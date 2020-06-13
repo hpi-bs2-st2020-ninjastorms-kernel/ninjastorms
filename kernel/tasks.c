@@ -26,6 +26,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #define CPSR_MODE_SVC  0x13
 #define CPSR_MODE_USER 0x10
@@ -46,7 +47,7 @@ void task_exit()
     exit();
 }
 
-int
+pid_t
 init_task (task_t *task, void *entrypoint, unsigned int stackbase)
 {
     int i;
@@ -135,7 +136,7 @@ next_free_tasks_position(void)
 /*
  * returns new tasks' pid or -1
  */
-int
+pid_t
 add_task (void *entrypoint)
 {
     if (!is_privileged()){

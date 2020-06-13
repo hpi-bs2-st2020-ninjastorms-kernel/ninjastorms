@@ -24,6 +24,8 @@
 #  include <config.h>
 #endif
 
+#include <sys/types.h>
+
 #define MAX_TASK_NUMBER 16
 
 struct task_t
@@ -35,8 +37,8 @@ struct task_t
 	unsigned int pc;
 	unsigned int cpsr;
     
-    unsigned int pid;
-    unsigned int parent_pid;
+    pid_t pid;
+    pid_t parent_pid;
     
     char valid; //used for navigating the array
 };
@@ -46,7 +48,7 @@ extern task_t *current_task;
 
 extern task_t tasks[MAX_TASK_NUMBER];
 
-int add_task (void *entrypoint);
+pid_t add_task (void *entrypoint);
 
 void exit_current_task(void);
 

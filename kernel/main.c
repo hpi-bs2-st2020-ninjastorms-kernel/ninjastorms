@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <sys/types.h>
 
 static void
 task_a (void)
@@ -74,13 +75,6 @@ task_c (void)
   int my_pid = get_pid();
   printf("c: My pid: %i, my parent is pid %i\n",my_pid, get_parent_pid());
   unsigned int n = 0;
-  printf("C: is 0 parent of c? %i\n",is_predecessor(my_pid,0));
-  printf("C: is 1 parent of c? %i\n",is_predecessor(my_pid,1));
-  printf("C: is 2 parent of c? %i\n",is_predecessor(my_pid,2));
-  printf("C: is 3 parent of c? %i\n",is_predecessor(my_pid,3));
-  printf("C: is 4 parent of c? %i\n",is_predecessor(my_pid,4));
-  printf("C: is 5 parent of c? %i\n",is_predecessor(my_pid,5));
-  printf("C: is 6 parent of c? %i\n",is_predecessor(my_pid,6));
 
   while (1)
     {
@@ -140,7 +134,7 @@ static void
 user_mode_init(void)
 {
     printf("User mode initialized with pid: %i\n", get_pid());
-    int e_pid = create_process(&task_e);
+    pid_t e_pid = create_process(&task_e);
     create_process(&task_b);
     create_process(&task_d);
     print_tasks_info();

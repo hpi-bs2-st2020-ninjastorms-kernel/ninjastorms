@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <sys/types.h>
 
 
 unsigned int syscall_dispatcher(unsigned int, void*);
@@ -61,7 +62,7 @@ unsigned int syscall_zero_dispatch(void* data)
     return 0;
 }
 
-int create_process_dispatch(void* data)
+pid_t create_process_dispatch(void* data)
 {
     struct create_process_specification spec = *((struct create_process_specification*) data);
     int result = add_task(spec.function);
@@ -74,12 +75,12 @@ int exit_dispatch(void* data)
     return 0;
 }
 
-unsigned int get_pid_dispatch(void* data)
+pid_t get_pid_dispatch(void* data)
 {
     return current_task->pid;
 }
 
-unsigned int get_parent_pid_dispatch(void* data)
+pid_t get_parent_pid_dispatch(void* data)
 {
     return current_task->parent_pid;
 }

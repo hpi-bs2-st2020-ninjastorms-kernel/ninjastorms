@@ -19,6 +19,7 @@
  ******************************************************************************/
 #include "syscall.h"
 #include <errno.h>
+#include <sys/types.h>
 
 unsigned int syscall(unsigned int number, void* data) 
 {
@@ -42,7 +43,7 @@ unsigned int syscall(unsigned int number, void* data)
     return ret;
 }
 
-int create_process(void * function) 
+pid_t create_process(void * function) 
 {
     struct create_process_specification new_process;
     new_process.function = function;
@@ -54,12 +55,12 @@ int exit()
     return syscall(2,(void*) 0);
 }
 
-unsigned int get_pid(void)
+pid_t get_pid(void)
 {
     return syscall(3,(void *) 0);
 }
 
-unsigned int get_parent_pid(void)
+pid_t get_parent_pid(void)
 {
     return syscall(4,(void *) 0);
 }

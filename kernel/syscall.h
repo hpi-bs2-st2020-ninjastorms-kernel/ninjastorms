@@ -19,15 +19,17 @@
  ******************************************************************************/
 #pragma once
 
+#include <sys/types.h>
+
 unsigned int syscall(unsigned int number, void* data);
 
-int create_process(void * function); 
+pid_t create_process(void * function); 
 
 int exit();
 
-unsigned int get_pid();
+pid_t get_pid();
 
-unsigned int get_parent_pid();
+pid_t get_parent_pid();
 
 int kill(unsigned int target);
 
