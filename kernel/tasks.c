@@ -37,7 +37,8 @@ task_t* current_task = &tasks[0];
 int next_pid = 1;
 
 
-void task_exit()
+void
+task_exit(void)
 {
     /*
      * This is called when a process has executed all its statements.
@@ -45,6 +46,18 @@ void task_exit()
      * to properly exit the process
      */
     exit();
+}
+
+void
+store_errno(void)
+{
+    current_task->stored_errno=errno;
+}
+
+void
+restore_errno(void)
+{
+    errno = current_task->stored_errno;
 }
 
 pid_t
@@ -91,6 +104,7 @@ clear_task(task_t* task_to_clear)
     task_to_clear->cpsr = 0;
     task_to_clear->pid = 0;
     task_to_clear->parent_pid=0;
+    task_to_clear->stored_errno=0;
     
     // zeroing the stack should be done
     //currently the used pid will not be freed

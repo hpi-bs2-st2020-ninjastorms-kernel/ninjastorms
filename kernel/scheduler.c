@@ -68,6 +68,7 @@ schedule_after_exit(void)
 {
     current_task = ring_buffer_remove();
     printf("New task will be Task %i",current_task->pid);
+    restore_errno();
     load_current_task_state();
 }
 
@@ -75,8 +76,10 @@ schedule_after_exit(void)
 void
 schedule (void)
 {
+  store_errno();
   ring_buffer_insert(current_task);
   current_task = ring_buffer_remove();
+  restore_errno();
 }
 
 

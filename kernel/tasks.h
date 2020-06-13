@@ -39,6 +39,8 @@ struct task_t
     
     pid_t pid;
     pid_t parent_pid;
+
+	unsigned int stored_errno;
     
     char valid; //used for navigating the array
 };
@@ -57,3 +59,7 @@ int process_is_descendent_of(int child, int pred);
 int kill_process(int target);
 
 void print_task_debug_info (void);
+
+void store_errno(void);
+
+void restore_errno(void);
