@@ -25,6 +25,9 @@ enum SYMBOLIC_ERRNO {
     ETOOMANYTASKS = 3, //Too many tasks
     ENOTIMPLEMENTED = 4, //Operation not implemented
     EINVALIDSYSCALLNO = 5, //Syscall no is not recognized
+    EBUFFEREMPTY = 6,
+    EBUFFERFULL = 7,
+    EINVALPID = 8 //given PID is not associaated with task
 };
 
 extern int errno;

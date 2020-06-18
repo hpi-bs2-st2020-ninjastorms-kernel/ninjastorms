@@ -26,6 +26,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <sys/types.h>
 
 #define CPSR_MODE_SVC  0x13
@@ -93,6 +94,7 @@ init_task (task_t *task, void *entrypoint, unsigned int stackbase)
 void
 clear_task(task_t* task_to_clear)
 {
+    printf("Clearing");
     // should be replaced by memset(task_to_clear,0,size_of(task_t));
     task_to_clear->valid = 0; //should be enough, but let's clean it nontheless
     for(int i=0;i<=13;i++){
@@ -105,6 +107,12 @@ clear_task(task_t* task_to_clear)
     task_to_clear->pid = 0;
     task_to_clear->parent_pid=0;
     task_to_clear->stored_errno=0;
+
+    for(int i=0; i<=IPC_BUFFER_SIZE;i++){
+        task_to_clear->ipc_buffer[i]=0;
+    }
+    task_to_clear->ipc_buffer_head = 0;
+    task_to_clear->ipc_buffer_open = 0;
     
     // zeroing the stack should be done
     //currently the used pid will not be freed
@@ -251,4 +259,72 @@ print_task_debug_info (void)
            tasksinfo[12],tasksinfo[13],tasksinfo[14],tasksinfo[15]);
     print_ring_buffer_debug_info();
     printf("-------------------------------\n");
+}
+
+task_t* _get_task(pid_t pid)
+{
+    for(int i=0;i<MAX_TASK_NUMBER;i++){
+        if(tasks[i].valid == 1 && tasks[i].pid == pid){
+            return &tasks[i];
+        }
+    }
+    errno = EINVALPID;
+    return NULL;
+} 
+
+
+//IPC
+
+void _open_ipc_buffer(size_t size)
+{
+    // Size will be ignored for now
+    current_task->ipc_buffer_open = 1;
+    // Head indicates size of buffer if it had unlimited memory
+    // this means actual head in array will be one less
+    current_task->ipc_buffer_head = 0;
+    printf("Opening ipc\n");
+}
+
+int _read_ipc_buffer(void)
+{
+    if (!current_task->ipc_buffer_open){
+        return -1;
+    }
+    if (current_task->ipc_buffer_head == 0){
+        errno = EBUFFEREMPTY;
+        return -1;
+    }
+    int result = current_task->ipc_buffer[current_task->ipc_buffer_head%IPC_BUFFER_SIZE];
+    current_task->ipc_buffer_head--;
+    return result;
+}
+
+
+int _close_ipc_buffer(void)
+{
+    current_task->ipc_buffer_open = 0;
+}
+
+int _send_to_ipc_bufer(int value, pid_t target)
+{
+    // maybe check at target, if sender is allowed?
+    printf("Head was %i\n", tasks[2].ipc_buffer_head);
+    task_t receiver = *(_get_task(target));
+    if (&receiver == NULL){
+        return -1;
+    }
+    if (!receiver.ipc_buffer_open){
+        errno = EPERMISSION;
+        return -1;
+    }   
+    receiver.ipc_buffer[receiver.ipc_buffer_head%IPC_BUFFER_SIZE] = value;
+    receiver.ipc_buffer_head++;
+    printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver.ipc_buffer_head);
+    return 0;
+}
+
+int _len_ipc_buffer(void)
+{
+    printf("Hi this is Task %i, my head is at %i \n", current_task->pid, current_task->ipc_buffer_head);
+    return current_task->ipc_buffer_head;
 }

@@ -35,13 +35,15 @@ int kill(unsigned int target);
 
 int is_predecessor(int child, int pred);
 
-int open_ipc_buffer(size_t size);
+int ipc_buffer_open(size_t size);
 
-int close_ipc_buffer();
+int ipc_buffer_close();
 
-int send_to_ipc_buffer(int value, pid_t target);
+int ipc_buffer_send(int value, pid_t target);
 
-int read_ipc_buffer();
+int ipc_buffer_read();
+
+int ipc_buffer_length();
 
 int print_tasks_info(void);
 

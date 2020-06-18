@@ -26,7 +26,6 @@
 .globl schedule
 
 // export
-.globl irq_handler_swi
 .globl irq_handler_timer
 .type irq_handler STT_FUNC
 .globl load_current_task_state

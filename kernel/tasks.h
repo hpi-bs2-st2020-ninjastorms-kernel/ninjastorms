@@ -27,6 +27,7 @@
 #include <sys/types.h>
 
 #define MAX_TASK_NUMBER 16
+#define IPC_BUFFER_SIZE 16
 
 struct task_t
 {
@@ -42,6 +43,10 @@ struct task_t
 
 	unsigned int stored_errno;
     
+	int ipc_buffer[IPC_BUFFER_SIZE];
+	char ipc_buffer_open;
+	int ipc_buffer_head;
+
     char valid; //used for navigating the array
 };
 typedef struct task_t task_t;
@@ -63,3 +68,13 @@ void print_task_debug_info (void);
 void store_errno(void);
 
 void restore_errno(void);
+
+void _open_ipc_buffer(size_t size);
+
+int _read_ipc_buffer(void);
+
+int _close_ipc_buffer(void);
+
+int _send_to_ipc_bufer(int value, pid_t target);
+
+int _len_ipc_buffer(void);

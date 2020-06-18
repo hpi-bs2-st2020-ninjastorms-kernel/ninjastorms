@@ -129,18 +129,51 @@ task_e (void)
     }
 }
 
+static void
+task_receiver (void)
+{
+    ipc_buffer_open(16);
+    while(1){
+        volatile int i;
+        for (i = 0; i < 100000000; ++i);
+        if (ipc_buffer_length()>0){
+            int received = ipc_buffer_read();
+            printf(" Received: %i\n", received);
+        }
+    }
+}
+
+static void
+task_sender (void)
+{
+    int receiver = create_process(&task_receiver);
+    unsigned int n = 0;
+    while (n<20)
+    {
+        volatile int i;
+        for (i = 0; i < 10000000; ++i);
+        if (ipc_buffer_send(n,receiver) == -1){
+            printf("Receiver not ready \n");
+        } else{
+            printf("Sent: %i \n", n);
+        }
+        n++;
+    }
+}
+
 
 static void
 user_mode_init(void)
 {
-    printf("User mode initialized with pid: %i\n", get_pid());
+    /*printf("User mode initialized with pid: %i\n", get_pid());
     pid_t e_pid = create_process(&task_e);
     create_process(&task_b);
     create_process(&task_d);
     print_tasks_info();
     for(int i=0;i<150000000; ++i);
     kill(e_pid);
-    print_tasks_info();
+    print_tasks_info();*/
+    create_process(&task_sender);
     while(1); //init will run forever
 }
 
@@ -152,6 +185,7 @@ char shuriken[] =
 "              __/()\\__\n"
 "             /   /\\   \\\n"
 "            /___/  \\___\\\n";
+
 
 int
 kernel_main (void)

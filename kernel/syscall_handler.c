@@ -109,26 +109,35 @@ unsigned int is_predecessor_dispatch(void* data)
 
 int open_ipc_buffer_dispatch(void* data)
 {
-    errno = ENOTIMPLEMENTED;
-    return -1;
+    // Size will be discarded for now
+
+    // Otherwise: cast struct
+    _open_ipc_buffer(0);
+    return 0;
 }
 
 int close_ipc_buffer_dispatch(void* data)
 {
-    errno = ENOTIMPLEMENTED;
-    return -1;
+    _close_ipc_buffer();
+    return 0;
 }
 
 int send_to_ipc_buffer_dispatch(void* data)
 {
-    errno = ENOTIMPLEMENTED;
-    return -1;
+    struct send_to_ipc_buffer_specification spec = *((struct send_to_ipc_buffer_specification*) data);
+    int value = spec.value;
+    pid_t target = spec.target;
+    return _send_to_ipc_bufer(value, target);
 }
 
 int read_ipc_buffer_dispatch(void* data)
 {
-    errno = ENOTIMPLEMENTED;
-    return -1;
+    return _read_ipc_buffer();
+}
+
+int length_ipc_buffer_dispatch(void* data)
+{
+    return _len_ipc_buffer();
 }
 
 int task_info_dispatch(void* data)
@@ -170,6 +179,8 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data)
             return send_to_ipc_buffer_dispatch(data);
         case READ_IPC_BUFFER:
             return read_ipc_buffer_dispatch(data);
+        case LEN_IPC_BUFFER:
+            return length_ipc_buffer_dispatch(data);
         case TASKS_INFO:
             return task_info_dispatch(data);
         case SHUTDOWN:

@@ -83,19 +83,19 @@ int is_predecessor(int child, int pred)
 
 // Inter process communication
 
-int open_ipc_buffer(size_t size)
+int ipc_buffer_open(size_t size)
 {
     struct open_ipc_buffer_specification open_ipc_spec;
     open_ipc_spec.size = size;
     return syscall(10, &open_ipc_spec);
 }
 
-int close_ipc_buffer()
+int ipc_buffer_close()
 {
     return syscall(11, NULL);
 }
 
-int send_to_ipc_buffer(int value, pid_t target)
+int ipc_buffer_send(int value, pid_t target)
 {
     struct send_to_ipc_buffer_specification send_ipc_spec;
     send_ipc_spec.target = target;
@@ -103,9 +103,14 @@ int send_to_ipc_buffer(int value, pid_t target)
     return syscall(12, &send_ipc_spec);
 }
 
-int read_ipc_buffer()
+int ipc_buffer_read()
 {
     return syscall(13, NULL);
+}
+
+int ipc_buffer_length()
+{
+    return syscall(14, NULL);
 }
 
 // Debug information
