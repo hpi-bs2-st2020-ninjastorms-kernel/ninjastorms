@@ -35,6 +35,14 @@ int kill(unsigned int target);
 
 int is_predecessor(int child, int pred);
 
+int open_ipc_buffer(size_t size);
+
+int close_ipc_buffer();
+
+int send_to_ipc_buffer(int value, pid_t target);
+
+int read_ipc_buffer();
+
 int print_tasks_info(void);
 
 unsigned int shutdown();
@@ -52,4 +60,13 @@ struct kill_specification{
 struct is_predecessor_specification{
     int child;
     int pred;
+};
+
+struct open_ipc_buffer_specification{
+    size_t size;
+};
+
+struct send_to_ipc_buffer_specification{
+    int value;
+    pid_t target;
 };

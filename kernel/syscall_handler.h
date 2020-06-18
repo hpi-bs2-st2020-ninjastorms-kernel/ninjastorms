@@ -34,6 +34,13 @@ enum SYSCALL_NUMBER {
     GET_PARENT_PID = 4,
     KILL = 5,
     IS_PREDECESSOR = 6,
+
+    //IPC
+    OPEN_IPC_BUFFER = 10,
+    CLOSE_IPC_BUFFER = 11,
+    SEND_TO_IPC_BUFFER = 12,
+    READ_IPC_BUFFER = 13,
+
     TASKS_INFO = 42,
     SHUTDOWN = 99
 }; 

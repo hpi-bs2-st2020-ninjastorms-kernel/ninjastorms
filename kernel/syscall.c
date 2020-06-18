@@ -20,6 +20,7 @@
 #include "syscall.h"
 #include <errno.h>
 #include <sys/types.h>
+#include <stddef.h>
 
 unsigned int syscall(unsigned int number, void* data) 
 {
@@ -52,17 +53,17 @@ pid_t create_process(void * function)
 
 int exit()
 {
-    return syscall(2,(void*) 0);
+    return syscall(2, NULL);
 }
 
 pid_t get_pid(void)
 {
-    return syscall(3,(void *) 0);
+    return syscall(3, NULL);
 }
 
 pid_t get_parent_pid(void)
 {
-    return syscall(4,(void *) 0);
+    return syscall(4, NULL);
 }
 
 int kill(unsigned int target)
@@ -80,14 +81,45 @@ int is_predecessor(int child, int pred)
     return syscall(6, &is_pred_spec);
 }
 
+// Inter process communication
+
+int open_ipc_buffer(size_t size)
+{
+    struct open_ipc_buffer_specification open_ipc_spec;
+    open_ipc_spec.size = size;
+    return syscall(10, &open_ipc_spec);
+}
+
+int close_ipc_buffer()
+{
+    return syscall(11, NULL);
+}
+
+int send_to_ipc_buffer(int value, pid_t target)
+{
+    struct send_to_ipc_buffer_specification send_ipc_spec;
+    send_ipc_spec.target = target;
+    send_ipc_spec.value  = value;
+    return syscall(12, &send_ipc_spec);
+}
+
+int read_ipc_buffer()
+{
+    return syscall(13, NULL);
+}
+
+// Debug information
+
 int print_tasks_info(void)
 {
-    return syscall(42,(void *) 0);
+    return syscall(42, NULL);
 }
+
+// System control
 
 unsigned int shutdown(void)
 {
-    return syscall(99,(void *)0);
+    return syscall(99, NULL);
 }
 
 

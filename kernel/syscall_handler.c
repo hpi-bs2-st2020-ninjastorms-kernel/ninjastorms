@@ -107,6 +107,30 @@ unsigned int is_predecessor_dispatch(void* data)
     return result;
 }
 
+int open_ipc_buffer_dispatch(void* data)
+{
+    errno = ENOTIMPLEMENTED;
+    return -1;
+}
+
+int close_ipc_buffer_dispatch(void* data)
+{
+    errno = ENOTIMPLEMENTED;
+    return -1;
+}
+
+int send_to_ipc_buffer_dispatch(void* data)
+{
+    errno = ENOTIMPLEMENTED;
+    return -1;
+}
+
+int read_ipc_buffer_dispatch(void* data)
+{
+    errno = ENOTIMPLEMENTED;
+    return -1;
+}
+
 int task_info_dispatch(void* data)
 {
     print_task_debug_info();
@@ -138,6 +162,14 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data)
             return kill_dispatch(data);
         case IS_PREDECESSOR:
             return is_predecessor_dispatch(data);
+        case OPEN_IPC_BUFFER:
+            return open_ipc_buffer_dispatch(data);
+        case CLOSE_IPC_BUFFER:
+            return close_ipc_buffer_dispatch(data);
+        case SEND_TO_IPC_BUFFER:
+            return send_to_ipc_buffer_dispatch(data);
+        case READ_IPC_BUFFER:
+            return read_ipc_buffer_dispatch(data);
         case TASKS_INFO:
             return task_info_dispatch(data);
         case SHUTDOWN:
