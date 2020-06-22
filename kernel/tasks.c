@@ -294,8 +294,9 @@ int _read_ipc_buffer(void)
         errno = EBUFFEREMPTY;
         return -1;
     }
-    int result = current_task->ipc_buffer[current_task->ipc_buffer_head%IPC_BUFFER_SIZE];
+    int result = current_task->ipc_buffer[(current_task->ipc_buffer_head%IPC_BUFFER_SIZE)-1];
     current_task->ipc_buffer_head--;
+    //printf("Read %i from buffer of task %i, head now decremented to %i \n",result, current_task->pid, current_task->ipc_buffer_head);
     return result;
 }
 
@@ -308,23 +309,21 @@ int _close_ipc_buffer(void)
 int _send_to_ipc_bufer(int value, pid_t target)
 {
     // maybe check at target, if sender is allowed?
-    printf("Head was %i\n", tasks[2].ipc_buffer_head);
-    task_t receiver = *(_get_task(target));
-    if (&receiver == NULL){
+    task_t* receiver = (_get_task(target));
+    if (receiver == NULL){
         return -1;
     }
-    if (!receiver.ipc_buffer_open){
+    if (!receiver->ipc_buffer_open){
         errno = EPERMISSION;
         return -1;
     }   
-    receiver.ipc_buffer[receiver.ipc_buffer_head%IPC_BUFFER_SIZE] = value;
-    receiver.ipc_buffer_head++;
-    printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver.ipc_buffer_head);
+    receiver->ipc_buffer[receiver->ipc_buffer_head%IPC_BUFFER_SIZE] = value;
+    receiver->ipc_buffer_head++;
+    //printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver->ipc_buffer_head);
     return 0;
 }
 
 int _len_ipc_buffer(void)
 {
-    printf("Hi this is Task %i, my head is at %i \n", current_task->pid, current_task->ipc_buffer_head);
     return current_task->ipc_buffer_head;
 }

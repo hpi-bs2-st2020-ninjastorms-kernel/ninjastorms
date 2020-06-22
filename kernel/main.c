@@ -135,10 +135,14 @@ task_receiver (void)
     ipc_buffer_open(16);
     while(1){
         volatile int i;
-        for (i = 0; i < 100000000; ++i);
+        for (i = 0; i < 20000000; ++i);
         if (ipc_buffer_length()>0){
             int received = ipc_buffer_read();
             printf(" Received: %i\n", received);
+        } else{
+          printf("Closing buffer!\n");
+          ipc_buffer_close();
+          shutdown();
         }
     }
 }
