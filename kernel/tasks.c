@@ -94,7 +94,6 @@ init_task (task_t *task, void *entrypoint, unsigned int stackbase)
 void
 clear_task(task_t* task_to_clear)
 {
-    printf("Clearing");
     // should be replaced by memset(task_to_clear,0,size_of(task_t));
     task_to_clear->valid = 0; //should be enough, but let's clean it nontheless
     for(int i=0;i<=13;i++){
@@ -294,7 +293,8 @@ int _read_ipc_buffer(void)
         errno = EBUFFEREMPTY;
         return -1;
     }
-    int result = current_task->ipc_buffer[(current_task->ipc_buffer_head%IPC_BUFFER_SIZE)-1];
+    // Modulo check is not neccessary when buffer is bounded (Which it is)
+    int result = current_task->ipc_buffer[(current_task->ipc_buffer_head-1)%IPC_BUFFER_SIZE];
     current_task->ipc_buffer_head--;
     //printf("Read %i from buffer of task %i, head now decremented to %i \n",result, current_task->pid, current_task->ipc_buffer_head);
     return result;
@@ -316,7 +316,12 @@ int _send_to_ipc_bufer(int value, pid_t target)
     if (!receiver->ipc_buffer_open){
         errno = EPERMISSION;
         return -1;
-    }   
+    }
+    // remove this if you want an unbounded buffer, this will result in the buffer being overwritten
+    if (receiver->ipc_buffer_head>=IPC_BUFFER_SIZE){
+        errno = EBUFFERFULL;
+        return -1;
+    }
     receiver->ipc_buffer[receiver->ipc_buffer_head%IPC_BUFFER_SIZE] = value;
     receiver->ipc_buffer_head++;
     //printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver->ipc_buffer_head);

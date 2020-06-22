@@ -20,6 +20,10 @@
 
 #include "utilities.h"
 #include "tasks.h"
+#include "syscall.h"
+#include "errno.h"
+
+// USERMODE/ SHARED UTILITIES
 
 unsigned int get_operating_mode(void)
 {
@@ -47,13 +51,6 @@ unsigned int is_privileged(void)
     return get_operating_mode() != 0b10000;
 }
 
-void halt_execution(void)
-{
-    if (is_privileged()){
-        asm("hlt");
-    }
-}
-
 /*
  * check if calling_process has rights for actions on process target
  */
@@ -68,4 +65,25 @@ int has_rights(int calling_process, int target)
         return 1;
     }
     return 0;
+}
+
+int read_ipc_buffer_and_block(void){
+    int DELAY = 50000;
+    int result = 0;
+    do{
+        result = ipc_buffer_read();
+        if (result == -1){
+            for(int i=0; i<DELAY; ++i);
+        }
+    } while(result == -1 && errno == EBUFFEREMPTY);
+    return result;
+}
+
+// KERNEL MODE UTILITIES
+
+void halt_execution(void)
+{
+    if (is_privileged()){
+        asm("hlt");
+    }
 }

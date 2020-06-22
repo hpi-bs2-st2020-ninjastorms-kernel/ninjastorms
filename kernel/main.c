@@ -157,7 +157,11 @@ task_sender (void)
         volatile int i;
         for (i = 0; i < 10000000; ++i);
         if (ipc_buffer_send(n,receiver) == -1){
+          if(errno == EPERMISSION){
             printf("Receiver not ready \n");
+          } else if(errno == EBUFFERFULL){
+            printf("Buffer full, not sending \n");
+          }
         } else{
             printf("Sent: %i \n", n);
         }

@@ -27,7 +27,7 @@
 #include <sys/types.h>
 
 #define MAX_TASK_NUMBER 16
-#define IPC_BUFFER_SIZE 8
+#define IPC_BUFFER_SIZE 4
 
 struct task_t
 {
