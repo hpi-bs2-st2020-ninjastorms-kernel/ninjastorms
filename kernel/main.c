@@ -138,7 +138,7 @@ task_receiver (void)
         for (i = 0; i < 20000000; ++i);
         if (ipc_buffer_length()>0){
             int received = ipc_buffer_read();
-            printf(" Received: %i\n", received);
+            printf(" Received: %c\n", received);
         } else{
           printf("Closing buffer!\n");
           ipc_buffer_close();
@@ -151,21 +151,23 @@ static void
 task_sender (void)
 {
     int receiver = create_process(&task_receiver);
-    unsigned int n = 0;
-    while (n<20)
+    unsigned int c = 0;
+    char message[] = "Shinobi";
+    while (c<8)
     {
         volatile int i;
         for (i = 0; i < 10000000; ++i);
-        if (ipc_buffer_send(n,receiver) == -1){
-          if(errno == EPERMISSION){
+        errno = 0;
+        if (ipc_buffer_send(message[c],receiver) == -1){
+          if(errno == EBUFFERCLOSED){
             printf("Receiver not ready \n");
           } else if(errno == EBUFFERFULL){
             printf("Buffer full, not sending \n");
           }
         } else{
-            printf("Sent: %i \n", n);
+            //printf("Sent: %i \n", message[c]);
+            c++;
         }
-        n++;
     }
 }
 

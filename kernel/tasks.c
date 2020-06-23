@@ -288,6 +288,7 @@ void _open_ipc_buffer(size_t size)
 int _read_ipc_buffer(void)
 {
     if (!current_task->ipc_buffer_open){
+        errno = EBUFFERCLOSED;
         return -1;
     }
     if (current_task->ipc_buffer_start == current_task->ipc_buffer_end){
@@ -315,7 +316,7 @@ int _send_to_ipc_bufer(int value, pid_t target)
         return -1;
     }
     if (!receiver->ipc_buffer_open){
-        errno = EPERMISSION;
+        errno = EBUFFERCLOSED;
         return -1;
     }
     int32_t new_end = (receiver->ipc_buffer_end + 1) % IPC_BUFFER_SIZE;
@@ -327,7 +328,6 @@ int _send_to_ipc_bufer(int value, pid_t target)
     receiver->ipc_buffer[receiver->ipc_buffer_end] = value;
     receiver->ipc_buffer_end = new_end;
 
-    //printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver->ipc_buffer_head);
     return 0;
 }
 

@@ -48,7 +48,8 @@ struct task_t
 	int8_t ipc_buffer_start;
 	int8_t ipc_buffer_end;
 
-    int8_t valid; //used for navigating the array
+	//used for navigating the array, boolean
+    int8_t valid; 
 };
 typedef struct task_t task_t;
 

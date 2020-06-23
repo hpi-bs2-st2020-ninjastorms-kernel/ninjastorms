@@ -105,6 +105,14 @@ int ipc_buffer_send(int value, pid_t target)
 
 int ipc_buffer_read(void)
 {
+    /* 
+    *  The syscall may return -1.
+    *  This can be because an error has occured,
+    *  e.g. Buffer not open or Buffer empty
+    *  OR the message in the buffer is "-1".
+    *  Receiver has to check errno to determine that.
+    */
+    errno = 0;
     return syscall(13, NULL);
 }
 
