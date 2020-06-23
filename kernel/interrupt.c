@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 #include "interrupt.h"
-#include "syscall_handler.h"
+#include "syscall/syscall_handler.h"
 
 #include "kernel/memory.h"
 #include "kernel/interrupt_handler.h"

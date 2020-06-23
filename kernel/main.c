@@ -142,7 +142,7 @@ task_receiver (void)
         } else{
           printf("Closing buffer!\n");
           ipc_buffer_close();
-          shutdown();
+          exit();
         }
     }
 }
@@ -175,15 +175,16 @@ task_sender (void)
 static void
 user_mode_init(void)
 {
-    /*printf("User mode initialized with pid: %i\n", get_pid());
+    printf("User mode initialized with pid: %i\n", get_pid());
     pid_t e_pid = create_process(&task_e);
     create_process(&task_b);
     create_process(&task_d);
+    create_process(&task_sender);
     print_tasks_info();
     for(int i=0;i<150000000; ++i);
     kill(e_pid);
-    print_tasks_info();*/
-    create_process(&task_sender);
+    print_tasks_info();
+    
     while(1); //init will run forever
 }
 

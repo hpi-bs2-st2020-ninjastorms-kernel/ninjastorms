@@ -19,13 +19,16 @@
  ******************************************************************************/
 
 #include "syscall_handler.h"
-#include "syscall.h"
-#include "tasks.h"
-#include "utilities.h"
+#include "kernel/syscall.h"
+#include "kernel/tasks.h"
+#include "kernel/utilities.h"
 
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
+
+#include "inter_process_com.h"
+#include "process_control.h"
 
 
 unsigned int syscall_dispatcher(unsigned int, void*);
@@ -60,84 +63,6 @@ unsigned int syscall_zero_dispatch(void* data)
 {
     puts("This is not a real syscall!\n");
     return 0;
-}
-
-pid_t create_process_dispatch(void* data)
-{
-    struct create_process_specification spec = *((struct create_process_specification*) data);
-    int result = add_task(spec.function);
-    return result;
-}
-
-int exit_dispatch(void* data)
-{
-    exit_current_task();
-    return 0;
-}
-
-pid_t get_pid_dispatch(void* data)
-{
-    return current_task->pid;
-}
-
-pid_t get_parent_pid_dispatch(void* data)
-{
-    return current_task->parent_pid;
-}
-
-int kill_dispatch(void* data)
-{
-    struct kill_specification spec = *((struct kill_specification*) data);
-    int target = spec.pid;
-    if(target == current_task->pid){
-        printf("Do not call kill() on yourself! Use exit() instead.\n");
-        return -1;
-    }
-    if(has_rights(current_task->pid, target)){
-        return kill_process(target);
-    }
-    errno = EPERMISSION;
-    return -1;
-}
-
-unsigned int is_predecessor_dispatch(void* data)
-{
-    struct is_predecessor_specification spec = *((struct is_predecessor_specification*) data);
-    int result = process_is_descendent_of(spec.child,spec.pred);
-    return result;
-}
-
-int open_ipc_buffer_dispatch(void* data)
-{
-    // Size will be discarded for now
-
-    // Otherwise: cast struct
-    _open_ipc_buffer(0);
-    return 0;
-}
-
-int close_ipc_buffer_dispatch(void* data)
-{
-    _close_ipc_buffer();
-    return 0;
-}
-
-int send_to_ipc_buffer_dispatch(void* data)
-{
-    struct send_to_ipc_buffer_specification spec = *((struct send_to_ipc_buffer_specification*) data);
-    int value = spec.value;
-    pid_t target = spec.target;
-    return _send_to_ipc_bufer(value, target);
-}
-
-int read_ipc_buffer_dispatch(void* data)
-{
-    return _read_ipc_buffer();
-}
-
-int length_ipc_buffer_dispatch(void* data)
-{
-    return _len_ipc_buffer();
 }
 
 int task_info_dispatch(void* data)
