@@ -110,11 +110,12 @@ clear_task(task_t* task_to_clear)
     for(int i=0; i<=IPC_BUFFER_SIZE;i++){
         task_to_clear->ipc_buffer[i]=0;
     }
-    task_to_clear->ipc_buffer_head = 0;
+    task_to_clear->ipc_buffer_start = 0;
+    task_to_clear->ipc_buffer_end = 0;
     task_to_clear->ipc_buffer_open = 0;
     
     // zeroing the stack should be done
-    //currently the used pid will not be freed
+    // currently the used pid will not be freed
 }
 
 void
@@ -278,9 +279,9 @@ void _open_ipc_buffer(size_t size)
 {
     // Size will be ignored for now
     current_task->ipc_buffer_open = 1;
-    // Head indicates size of buffer if it had unlimited memory
-    // this means actual head in array will be one less
-    current_task->ipc_buffer_head = 0;
+
+    current_task->ipc_buffer_start = 0;
+    current_task->ipc_buffer_end = 0;
     printf("Opening ipc\n");
 }
 
@@ -289,13 +290,13 @@ int _read_ipc_buffer(void)
     if (!current_task->ipc_buffer_open){
         return -1;
     }
-    if (current_task->ipc_buffer_head == 0){
+    if (current_task->ipc_buffer_start == current_task->ipc_buffer_end){
         errno = EBUFFEREMPTY;
         return -1;
     }
-    // Modulo check is not neccessary when buffer is bounded (Which it is)
-    int result = current_task->ipc_buffer[(current_task->ipc_buffer_head-1)%IPC_BUFFER_SIZE];
-    current_task->ipc_buffer_head--;
+
+    int32_t result = current_task->ipc_buffer[current_task->ipc_buffer_start];
+    current_task->ipc_buffer_start =(current_task->ipc_buffer_start +1) % IPC_BUFFER_SIZE;
     //printf("Read %i from buffer of task %i, head now decremented to %i \n",result, current_task->pid, current_task->ipc_buffer_head);
     return result;
 }
@@ -317,18 +318,20 @@ int _send_to_ipc_bufer(int value, pid_t target)
         errno = EPERMISSION;
         return -1;
     }
-    // remove this if you want an unbounded buffer, this will result in the buffer being overwritten
-    if (receiver->ipc_buffer_head>=IPC_BUFFER_SIZE){
+    int32_t new_end = (receiver->ipc_buffer_end + 1) % IPC_BUFFER_SIZE;
+    if (new_end == receiver->ipc_buffer_start)
+    {
         errno = EBUFFERFULL;
         return -1;
     }
-    receiver->ipc_buffer[receiver->ipc_buffer_head%IPC_BUFFER_SIZE] = value;
-    receiver->ipc_buffer_head++;
+    receiver->ipc_buffer[receiver->ipc_buffer_end] = value;
+    receiver->ipc_buffer_end = new_end;
+
     //printf("Task %i send %i to task %i. For receiver, Head is now at %i\n",current_task->pid,value,target, receiver->ipc_buffer_head);
     return 0;
 }
 
 int _len_ipc_buffer(void)
 {
-    return current_task->ipc_buffer_head;
+    return current_task->ipc_buffer_end-current_task->ipc_buffer_start;
 }

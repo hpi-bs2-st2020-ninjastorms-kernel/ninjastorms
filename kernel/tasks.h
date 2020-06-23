@@ -27,27 +27,28 @@
 #include <sys/types.h>
 
 #define MAX_TASK_NUMBER 16
-#define IPC_BUFFER_SIZE 4
+#define IPC_BUFFER_SIZE 16
 
 struct task_t
 {
   // r01..r12, sp, lr, pc
-	unsigned int reg[13];
-	unsigned int sp;
-	unsigned int lr;
-	unsigned int pc;
-	unsigned int cpsr;
+	uint32_t reg[13];
+	uint32_t sp;
+	uint32_t lr;
+	uint32_t pc;
+	uint32_t cpsr;
     
     pid_t pid;
     pid_t parent_pid;
 
-	unsigned int stored_errno;
+	uint32_t stored_errno;
     
-	int ipc_buffer[IPC_BUFFER_SIZE];
-	char ipc_buffer_open;
-	int ipc_buffer_head;
+	int32_t ipc_buffer[IPC_BUFFER_SIZE];
+	int8_t ipc_buffer_open;
+	int8_t ipc_buffer_start;
+	int8_t ipc_buffer_end;
 
-    char valid; //used for navigating the array
+    int8_t valid; //used for navigating the array
 };
 typedef struct task_t task_t;
 
