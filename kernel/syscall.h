@@ -25,29 +25,29 @@ unsigned int syscall(unsigned int number, void* data);
 
 pid_t create_process(void * function); 
 
-int exit();
+int exit(void);
 
-pid_t get_pid();
+pid_t get_pid(void);
 
-pid_t get_parent_pid();
+pid_t get_parent_pid(void);
 
-int kill(unsigned int target);
+int kill(pid_t target);
 
-int is_predecessor(int child, int pred);
+int is_predecessor(pid_t child, pid_t pred);
 
 int ipc_buffer_open(size_t size);
 
-int ipc_buffer_close();
+int ipc_buffer_close(void);
 
 int ipc_buffer_send(int value, pid_t target);
 
-int ipc_buffer_read();
+int ipc_buffer_read(void);
 
-int ipc_buffer_length();
+int ipc_buffer_length(void);
 
 int print_tasks_info(void);
 
-unsigned int shutdown();
+unsigned int shutdown(void);
 
 struct create_process_specification{
     void * function;

@@ -51,7 +51,7 @@ pid_t create_process(void * function)
     return syscall(1, &new_process);
 }
 
-int exit()
+int exit(void)
 {
     return syscall(2, NULL);
 }
@@ -66,14 +66,14 @@ pid_t get_parent_pid(void)
     return syscall(4, NULL);
 }
 
-int kill(unsigned int target)
+int kill(pid_t target)
 {
     struct kill_specification kill_spec;
     kill_spec.pid = target;
     return syscall(5, &kill_spec);
 }
 
-int is_predecessor(int child, int pred)
+int is_predecessor(pid_t child, pid_t pred)
 {
     struct is_predecessor_specification is_pred_spec;
     is_pred_spec.child = child;
@@ -90,7 +90,7 @@ int ipc_buffer_open(size_t size)
     return syscall(10, &open_ipc_spec);
 }
 
-int ipc_buffer_close()
+int ipc_buffer_close(void)
 {
     return syscall(11, NULL);
 }
@@ -103,12 +103,12 @@ int ipc_buffer_send(int value, pid_t target)
     return syscall(12, &send_ipc_spec);
 }
 
-int ipc_buffer_read()
+int ipc_buffer_read(void)
 {
     return syscall(13, NULL);
 }
 
-int ipc_buffer_length()
+int ipc_buffer_length(void)
 {
     return syscall(14, NULL);
 }
