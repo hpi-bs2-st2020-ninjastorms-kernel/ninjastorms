@@ -26,3 +26,6 @@ scripts/
 
 .dirstamp
 .gdbinit
+
+# editor
+.vscode/

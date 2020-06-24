@@ -20,8 +20,12 @@
 
 #pragma once
 
+#include <sys/types.h>
+
 unsigned int is_privileged(void);
 
 void halt_execution(void);
 
 int has_rights(int calling_process, int target);
+
+int32_t read_ipc_buffer_and_check(int32_t* validity);

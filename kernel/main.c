@@ -132,19 +132,22 @@ task_e (void)
 static void
 task_receiver (void)
 {
-    ipc_buffer_open(16);
-    while(1){
+    int c = 0;
+    while(c<8){
         volatile int i;
         for (i = 0; i < 20000000; ++i);
-        if (ipc_buffer_length()>0){
-            int received = ipc_buffer_read();
-            printf(" Received: %c\n", received);
-        } else{
-          printf("Closing buffer!\n");
-          ipc_buffer_close();
-          exit();
+        int validity = 0;
+        int received = read_ipc_buffer_and_check(&validity);
+        if(!validity){
+          printf("Oops forgot to open buffer\n");
+          ipc_buffer_open(16);
         }
+        printf(" Received: %c\n", received);
+        c++;
     }
+    printf("Closing buffer!\n");
+    ipc_buffer_close();
+    exit();
 }
 
 static void

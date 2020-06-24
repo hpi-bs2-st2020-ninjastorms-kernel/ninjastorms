@@ -67,7 +67,8 @@ int has_rights(int calling_process, int target)
     return 0;
 }
 
-int read_ipc_buffer_and_block(void){
+int read_ipc_buffer_and_block(void)
+{
     int DELAY = 50000;
     int result = 0;
     do{
@@ -76,6 +77,18 @@ int read_ipc_buffer_and_block(void){
             for(int i=0; i<DELAY; ++i);
         }
     } while(result == -1 && errno == EBUFFEREMPTY);
+    return result;
+}
+
+int32_t read_ipc_buffer_and_check(int32_t* validity)
+{
+    *validity = 1;
+    int32_t result = ipc_buffer_read();
+    if(result == -1 && errno != 0){
+        // The result is not literally "-1", but indicates an error occured (errno is set to 0 by ipc_buffer_read())
+        // thus the return value is not valid
+        *validity = 0;
+    }
     return result;
 }
 
