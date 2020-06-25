@@ -25,6 +25,7 @@
 #include "kernel/tasks.h"
 #include "memory.h"
 #include "kernel/utilities.h"
+#include "user.h"
 
 #include "syscall.h"
 
@@ -209,6 +210,7 @@ kernel_main (void)
   puts(shuriken);
 
   add_task(&user_mode_init);
+  set_uid(0,1); // make sure usermode init is not root 
   start_scheduler();
 
   puts("All done. ninjastorms out!");

@@ -42,6 +42,9 @@ enum SYSCALL_NUMBER {
     READ_IPC_BUFFER = 13,
     LEN_IPC_BUFFER = 14,
 
+    //UAC
+    GET_UID  = 20,
+
     TASKS_INFO = 42,
     SHUTDOWN = 99
 }; 

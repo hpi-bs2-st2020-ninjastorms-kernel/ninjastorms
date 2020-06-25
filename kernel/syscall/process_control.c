@@ -23,6 +23,7 @@
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
+#include "kernel/user.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -72,4 +73,9 @@ uint32_t is_predecessor_dispatch(void* data)
     struct is_predecessor_specification spec = *((struct is_predecessor_specification*) data);
     int result = process_is_descendent_of(spec.child,spec.pred);
     return result;
+}
+
+uid_t get_uid_dispatch(void* data)
+{
+    return current_task->user;
 }

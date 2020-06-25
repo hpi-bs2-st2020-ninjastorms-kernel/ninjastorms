@@ -38,6 +38,7 @@ ninjastorms_SOURCES = \
     kernel/syscall/process_control.c kernel/syscall/process_control.h \
     kernel/syscall.c kernel/syscall.h \
     kernel/utilities.c kernel/utilities.h \
+    kernel/user.c  kernel/user.h \
     kernel/interrupt_handler.S kernel/interrupt_handler.h \
     kernel/memory.h \
     kernel/mmio.c kernel/mmio.h \

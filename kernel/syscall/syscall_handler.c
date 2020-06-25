@@ -22,6 +22,7 @@
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
+#include "kernel/user.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -71,11 +72,18 @@ int task_info_dispatch(void* data)
     return 0;
 }
 
-unsigned int shutdown_dispatch(void* data)
+
+int32_t shutdown_dispatch(void* data)
 {
     // close all processes attached with hooks
     // ...
-    halt_execution();
+        if (is_super_user(current_task->user)){ 
+        asm("hlt");
+    } else{
+        errno = EPERMISSION;
+        printf("Error: Lacking rights to perform shutdown\n");
+        return -1;
+    }
 }
 
 unsigned int syscall_dispatcher(unsigned int syscallno, void *data) 
@@ -96,6 +104,8 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data)
             return kill_dispatch(data);
         case IS_PREDECESSOR:
             return is_predecessor_dispatch(data);
+        case GET_UID:
+            return get_uid_dispatch(data);
         case OPEN_IPC_BUFFER:
             return open_ipc_buffer_dispatch(data);
         case CLOSE_IPC_BUFFER:

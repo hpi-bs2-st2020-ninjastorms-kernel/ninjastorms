@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "tasks.h"
+
 #include "scheduler.h"
 #include "kernel/memory.h"
 #include "kernel/utilities.h"
@@ -103,8 +104,11 @@ clear_task(task_t* task_to_clear)
     task_to_clear->pc = 0;
     task_to_clear->sp = 0;
     task_to_clear->cpsr = 0;
+
     task_to_clear->pid = 0;
     task_to_clear->parent_pid=0;
+    task_to_clear->user = 0;
+
     task_to_clear->stored_errno=0;
 
     for(int i=0; i<=IPC_BUFFER_SIZE;i++){
@@ -176,6 +180,9 @@ add_task (void *entrypoint)
     // push &task_finished
     unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase);
     insert_task(&tasks[new_task_pos]);
+
+    tasks[new_task_pos].user = current_task->user;
+
     task_count++;
     return new_pid;
 }
