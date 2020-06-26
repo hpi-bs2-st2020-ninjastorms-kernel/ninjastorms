@@ -32,6 +32,7 @@
 #define IS_PARENT 0b00000010
 #define IS_PRED   0b00000100
 #define REFLEXIVE 0b00001000
+#define SAME_USER 0b00010000
 #define GENERIC   0b10000000
 
 typedef int8_t rights_t;

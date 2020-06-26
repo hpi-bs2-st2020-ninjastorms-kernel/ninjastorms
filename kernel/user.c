@@ -76,6 +76,12 @@ bool rights_check_process_on(pid_t caller, pid_t target, rights_t rights)
         if(process_is_descendent_of(target, caller))
             return true;
     }
+    if((rights & SAME_USER) == SAME_USER){
+        task_t* target_task = _get_task(target);
+        task_t* caller_task = _get_task(caller);
+        if(caller_task->user == target_task->user)
+            return true;
+    }
     if((rights & GENERIC) == GENERIC){
         return true;
     }
@@ -99,6 +105,11 @@ bool rights_check_current_process_on(pid_t target, rights_t rights)
     }
     if((rights & IS_PRED) == IS_PRED){
         if(process_is_descendent_of(target, current_task->pid))
+            return true;
+    }
+    if((rights & SAME_USER) == SAME_USER){
+        task_t* target_task = _get_task(target);
+        if(current_task->user == target_task->user)
             return true;
     }
     if((rights & GENERIC) == GENERIC){

@@ -189,7 +189,7 @@ add_task (void *entrypoint)
 
 // check if process with pid pred is predecessor (parent of parent ...) with pid child 
 int
-process_is_descendent_of(int child, int pred)
+process_is_descendent_of(pid_t child, pid_t pred)
 {
     if(child == pred){
         //question of definition
@@ -217,7 +217,7 @@ process_is_descendent_of(int child, int pred)
     return current_parent == pred;
 }
 
-int kill_process(int target)
+int kill_process(pid_t target)
 {
     // Don't use kill on the current task, use exit() instead.
     if(target == current_task->pid){
@@ -292,7 +292,7 @@ void _open_ipc_buffer(size_t size)
     printf("Opening ipc\n");
 }
 
-int _read_ipc_buffer(void)
+int32_t _read_ipc_buffer(void)
 {
     if (!current_task->ipc_buffer_open){
         errno = EBUFFERCLOSED;
@@ -310,12 +310,12 @@ int _read_ipc_buffer(void)
 }
 
 
-int _close_ipc_buffer(void)
+int32_t _close_ipc_buffer(void)
 {
     current_task->ipc_buffer_open = 0;
 }
 
-int _send_to_ipc_bufer(int value, pid_t target)
+int32_t _send_to_ipc_bufer(int value, pid_t target)
 {
     // maybe check at target, if sender is allowed?
     task_t* receiver = (_get_task(target));
@@ -338,7 +338,7 @@ int _send_to_ipc_bufer(int value, pid_t target)
     return 0;
 }
 
-int _len_ipc_buffer(void)
+int32_t _len_ipc_buffer(void)
 {
     return current_task->ipc_buffer_end-current_task->ipc_buffer_start;
 }

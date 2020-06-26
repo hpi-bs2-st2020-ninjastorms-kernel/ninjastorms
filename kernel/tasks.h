@@ -63,9 +63,9 @@ pid_t add_task (void *entrypoint);
 
 void exit_current_task(void);
 
-int process_is_descendent_of(int child, int pred);
+int process_is_descendent_of(pid_t child, pid_t pred);
 
-int kill_process(int target);
+int kill_process(pid_t target);
 
 void print_task_debug_info (void);
 
@@ -77,10 +77,10 @@ task_t* _get_task(pid_t pid);
 
 void _open_ipc_buffer(size_t size);
 
-int _read_ipc_buffer(void);
+int32_t _read_ipc_buffer(void);
 
-int _close_ipc_buffer(void);
+int32_t _close_ipc_buffer(void);
 
-int _send_to_ipc_bufer(int value, pid_t target);
+int32_t _send_to_ipc_bufer(int value, pid_t target);
 
-int _len_ipc_buffer(void);
+int32_t _len_ipc_buffer(void);
