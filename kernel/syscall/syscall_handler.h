@@ -44,6 +44,8 @@ enum SYSCALL_NUMBER {
 
     //UAC
     GET_UID  = 20,
+    SET_UID  = 21,
+    CREATE_PROCESS_UID = 22,
 
     TASKS_INFO = 42,
     SHUTDOWN = 99

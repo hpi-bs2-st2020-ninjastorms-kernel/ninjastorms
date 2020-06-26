@@ -27,7 +27,7 @@ enum SYMBOLIC_ERRNO {
     EINVALIDSYSCALLNO = 5, //Syscall no is not recognized
     EBUFFEREMPTY = 6,
     EBUFFERFULL = 7,
-    EBUFFERCLOSED,
+    EBUFFERCLOSED = 8,
     EINVALPID = 9 //given PID is not associaated with task
 };
 

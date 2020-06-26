@@ -24,8 +24,9 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdio.h>
 
-int32_t set_uid(pid_t target, uid_t uid)
+int32_t _set_uid(pid_t target, uid_t uid)
 {
     task_t* process = _get_task(target);
     if (process == NULL){
@@ -33,9 +34,10 @@ int32_t set_uid(pid_t target, uid_t uid)
         return -1;
     }
     process->user = uid;
+    return 0;
 }
 
-uid_t get_uid(pid_t target)
+uid_t _get_uid(pid_t target)
 {
     task_t* process = _get_task(target);
     if (process == NULL){
@@ -47,25 +49,74 @@ uid_t get_uid(pid_t target)
 
 bool is_super_user(pid_t target)
 {
-    return (get_uid(target) == root);
+    return (_get_uid(target) == root);
 }
 
-/*
- * check if calling_process has rights for actions on process target
- */
-bool has_rights(pid_t calling_process, pid_t target)
+bool current_task_is_super_user()
 {
-    // same process
-    if(calling_process == target){
+    return (current_task->user == root);
+}
+
+
+bool rights_check_process_on(pid_t caller, pid_t target, rights_t rights)
+{
+    if((rights & IS_ROOT) == IS_ROOT){
+        if(is_super_user(caller))
+            return true;
+    }
+    if((rights & IS_PARENT) == IS_PARENT){
+        if(_get_task(target)->parent_pid==caller)
+            return true;
+    }
+    if((rights & REFLEXIVE) == REFLEXIVE){
+        if(caller == target)
+            return true;
+    }
+    if((rights & IS_PRED) == IS_PRED){
+        if(process_is_descendent_of(target, caller))
+            return true;
+    }
+    if((rights & GENERIC) == GENERIC){
         return true;
     }
-    // super user
-    if(is_super_user(target)){
+    errno = EPERMISSION;
+    return false;
+}
+
+bool rights_check_current_process_on(pid_t target, rights_t rights)
+{
+    if((rights & IS_ROOT) == IS_ROOT){
+        if(current_task_is_super_user())
+            return true;
+    }
+    if((rights & IS_PARENT) == IS_PARENT){
+        if(current_task->parent_pid == target)
+            return true;
+    }
+    if((rights & REFLEXIVE) == REFLEXIVE){
+        if(current_task->pid == target)
+            return true;
+    }
+    if((rights & IS_PRED) == IS_PRED){
+        if(process_is_descendent_of(target, current_task->pid))
+            return true;
+    }
+    if((rights & GENERIC) == GENERIC){
         return true;
     }
-    // target is child of calling_process
-    if(process_is_descendent_of(target,calling_process)){
+    errno = EPERMISSION;
+    return false;
+}
+
+bool rights_check_current_process(rights_t rights)
+{
+    if((rights & IS_ROOT) == IS_ROOT){
+        if(current_task_is_super_user())
+            return true;
+    }
+    if((rights & GENERIC) == GENERIC){
         return true;
     }
+    errno = EPERMISSION;
     return false;
 }

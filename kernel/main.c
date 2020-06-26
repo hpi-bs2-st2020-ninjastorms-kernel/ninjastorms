@@ -109,7 +109,8 @@ task_d (void)
         if(n>25){
             //That's enough for everyone!
             print_tasks_info();
-            shutdown();
+            // Send shutdown signal to init
+            ipc_buffer_send(99,1);
         }
     }
 }
@@ -180,16 +181,25 @@ static void
 user_mode_init(void)
 {
     printf("User mode initialized with pid: %i\n", get_pid());
-    pid_t e_pid = create_process(&task_e);
-    create_process(&task_b);
-    create_process(&task_d);
-    create_process(&task_sender);
+    // Make sure that processes are not started as root
+    pid_t e_pid = create_process_with_uid(&task_e,1);
+    create_process_with_uid(&task_b,1);
+    create_process_with_uid(&task_d, 1);
+    create_process_with_uid(&task_sender,1);
     print_tasks_info();
     for(int i=0;i<150000000; ++i);
     kill(e_pid);
     print_tasks_info();
-    
-    while(1); //init will run forever
+    ipc_buffer_open(1);
+    while(1){
+      int result = read_ipc_buffer_and_block();
+      /* This is a way to implement some syscall like control on user mode level
+      *  with sub processes sending signals to init, to perform tasks only available to root
+      */
+      if(result == 99){ //shutdown signal sent from subtask
+        shutdown();
+      }
+    } //init will run forever
 }
 
 
@@ -210,7 +220,6 @@ kernel_main (void)
   puts(shuriken);
 
   add_task(&user_mode_init);
-  set_uid(0,1); // make sure usermode init is not root 
   start_scheduler();
 
   puts("All done. ninjastorms out!");

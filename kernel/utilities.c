@@ -53,7 +53,7 @@ unsigned int is_privileged(void)
 
 int read_ipc_buffer_and_block(void)
 {
-    int DELAY = 50000;
+    int DELAY = 50000000;
     int result = 0;
     do{
         result = ipc_buffer_read();

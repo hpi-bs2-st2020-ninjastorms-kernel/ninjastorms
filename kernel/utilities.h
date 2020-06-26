@@ -25,3 +25,5 @@
 unsigned int is_privileged(void);
 
 int32_t read_ipc_buffer_and_check(int32_t* validity);
+
+int read_ipc_buffer_and_block(void);

@@ -33,6 +33,12 @@ pid_t get_parent_pid(void);
 
 int kill(pid_t target);
 
+uid_t get_uid(void);
+
+int32_t set_uid(pid_t target, uid_t new_uid);
+
+pid_t create_process_with_uid(void * function, uid_t uid);
+
 int is_predecessor(pid_t child, pid_t pred);
 
 int ipc_buffer_open(size_t size);
@@ -51,17 +57,22 @@ unsigned int shutdown(void);
 
 struct create_process_specification{
     void * function;
-    //int parent_pid;
+    uid_t uid;
 };
 
 struct kill_specification{
-    unsigned int pid;
+    pid_t pid;
     //int signal;
 };
 
 struct is_predecessor_specification{
-    int child;
-    int pred;
+    pid_t child;
+    pid_t pred;
+};
+
+struct set_uid_specification{
+    pid_t target;
+    uid_t uid;
 };
 
 struct open_ipc_buffer_specification{

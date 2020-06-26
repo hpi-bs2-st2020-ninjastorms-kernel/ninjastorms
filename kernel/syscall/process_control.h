@@ -39,3 +39,7 @@ int32_t kill_dispatch(void* data);
 uint32_t is_predecessor_dispatch(void* data);
 
 uid_t get_uid_dispatch(void* data);
+
+int32_t set_uid_dispatch(void* data);
+
+pid_t create_process_uid_dispatch(void* data);

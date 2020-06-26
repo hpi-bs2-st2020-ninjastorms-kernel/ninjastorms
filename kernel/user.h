@@ -28,8 +28,22 @@
 
 #include <sys/types.h>
 
-int32_t set_uid(pid_t target, uid_t uid);
+#define IS_ROOT   0b00000001
+#define IS_PARENT 0b00000010
+#define IS_PRED   0b00000100
+#define REFLEXIVE 0b00001000
+#define GENERIC   0b10000000
 
-uid_t get_uid(pid_t target);
+typedef int8_t rights_t;
+
+int32_t _set_uid(pid_t target, uid_t uid);
+
+uid_t _get_uid(pid_t target);
 
 bool is_super_user(pid_t target);
+
+bool rights_check_process_on(pid_t caller, pid_t target, rights_t rights);
+
+bool rights_check_current_process_on(pid_t target, rights_t rights);
+
+bool rights_check_current_process(rights_t rights);

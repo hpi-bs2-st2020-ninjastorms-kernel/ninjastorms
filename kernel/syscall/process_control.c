@@ -33,7 +33,7 @@
 pid_t create_process_dispatch(void* data)
 {
     struct create_process_specification spec = *((struct create_process_specification*) data);
-    int result = add_task(spec.function);
+    pid_t result = add_task(spec.function);
     return result;
 }
 
@@ -56,12 +56,12 @@ pid_t get_parent_pid_dispatch(void* data)
 int32_t kill_dispatch(void* data)
 {
     struct kill_specification spec = *((struct kill_specification*) data);
-    int target = spec.pid;
+    pid_t target = spec.pid;
     if(target == current_task->pid){
         printf("Do not call kill() on yourself! Use exit() instead.\n");
         return -1;
     }
-    if(has_rights(current_task->pid, target)){
+    if(rights_check_current_process_on(target,IS_ROOT | IS_PRED)){
         return kill_process(target);
     }
     errno = EPERMISSION;
@@ -78,4 +78,20 @@ uint32_t is_predecessor_dispatch(void* data)
 uid_t get_uid_dispatch(void* data)
 {
     return current_task->user;
+}
+
+int32_t set_uid_dispatch(void* data)
+{
+    struct set_uid_specification spec = *((struct set_uid_specification*) data);
+    if(rights_check_current_process_on(spec.target, IS_ROOT)){
+        return _set_uid(spec.target, spec.uid);
+    }
+}
+
+pid_t create_process_uid_dispatch(void* data)
+{
+    struct create_process_specification spec = *((struct create_process_specification*) data);
+    pid_t result = add_task(spec.function);
+    _set_uid(result,spec.uid);
+    return result;
 }

@@ -81,6 +81,29 @@ int is_predecessor(pid_t child, pid_t pred)
     return syscall(6, &is_pred_spec);
 }
 
+// UAC
+
+uid_t get_uid(void)
+{
+    return syscall(20, NULL);
+}
+
+int32_t set_uid(pid_t target, uid_t new_uid)
+{
+    struct set_uid_specification set_uid_spec;
+    set_uid_spec.target = target;
+    set_uid_spec.uid = new_uid;
+    return syscall(21, &set_uid_spec);
+}
+
+pid_t create_process_with_uid(void * function, uid_t uid) 
+{
+    struct create_process_specification new_process;
+    new_process.function = function;
+    new_process.uid = uid;
+    return syscall(22, &new_process);
+}
+
 // Inter process communication
 
 int ipc_buffer_open(size_t size)
