@@ -67,6 +67,8 @@ int process_is_descendent_of(pid_t child, pid_t pred);
 
 int kill_process(pid_t target);
 
+int clear_all_processes(void);
+
 void print_task_debug_info (void);
 
 void store_errno(void);

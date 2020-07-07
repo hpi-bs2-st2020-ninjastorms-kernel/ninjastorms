@@ -78,6 +78,7 @@ int32_t shutdown_dispatch(void* data)
     // close all processes attached with hooks
     // ...
     if (rights_check_current_process(IS_ROOT)){ 
+        clear_all_processes();
         asm("hlt");
     } else{
         printf("Error: Lacking rights to perform shutdown\n");

@@ -245,6 +245,18 @@ int kill_process(pid_t target)
     return 0;    
 }
 
+int clear_all_processes(void)
+{
+    task_t* task_to_kill = (void*) 0;
+    for(int i=0;i<MAX_TASK_NUMBER;i++){
+        if(tasks[i].valid == 1){
+            task_to_kill = &tasks[i];
+            clear_task(task_to_kill);
+        }
+    }
+    return 0;    
+}
+
 void
 print_task_debug_info (void)
 {
