@@ -76,7 +76,7 @@ save_current_task_state:
   ldr  r1, [r0], #4     // load saved r2 from stack
   str  r1, [r2], #4     // save it to the struct
   // save r3-r12, sp, lr
-  stm  r2!, {r3-r12, sp, lr}^   // uses sp and lr from user mode because of the carot
+  stm  r2!, {r3-r12, sp, lr}^   // uses sp and lr from user mode because of the caret
   // save pc
   ldr  r1, [r0]         // load saved lr from stack
   sub  r1, #4           // because lr is the old pc+4

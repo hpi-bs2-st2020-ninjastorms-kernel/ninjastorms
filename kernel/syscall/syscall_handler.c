@@ -50,11 +50,6 @@ unsigned int syscall_handler()
     
     // stores return value in r0
     syscall_dispatcher(syscallno, data);
-    
-    asm(
-        "mov %[pre_fork_pc], lr\n" //Save return value of calling process for child in fork
-        : [pre_fork_pc] "=r" (pre_fork_pc)
-    );
 
     // return from software interrupt and restore cpsr
     asm(

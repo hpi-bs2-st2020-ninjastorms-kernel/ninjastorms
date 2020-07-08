@@ -238,8 +238,24 @@ clone_task(task_t* original, task_t* clone)
     clone->ipc_buffer_open = original->ipc_buffer_open;
 }
 
+void
+update_current_task_struct(void)
+{
+    uint32_t values[3] = {0};
+    // Store execution context data to look at it in syscall
+    asm(
+        "stm %[vals], {lr,pc,sp}^ \n" 
+        : :  [vals] "r" (&values)
+    );
+    current_task->lr = values[0];
+    current_task->pc = values[1];
+    current_task->sp = values[2];
+}
+
 pid_t
-do_fork(uint32_t pc){
+do_fork(){
+    update_current_task_struct();
+
     printf("Content of r0 %i\n",current_task->reg[0]);
     pid_t forked_pid = add_task(NULL);
     pid_t original_pid = current_task->pid;
@@ -248,7 +264,7 @@ do_fork(uint32_t pc){
     clone_task(current_task, new_task);
 
     //set pc to the next instruction
-    new_task->pc = pc;
+    new_task->pc = current_task->pc;
     
     //Return value for new task
     new_task->reg[0] = 0; 

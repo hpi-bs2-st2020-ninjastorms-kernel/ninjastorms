@@ -59,7 +59,7 @@ extern task_t tasks[MAX_TASK_NUMBER];
 
 pid_t add_task (void *entrypoint);
 
-pid_t do_fork(uint32_t pc);
+pid_t do_fork();
 
 void exit_current_task(void);
 

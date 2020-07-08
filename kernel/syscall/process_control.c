@@ -76,5 +76,5 @@ uint32_t is_predecessor_dispatch(void* data)
 
 pid_t fork_dispatch(void* data)
 {
-    return do_fork(pre_fork_pc);
+    return do_fork();
 }
