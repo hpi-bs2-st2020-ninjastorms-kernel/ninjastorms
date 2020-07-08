@@ -226,6 +226,7 @@ clone_task(task_t* original, task_t* clone)
     while((uint32_t) original_stack > original->sp){
         *(new_stack++) = *(original_stack++);
     }
+    clone->sp = (uint32_t) new_stack;
 
     clone->stored_errno = original->stored_errno;
 
@@ -238,7 +239,7 @@ clone_task(task_t* original, task_t* clone)
 }
 
 pid_t
-do_fork(void){
+do_fork(uint32_t pc){
     printf("Content of r0 %i\n",current_task->reg[0]);
     pid_t forked_pid = add_task(NULL);
     pid_t original_pid = current_task->pid;
@@ -246,8 +247,8 @@ do_fork(void){
 
     clone_task(current_task, new_task);
 
-    //set pc to the next instruction at next word (4byte = wordlength)
-    new_task->pc = current_task->pc + 4;
+    //set pc to the next instruction
+    new_task->pc = pc;
     
     //Return value for new task
     new_task->reg[0] = 0; 

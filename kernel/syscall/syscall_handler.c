@@ -51,11 +51,16 @@ unsigned int syscall_handler()
     // stores return value in r0
     syscall_dispatcher(syscallno, data);
     
+    asm(
+        "mov %[pre_fork_pc], lr\n" //Save return value of calling process for child in fork
+        : [pre_fork_pc] "=r" (pre_fork_pc)
+    );
+
     // return from software interrupt and restore cpsr
     asm(
-        "add sp, sp, #8 \n"  // discard two values from stack (local vars)
-    "pop {r11, lr} \n"   // restore link register and (frame pointer)?
-    "movs pc, lr \n"     // return from svc (return and restore cpsr)
+        "sub sp, fp, #4\n"   // discard locals
+        "pop {r11, lr} \n"   // restore link register and (frame pointer)?
+        "movs pc, lr \n"     // return from svc (return and restore cpsr)
     );
 }
 

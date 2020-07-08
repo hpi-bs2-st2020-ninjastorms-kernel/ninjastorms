@@ -26,6 +26,8 @@
 
 unsigned int syscall_handler();
 
+unsigned int pre_fork_pc;
+
 enum SYSCALL_NUMBER {
     ZERO_SYSCALL = 0,
     CREATE_PROCESS = 1,
