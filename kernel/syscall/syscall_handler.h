@@ -34,6 +34,8 @@ enum SYSCALL_NUMBER {
     GET_PARENT_PID = 4,
     KILL = 5,
     IS_PREDECESSOR = 6,
+    FORK = 7,
+    WAIT = 8,
 
     //IPC
     OPEN_IPC_BUFFER = 10,

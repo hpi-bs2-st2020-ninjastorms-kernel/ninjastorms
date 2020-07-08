@@ -155,6 +155,13 @@ next_free_tasks_position(void)
     return -1;
 }
 
+unsigned int
+calculate_stackbase(int32_t array_position)
+{
+    return TASK_STACK_BASE_ADDRESS - STACK_SIZE * array_position;
+}
+
+
 /*
  * returns new tasks' pid or -1
  */
@@ -172,13 +179,82 @@ add_task (void *entrypoint)
     
     int new_task_pos = next_free_tasks_position();
     
-    unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE * new_task_pos;
+    unsigned int stackbase = calculate_stackbase(new_task_pos);
     // push &task_finished
     unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase);
     insert_task(&tasks[new_task_pos]);
     task_count++;
     return new_pid;
 }
+
+unsigned int
+get_stackbase(pid_t target)
+{
+    for(int i = 0; i<MAX_TASK_NUMBER; i++){
+        if(tasks[i].pid == target){
+            return calculate_stackbase(i);
+        }
+    }
+    return 0;
+}
+
+task_t* _get_task(pid_t pid)
+{
+    for(int i=0;i<MAX_TASK_NUMBER;i++){
+        if(tasks[i].valid == 1 && tasks[i].pid == pid){
+            return &tasks[i];
+        }
+    }
+    errno = EINVALPID;
+    return NULL;
+} 
+
+
+void
+clone_task(task_t* original, task_t* clone)
+{
+    for(int i=0;i<=13;i++){
+        clone->reg[i]=original->reg[i];
+    }
+    clone->lr = original->lr;
+    clone->pc = original->pc;
+    clone->cpsr = original->cpsr;
+
+    //TODO: Handle stack
+    uint32_t* original_stack = (uint32_t*) get_stackbase(original->pid);
+    uint32_t* new_stack = (uint32_t*) get_stackbase(clone->pid);
+    while((uint32_t) original_stack > original->sp){
+        *(new_stack++) = *(original_stack++);
+    }
+
+    clone->stored_errno = original->stored_errno;
+
+    for(int i=0; i<=IPC_BUFFER_SIZE;i++){
+        clone->ipc_buffer[i]=original->ipc_buffer[i];
+    }
+    clone->ipc_buffer_start = original->ipc_buffer_start;
+    clone->ipc_buffer_end = original->ipc_buffer_end;
+    clone->ipc_buffer_open = original->ipc_buffer_open;
+}
+
+pid_t
+do_fork(void){
+    printf("Content of r0 %i\n",current_task->reg[0]);
+    pid_t forked_pid = add_task(NULL);
+    pid_t original_pid = current_task->pid;
+    task_t* new_task = _get_task(forked_pid);
+
+    clone_task(current_task, new_task);
+
+    //set pc to the next instruction at next word (4byte = wordlength)
+    new_task->pc = current_task->pc + 4;
+    
+    //Return value for new task
+    new_task->reg[0] = 0; 
+    return forked_pid;
+}
+
+
 
 // check if process with pid pred is predecessor (parent of parent ...) with pid child 
 int
@@ -260,17 +336,6 @@ print_task_debug_info (void)
     print_ring_buffer_debug_info();
     printf("-------------------------------\n");
 }
-
-task_t* _get_task(pid_t pid)
-{
-    for(int i=0;i<MAX_TASK_NUMBER;i++){
-        if(tasks[i].valid == 1 && tasks[i].pid == pid){
-            return &tasks[i];
-        }
-    }
-    errno = EINVALPID;
-    return NULL;
-} 
 
 
 //IPC

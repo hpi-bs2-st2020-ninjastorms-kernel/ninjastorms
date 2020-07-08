@@ -35,6 +35,8 @@ int kill(pid_t target);
 
 int is_predecessor(pid_t child, pid_t pred);
 
+pid_t fork(void);
+
 int ipc_buffer_open(size_t size);
 
 int ipc_buffer_close(void);

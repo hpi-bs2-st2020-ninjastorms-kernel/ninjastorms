@@ -81,6 +81,16 @@ int is_predecessor(pid_t child, pid_t pred)
     return syscall(6, &is_pred_spec);
 }
 
+pid_t fork(void)
+{
+    return syscall(7, NULL);
+}
+
+int wait(pid_t target)
+{
+    return syscall(8, NULL);
+}
+
 // Inter process communication
 
 int ipc_buffer_open(size_t size)

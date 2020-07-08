@@ -59,6 +59,8 @@ extern task_t tasks[MAX_TASK_NUMBER];
 
 pid_t add_task (void *entrypoint);
 
+pid_t do_fork(void);
+
 void exit_current_task(void);
 
 int process_is_descendent_of(int child, int pred);

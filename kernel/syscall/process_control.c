@@ -73,3 +73,8 @@ uint32_t is_predecessor_dispatch(void* data)
     int result = process_is_descendent_of(spec.child,spec.pred);
     return result;
 }
+
+pid_t fork_dispatch(void* data)
+{
+    return do_fork();
+}

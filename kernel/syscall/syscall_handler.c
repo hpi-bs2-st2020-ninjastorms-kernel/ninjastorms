@@ -96,6 +96,8 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data)
             return kill_dispatch(data);
         case IS_PREDECESSOR:
             return is_predecessor_dispatch(data);
+        case FORK:
+            return fork_dispatch(data);
         case OPEN_IPC_BUFFER:
             return open_ipc_buffer_dispatch(data);
         case CLOSE_IPC_BUFFER:
