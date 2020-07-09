@@ -28,6 +28,8 @@
 
 void schedule_after_exit(void);
 
+void schedule(void);
+
 void rebuild_ring_buffer(void);
 
 void start_scheduler (void);

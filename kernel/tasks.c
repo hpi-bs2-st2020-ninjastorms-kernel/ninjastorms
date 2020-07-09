@@ -84,7 +84,7 @@ init_task (task_t *task, void *entrypoint, unsigned int stackbase)
     } else {
         task->parent_pid = current_task->pid;
     }
-    
+    task->state = TASK_RUNNING;
     
     task->valid = 1;
     
@@ -133,15 +133,18 @@ void
 exit_current_task(void)
 {
     task_t* task_to_kill = current_task;
+    task_to_kill->state =  TASK_DONE;
     int pid_to_kill = current_task->pid;
     printf("Task %i will be exited\n",pid_to_kill);
-    
+    reparent_tasks(pid_to_kill);
+    /*
     clear_task(task_to_kill);
     
-    reparent_tasks(pid_to_kill);
+    
     
     task_count--;
-    schedule_after_exit();
+    schedule_after_exit();*/
+    schedule();
 }
 
 int
@@ -154,6 +157,17 @@ next_free_tasks_position(void)
     }
     return -1;
 }
+
+task_t* _get_task(pid_t pid)
+{
+    for(int i=0;i<MAX_TASK_NUMBER;i++){
+        if(tasks[i].valid == 1 && tasks[i].pid == pid){
+            return &tasks[i];
+        }
+    }
+    errno = EINVALPID;
+    return NULL;
+} 
 
 /*
  * returns new tasks' pid or -1
@@ -238,6 +252,41 @@ int kill_process(int target)
     return 0;    
 }
 
+// Check if current_task, in TASK_WAIT state, is done waiting and update accordingly
+int8_t update_wait(void)
+{
+    if(current_task->state != TASK_WAITING){
+        return 0;
+    }
+    task_t* target = _get_task(current_task->waiting_on);
+    if(target->state == TASK_DONE){
+        current_task->state  = TASK_RUNNING;
+        current_task->reg[0] = target->result; //Which register is the return value again?
+        current_task->reg[1] = target->result;
+        current_task->reg[2] = target->result;
+    }
+    return 0;
+}
+
+int32_t do_wait(pid_t target)
+{
+    task_t* waiting = _get_task(target);
+    if(waiting == NULL){
+        return -1;
+    }
+    current_task->state = TASK_WAITING;
+    current_task->waiting_on = target;
+    schedule();
+}
+
+void do_exit_with(int result)
+{
+    task_t* task_to_kill = current_task;
+    task_to_kill->result = result; //Return value
+    
+    exit_current_task();
+}
+
 void
 print_task_debug_info (void)
 {
@@ -260,18 +309,6 @@ print_task_debug_info (void)
     print_ring_buffer_debug_info();
     printf("-------------------------------\n");
 }
-
-task_t* _get_task(pid_t pid)
-{
-    for(int i=0;i<MAX_TASK_NUMBER;i++){
-        if(tasks[i].valid == 1 && tasks[i].pid == pid){
-            return &tasks[i];
-        }
-    }
-    errno = EINVALPID;
-    return NULL;
-} 
-
 
 //IPC
 

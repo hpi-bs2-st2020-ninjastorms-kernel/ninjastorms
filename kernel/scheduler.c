@@ -63,22 +63,46 @@ ring_buffer_remove (void)
   return task;
 }
 
+
+void
+set_current_task_update_state()
+{
+  int32_t initial_buffer_start = buffer_start;
+  
+  do{
+    current_task = ring_buffer_remove();
+    if(current_task->state == TASK_RUNNING){
+      return;
+    }
+    if(current_task->state == TASK_WAITING){
+      int8_t wait_done = update_wait();
+      if(wait_done){
+        return;
+      } //Wait not done, select another process
+    }
+    if(current_task->state == TASK_DONE){
+      //TODO clear done task
+      return;
+    }
+  } while(buffer_start != initial_buffer_start);
+  printf("No task not marked done or waiting!\n");
+}
+
 void
 schedule_after_exit(void)
 {
-    current_task = ring_buffer_remove();
+    set_current_task_update_state();
     printf("New task will be Task %i",current_task->pid);
     restore_errno();
     load_current_task_state();
 }
-
 
 void
 schedule (void)
 {
   store_errno();
   ring_buffer_insert(current_task);
-  current_task = ring_buffer_remove();
+  set_current_task_update_state();
   restore_errno();
 }
 

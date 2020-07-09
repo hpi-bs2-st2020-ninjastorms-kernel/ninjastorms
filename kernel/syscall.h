@@ -33,6 +33,10 @@ pid_t get_parent_pid(void);
 
 int kill(pid_t target);
 
+int32_t wait_on_pid(pid_t target);
+
+void exit_with_result(int result);
+
 int is_predecessor(pid_t child, pid_t pred);
 
 int ipc_buffer_open(size_t size);
@@ -57,6 +61,14 @@ struct create_process_specification{
 struct kill_specification{
     unsigned int pid;
     //int signal;
+};
+
+struct wait_specification{
+    pid_t target;
+};
+
+struct exit_specification{
+    int value;
 };
 
 struct is_predecessor_specification{

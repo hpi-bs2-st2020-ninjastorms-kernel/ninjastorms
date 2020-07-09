@@ -29,6 +29,12 @@
 #define MAX_TASK_NUMBER 16
 #define IPC_BUFFER_SIZE 16
 
+enum TASK_STATE{
+	TASK_RUNNING,
+	TASK_WAITING,
+	TASK_DONE
+};
+
 struct task_t
 {
   // r01..r12, sp, lr, pc
@@ -40,6 +46,10 @@ struct task_t
     
     pid_t pid;
     pid_t parent_pid;
+
+	int32_t result;
+	int8_t state;
+	pid_t waiting_on;
 
 	uint32_t stored_errno;
     
@@ -64,6 +74,12 @@ void exit_current_task(void);
 int process_is_descendent_of(int child, int pred);
 
 int kill_process(int target);
+
+int8_t update_wait(void);
+
+int32_t do_wait(pid_t target);
+
+void do_exit_with(int result);
 
 void print_task_debug_info (void);
 

@@ -81,6 +81,19 @@ int is_predecessor(pid_t child, pid_t pred)
     return syscall(6, &is_pred_spec);
 }
 
+int32_t wait_on_pid(pid_t target)
+{
+    struct wait_specification spec;
+    spec.target = target;
+    return syscall(8, &spec);
+}
+
+void exit_with_result(int result){
+    struct exit_specification spec;
+    spec.value = result;
+    return syscall(9, &spec);
+}
+
 // Inter process communication
 
 int ipc_buffer_open(size_t size)

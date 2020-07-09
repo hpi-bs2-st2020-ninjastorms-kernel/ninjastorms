@@ -23,6 +23,7 @@
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
+#include "kernel/scheduler.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -72,4 +73,16 @@ uint32_t is_predecessor_dispatch(void* data)
     struct is_predecessor_specification spec = *((struct is_predecessor_specification*) data);
     int result = process_is_descendent_of(spec.child,spec.pred);
     return result;
+}
+
+int32_t wait_dispatch(void* data)
+{
+    struct wait_specification spec = *((struct wait_specification*) data);
+    do_wait(spec.target);
+}
+
+void exit_result_dispatch(void* data)
+{
+    struct exit_specification spec = *((struct exit_specification*) data);
+    do_exit_with(spec.value);
 }

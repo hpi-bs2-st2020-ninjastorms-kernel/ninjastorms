@@ -174,18 +174,50 @@ task_sender (void)
     }
 }
 
+static void
+task_calculate (void)
+{
+  int n1, n2, i, gcd, lcm;
+  n1 = 7;
+  n2 = 24;
+  for(int j=0;j<150000000; ++j);
+  printf("calculating lcm of %i and %i \n",n1,n2);
+  for (i=1;i<=n1&&i<=n2;++i) {
+    if (n1 % i == 0 && n2 % i == 0)
+      gcd = i;
+    }
+  lcm = (n1 * n2) / gcd;
+  for(int j=0;j<150000000; ++j);
+  exit_with_result(lcm);
+}
+
+static void
+task_wait (void)
+{
+  pid_t calc_task = create_process(&task_calculate);
+  printf("Starting wait\n");
+  float result = wait_on_pid(calc_task);
+  printf("lcm is %i\n",(int) result);
+}
+
+
+
 
 static void
 user_mode_init(void)
 {
     printf("User mode initialized with pid: %i\n", get_pid());
-    pid_t e_pid = create_process(&task_e);
+    /*pid_t e_pid = create_process(&task_e);
     create_process(&task_b);
     create_process(&task_d);
     create_process(&task_sender);
     print_tasks_info();
     for(int i=0;i<150000000; ++i);
-    kill(e_pid);
+    kill(e_pid); */
+
+    create_process(&task_wait);
+
+    for(int i=0;i<150000000; ++i);
     print_tasks_info();
     
     while(1); //init will run forever
