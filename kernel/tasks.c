@@ -221,9 +221,19 @@ clone_task(task_t* original, task_t* clone)
     clone->pc = original->pc;
     clone->cpsr = original->cpsr;
 
-    //Copy stack
-    uint32_t* original_stack = (uint32_t*) get_stackbase(original->pid);
+    //Duplicate all memory
+    /*
+    * We tried to implement fork() without virtual addresses and pages,
+    * this may be possible as outlined in 
+    * Tim Wilkinson, Ashley Saulsbury, Tom Stiemerling, and Kevin Murray.Compiling for a 64-bit single address space architecture.  TechnicalReport TCU/SARC/1993/1, Systems Architecture Research Centre, CityUniversity, London, UK, 1993.
+    * but is propably out of scope.
+    * So while pages are not implemented, this will not work, as in the
+    * parents stack there are a lot of addresses (e.g. frame pointers)
+    * that point to its stack.
+    **/
+
     uint32_t* new_stack = (uint32_t*) get_stackbase(clone->pid);
+    uint32_t* original_stack = (uint32_t*) get_stackbase(original->pid);
 
     while((uint32_t) original_stack > original->sp){
         *(new_stack--) = *(original_stack--);
@@ -251,8 +261,7 @@ do_fork()
     clone_task(current_task, new_task);
     
     //set pc to the next instruction
-    printf("New task pc will be %X\n", current_task->pc);
-    new_task->pc = current_task->pc;
+    new_task->pc = current_task->pc+4;
     
     //Return value for new task
     new_task->reg[0] = 42;
