@@ -37,6 +37,7 @@ struct task_t
 	uint32_t lr;
 	uint32_t pc;
 	uint32_t cpsr;
+	// Above positions are explicitly accessed in interrupt_handler.S
     
     pid_t pid;
     pid_t parent_pid;

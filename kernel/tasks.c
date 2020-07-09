@@ -23,6 +23,7 @@
 #include "kernel/memory.h"
 #include "kernel/utilities.h"
 #include "syscall.h"
+#include "interrupt_handler.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -220,11 +221,12 @@ clone_task(task_t* original, task_t* clone)
     clone->pc = original->pc;
     clone->cpsr = original->cpsr;
 
-    //TODO: Handle stack
+    //Copy stack
     uint32_t* original_stack = (uint32_t*) get_stackbase(original->pid);
     uint32_t* new_stack = (uint32_t*) get_stackbase(clone->pid);
+
     while((uint32_t) original_stack > original->sp){
-        *(new_stack++) = *(original_stack++);
+        *(new_stack--) = *(original_stack--);
     }
     clone->sp = (uint32_t) new_stack;
 
@@ -238,36 +240,23 @@ clone_task(task_t* original, task_t* clone)
     clone->ipc_buffer_open = original->ipc_buffer_open;
 }
 
-void
-update_current_task_struct(void)
-{
-    uint32_t values[3] = {0};
-    // Store execution context data to look at it in syscall
-    asm(
-        "stm %[vals], {lr,pc,sp}^ \n" 
-        : :  [vals] "r" (&values)
-    );
-    current_task->lr = values[0];
-    current_task->pc = values[1];
-    current_task->sp = values[2];
-}
 
 pid_t
-do_fork(){
-    update_current_task_struct();
-
-    printf("Content of r0 %i\n",current_task->reg[0]);
+do_fork()
+{
     pid_t forked_pid = add_task(NULL);
     pid_t original_pid = current_task->pid;
     task_t* new_task = _get_task(forked_pid);
 
     clone_task(current_task, new_task);
-
+    
     //set pc to the next instruction
+    printf("New task pc will be %X\n", current_task->pc);
     new_task->pc = current_task->pc;
     
     //Return value for new task
-    new_task->reg[0] = 0; 
+    new_task->reg[0] = 42;
+    
     return forked_pid;
 }
 

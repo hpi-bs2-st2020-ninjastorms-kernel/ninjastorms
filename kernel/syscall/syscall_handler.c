@@ -22,6 +22,7 @@
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
+#include "kernel/interrupt_handler.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -41,11 +42,21 @@ unsigned int syscall_handler()
     
     asm(
         "mov %[syscallno], r0 \n"    // retrieve syscall number
-        
         "mov %[data], r1 \n"    // retrieve data
         
         : [syscallno] "=r" (syscallno),
         [data] "=r" (data)
+    );
+
+    // possible improvement: check if syscallno requires this
+    //save task state to access it in syscalls
+    asm(
+        "push  {r0-r2, lr}\n"
+        "mov  r0, sp \n"   // set argument of save_current_task_state
+    );
+    save_current_task_state();
+    asm(
+        "pop {r0-r2, lr}\n"
     );
     
     // stores return value in r0

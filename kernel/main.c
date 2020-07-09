@@ -179,7 +179,7 @@ fork_test (void)
 {
     pid_t result = fork();
     printf("Forked with result %i\n", result);
-    if(result == 0){
+    if(result == 42){
       printf("I'm a child\n");
       print_tasks_info();
       while(1);
