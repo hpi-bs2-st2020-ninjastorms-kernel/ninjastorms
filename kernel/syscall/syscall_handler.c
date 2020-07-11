@@ -22,6 +22,7 @@
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
+#include "kernel/interrupt_handler.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -47,15 +48,26 @@ unsigned int syscall_handler()
         : [syscallno] "=r" (syscallno),
         [data] "=r" (data)
     );
+
+    // possible improvement: check if syscallno requires this
+    // save task state to access it in syscalls
+    asm(
+        "push  {r0-r2, lr}\n"
+        "mov  r0, sp \n"   // set argument of save_current_task_state
+    );
+    save_current_task_state();
+    asm(
+        "pop {r0-r2, lr}\n"
+    );
     
     // stores return value in r0
     syscall_dispatcher(syscallno, data);
     
     // return from software interrupt and restore cpsr
     asm(
-        "add sp, sp, #8 \n"  // discard two values from stack (local vars)
-    "pop {r11, lr} \n"   // restore link register and (frame pointer)?
-    "movs pc, lr \n"     // return from svc (return and restore cpsr)
+        "sub sp, fp, #4 \n"  // discard locals
+        "pop {r11, lr} \n"   // restore link register and (frame pointer)?
+        "movs pc, lr \n"     // return from svc (return and restore cpsr)
     );
 }
 

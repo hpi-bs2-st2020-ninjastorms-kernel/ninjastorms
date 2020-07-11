@@ -30,6 +30,8 @@
 .type irq_handler STT_FUNC
 .globl load_current_task_state
 .type load_current_task_state STT_FUNC
+.globl save_current_task_state
+.type save_current_task_state STT_FUNC
 
 
 irq_handler_timer:

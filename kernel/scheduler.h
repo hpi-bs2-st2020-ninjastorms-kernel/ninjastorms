@@ -28,7 +28,7 @@
 
 void schedule_after_exit(void);
 
-void schedule(void);
+void schedule_after_wait (void);
 
 void rebuild_ring_buffer(void);
 

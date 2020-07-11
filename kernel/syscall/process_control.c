@@ -81,7 +81,7 @@ int32_t wait_dispatch(void* data)
     do_wait(spec.target);
 }
 
-void exit_result_dispatch(void* data)
+int32_t exit_result_dispatch(void* data)
 {
     struct exit_specification spec = *((struct exit_specification*) data);
     do_exit_with(spec.value);

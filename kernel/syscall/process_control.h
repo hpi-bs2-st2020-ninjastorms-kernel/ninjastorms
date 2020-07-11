@@ -39,3 +39,5 @@ int32_t kill_dispatch(void* data);
 uint32_t is_predecessor_dispatch(void* data);
 
 int32_t wait_dispatch(void* data);
+
+int32_t exit_result_dispatch(void* data);

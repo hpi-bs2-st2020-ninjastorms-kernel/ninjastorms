@@ -144,7 +144,7 @@ exit_current_task(void)
     
     task_count--;
     schedule_after_exit();*/
-    schedule();
+    schedule_after_wait();
 }
 
 int
@@ -261,9 +261,9 @@ int8_t update_wait(void)
     task_t* target = _get_task(current_task->waiting_on);
     if(target->state == TASK_DONE){
         current_task->state  = TASK_RUNNING;
-        current_task->reg[0] = target->result; //Which register is the return value again?
-        current_task->reg[1] = target->result;
-        current_task->reg[2] = target->result;
+        current_task->reg[0] = target->result; // put return value for syscall_handler in r0
+        current_task->pc = current_task->pc+4; // next instruction, would otherwise result in constant syscalls
+        return 1;
     }
     return 0;
 }
@@ -276,7 +276,7 @@ int32_t do_wait(pid_t target)
     }
     current_task->state = TASK_WAITING;
     current_task->waiting_on = target;
-    schedule();
+    schedule_after_wait();
 }
 
 void do_exit_with(int result)

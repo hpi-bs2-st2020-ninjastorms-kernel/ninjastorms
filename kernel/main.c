@@ -180,23 +180,23 @@ task_calculate (void)
   int n1, n2, i, gcd, lcm;
   n1 = 7;
   n2 = 24;
-  for(int j=0;j<150000000; ++j);
+  //for(int j=0;j<150000000; ++j);
   printf("calculating lcm of %i and %i \n",n1,n2);
   for (i=1;i<=n1&&i<=n2;++i) {
     if (n1 % i == 0 && n2 % i == 0)
       gcd = i;
     }
   lcm = (n1 * n2) / gcd;
-  for(int j=0;j<150000000; ++j);
+  //for(int j=0;j<150000000; ++j);
   exit_with_result(lcm);
 }
 
 static void
 task_wait (void)
 {
-  pid_t calc_task = create_process(&task_calculate);
+  //pid_t calc_task = create_process(&task_calculate);
   printf("Starting wait\n");
-  float result = wait_on_pid(calc_task);
+  float result = wait_on_pid(3);
   printf("lcm is %i\n",(int) result);
 }
 
@@ -216,6 +216,7 @@ user_mode_init(void)
     kill(e_pid); */
 
     create_process(&task_wait);
+    create_process(&task_calculate);
 
     for(int i=0;i<150000000; ++i);
     print_tasks_info();

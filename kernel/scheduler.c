@@ -82,7 +82,6 @@ set_current_task_update_state()
     }
     if(current_task->state == TASK_DONE){
       //TODO clear done task
-      return;
     }
   } while(buffer_start != initial_buffer_start);
   printf("No task not marked done or waiting!\n");
@@ -95,6 +94,16 @@ schedule_after_exit(void)
     printf("New task will be Task %i",current_task->pid);
     restore_errno();
     load_current_task_state();
+}
+
+void
+schedule_after_wait (void)
+{
+  store_errno();
+  ring_buffer_insert(current_task);
+  set_current_task_update_state();
+  restore_errno();
+  load_current_task_state();
 }
 
 void
