@@ -28,10 +28,10 @@
 #include "kernel/utilities.h"
 
 #include "syscall.h"
-#include "sync.h"
 
 #include <stdio.h>
 #include <sys/types.h>
+#include <thread.h>
 
 static void
 task_a (void)
@@ -175,42 +175,37 @@ task_sender (void)
     }
 }
 
-unsigned int output_mutex = unlocked;
+unsigned int shared_mem = unlocked;
 int count_value = 0;
 
 static void
 task_mutex_a (void)
 {
-  int i;
-  /* Wait until the output mutex is acquired */
-  printf("A: Trying to enter critical section\n");
-  lock_mutex(&output_mutex);
-  /* Entered critical section */
-  /* Output each individual character from str */
-  for(i=0 ; i<10 ; i++) {
-    for(int i=0;i<15000000; ++i);
-    count_value++;
+  for(int i=0 ; i<10 ; i++) {
+    lock_mutex(&shared_mem);
+    int tmp_value = count_value;
+    for(int j=0;j<500000; ++j);
+    tmp_value++;
+    count_value = tmp_value;
     printf("A: %i\n",count_value);
+    unlock_mutex(&shared_mem);
+    for(int j=0;j<500000; ++j);
   }
-
-  /* Leave critical section - release output mutex */
-  unlock_mutex(&output_mutex);
-  printf("A: Finished critical section\n");
 }
 
 static void
 task_mutex_b (void)
 {
-  int i;
-  printf("B: Trying to enter critical section\n");
-  lock_mutex(&output_mutex);
-  for(i=0 ; i<10 ; i++) {
-    for(int i=0;i<15000000; ++i);
-    count_value--;
+  for(int i=0 ; i<10 ; i++) {
+    lock_mutex(&shared_mem);
+    int tmp_value = count_value;
+    for(int j=0;j<500000; ++j);
+    tmp_value--;
+    count_value = tmp_value;
     printf("B: %i\n",count_value);
+    unlock_mutex(&shared_mem);
+    for(int j=0;j<500000; ++j);
   }
-  unlock_mutex(&output_mutex);
-  printf("B: Finished critical section\n");
 }
 
 

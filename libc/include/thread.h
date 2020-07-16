@@ -18,26 +18,15 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
  
+#pragma once
+
 #define locked   1
 #define unlocked 0
 
-// export
-.globl lock_mutex
-.type lock_mutex STT_FUNC
-.globl unlock_mutex
-.type unlock_mutex STT_FUNC
+/*
+ * inspired by pthread.h
+ */
 
-// lock_mutex
-// Declare for use from C as extern void lock_mutex(void * mutex);
+void lock_mutex(void * mutex);
 
-lock_mutex:
-    LDR r2, =locked
-    SWP r1, r2, [r0]       // Swap R2 with location [R0], [R0] value placed in R1
-    CMP r1, r2             // Check if memory value was 'locked'
-    BEQ lock_mutex         // If so, retry immediately
-    BX  lr                 // If not, lock successful, return
-
-unlock_mutex:
-    LDR r1, =unlocked
-    STR r1, [r0]           // Write value 'unlocked' to location [R0]
-    BX  lr
+void unlock_mutex(void * mutex);

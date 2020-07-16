@@ -20,11 +20,13 @@ libc_libc_la_SOURCES = \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
+    libc/thread/thread.c \
     libc/include/errno.h \
     libc/include/syscall.h \
     libc/include/stddef.h \
     libc/include/stdio.h \
     libc/include/string.h \
+    libc/process/process.h \
     libc/include/sys/types.h
 
 noinst_PROGRAMS = ninjastorms
@@ -42,7 +44,6 @@ ninjastorms_SOURCES = \
     kernel/utilities.c kernel/utilities.h \
     kernel/interrupt_handler.S kernel/interrupt_handler.h \
     kernel/memory.h \
-    kernel/sync.S kernel/sync.h \
     kernel/mmio.c kernel/mmio.h \
     kernel/drivers/adc.c kernel/drivers/adc.h \
     kernel/drivers/button.c kernel/drivers/button.h \
