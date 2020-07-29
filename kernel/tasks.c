@@ -47,7 +47,7 @@ task_exit(int return_value)
      * to properly exit the process
      */
     printf("Task exited with %i \n", return_value);
-    exit_with_result(return_value);
+    exit(return_value);
 }
 
 void

@@ -81,7 +81,7 @@ task_c (void)
       printf("  task c: %i\n", n++);
       if(n>3){
           //That's enough for me
-          exit();
+          return;
       }
       volatile int i;
       for (i = 0; i < 10000000; ++i);
@@ -147,7 +147,7 @@ task_receiver (void)
     }
     printf("Closing buffer!\n");
     ipc_buffer_close();
-    exit();
+    exit(0);
 }
 
 static void

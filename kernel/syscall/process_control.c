@@ -36,12 +36,6 @@ pid_t create_process_dispatch(void* data)
     return result;
 }
 
-int32_t exit_dispatch(void* data)
-{
-    exit_current_task();
-    return 0;
-}
-
 pid_t get_pid_dispatch(void* data)
 {
     return current_task->pid;
@@ -50,6 +44,12 @@ pid_t get_pid_dispatch(void* data)
 pid_t get_parent_pid_dispatch(void* data)
 {
     return current_task->parent_pid;
+}
+
+int32_t exit_dispatch(void* data)
+{
+    struct exit_specification spec = *((struct exit_specification*) data);
+    do_exit_with(spec.value);
 }
 
 int32_t kill_dispatch(void* data)
@@ -80,8 +80,3 @@ int32_t wait_dispatch(void* data)
     do_wait(spec.target);
 }
 
-int32_t exit_result_dispatch(void* data)
-{
-    struct exit_specification spec = *((struct exit_specification*) data);
-    do_exit_with(spec.value);
-}

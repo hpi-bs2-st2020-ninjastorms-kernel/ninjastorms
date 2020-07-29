@@ -25,7 +25,7 @@ unsigned int syscall(unsigned int number, void* data);
 
 pid_t create_process(void * function); 
 
-int exit(void);
+void exit(int result);
 
 pid_t get_pid(void);
 
@@ -34,8 +34,6 @@ pid_t get_parent_pid(void);
 int kill(pid_t target);
 
 int32_t wait_on_pid(pid_t target);
-
-void exit_with_result(int result);
 
 int is_predecessor(pid_t child, pid_t pred);
 

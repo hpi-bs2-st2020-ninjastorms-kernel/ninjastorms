@@ -51,11 +51,6 @@ pid_t create_process(void * function)
     return syscall(1, &new_process);
 }
 
-int exit(void)
-{
-    return syscall(2, NULL);
-}
-
 pid_t get_pid(void)
 {
     return syscall(3, NULL);
@@ -64,6 +59,12 @@ pid_t get_pid(void)
 pid_t get_parent_pid(void)
 {
     return syscall(4, NULL);
+}
+
+void exit(int result){
+    struct exit_specification spec;
+    spec.value = result;
+    syscall(9, &spec);
 }
 
 int kill(pid_t target)
@@ -88,11 +89,6 @@ int32_t wait_on_pid(pid_t target)
     return syscall(8, &spec);
 }
 
-void exit_with_result(int result){
-    struct exit_specification spec;
-    spec.value = result;
-    syscall(9, &spec);
-}
 
 // Inter process communication
 
