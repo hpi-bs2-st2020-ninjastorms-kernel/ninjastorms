@@ -24,6 +24,5 @@
 #  include <config.h>
 #endif
 
-#include <sys/types.h>
 
-uint32_t syscall_handler(uint32_t syscall_number, void *data);
+unsigned int syscall_handler(unsigned int syscall_number, void *data);

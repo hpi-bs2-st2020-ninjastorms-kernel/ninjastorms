@@ -26,7 +26,6 @@
 
 #include <stdio.h>
 #include <errno.h>
-#include <sys/types.h>
 
 #include "inter_process_com.h"
 #include "process_control.h"

@@ -17,9 +17,9 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "syscall_dispatcher.h"
-
 .section .text
+
+.globl syscall_dispatcher
 
 .globl syscall_handler
 .type syscall_handler STT_FUNC
@@ -27,16 +27,21 @@
 // r0 contains syscall number
 // r1 contains address of data
 syscall_handler:
-    // save current task state
-
-    // fp, local variables
-    push {r11, lr}
-    add r11, sp, #4
     
+    // save current task state
+    push {r3}   // save r3 for second part of transfer
+    ldr r3, =current_task    // get address of task_struct
+    ldr r3, [r3]    // dereference current_task, to get the task_struct
+    stm r3!, {r0-r2}    // copy r0-r2 using r3 as counter
+    mov r2, r3    // copy r3 to r2 so we are able to store r3
+    pop {r3}    // restore r3
+    stm r2!, {r3-r12}    // store other general purpose registers
+    stm r2!, {sp, lr}^   // store sp and lr from user mode
+    str lr, [r2]    // store pc
+
     // call syscall_dispatcher
     bl syscall_dispatcher
 
     // return 
-    sub sp, fp, #4  // discard locals
     pop {fp, lr}   // restore link register and frame pointer
     movs pc, lr     // return from svc (return and restore cpsr)
