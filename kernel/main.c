@@ -200,7 +200,11 @@ task_wait (void)
   printf("lcm is %i\n",(int) result);
 }
 
-
+static void
+task_exit(void)
+{
+    exit_with_result(get_pid());
+}
 
 
 static void
@@ -215,12 +219,17 @@ user_mode_init(void)
     for(int i=0;i<150000000; ++i);
     kill(e_pid); */
 
-    create_process(&task_wait);
-    create_process(&task_calculate);
+    //create_process(&task_wait);
+    //create_process(&task_calculate);
 
-    for(int i=0;i<150000000; ++i);
-    print_tasks_info();
-    
+    //for(int i=0;i<150000000; ++i);
+    //print_tasks_info();
+   
+    create_process(&task_exit);
+    create_process(&task_exit);
+    create_process(&task_exit);
+    create_process(&task_exit);
+    create_process(&task_exit);
     while(1); //init will run forever
 }
 

@@ -25,3 +25,5 @@
 #endif
 
 unsigned int syscall_dispatcher(unsigned int syscall_number, void *data);
+
+extern char return_to_user_mode;

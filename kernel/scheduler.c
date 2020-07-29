@@ -24,6 +24,7 @@
 #include "kernel/drivers/timer.h"
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"
+#include "kernel/syscall/syscall_dispatcher.h"
 
 #include <stdio.h>
 
@@ -93,7 +94,7 @@ schedule_after_exit(void)
     set_current_task_update_state();
     printf("New task will be Task %i",current_task->pid);
     restore_errno();
-    load_current_task_state();
+    return_to_user_mode = 0;
 }
 
 void
@@ -103,7 +104,7 @@ schedule_after_wait (void)
   ring_buffer_insert(current_task);
   set_current_task_update_state();
   restore_errno();
-  load_current_task_state();
+  return_to_user_mode = 0;
 }
 
 void

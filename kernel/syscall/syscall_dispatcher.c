@@ -31,6 +31,8 @@
 #include "process_control.h"
 
 
+char return_to_user_mode = 0;
+
 enum SYSCALL_NUMBER {
     ZERO_SYSCALL = 0,
     CREATE_PROCESS = 1,
@@ -75,6 +77,7 @@ unsigned int shutdown_dispatch(void* data)
 
 unsigned int syscall_dispatcher(unsigned int syscallno, void *data) 
 {
+    return_to_user_mode = 1;
     printf("Handling syscall %i with data at address %x.\n", syscallno, data);
     switch(syscallno){ 
         case ZERO_SYSCALL:

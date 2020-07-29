@@ -20,6 +20,7 @@
 .section .text
 
 .globl syscall_dispatcher
+.global return_to_user_mode
 
 .globl syscall_handler
 .type syscall_handler STT_FUNC
@@ -43,6 +44,16 @@ syscall_handler:
     // call syscall_dispatcher
     bl syscall_dispatcher
 
-    // return 
-    pop {fp, lr}   // restore link register and frame pointer
+    push {r1}
+    ldr r1, =return_to_user_mode
+    ldr r1, [r1]
+    cmp r1, #0
+    beq reload_task
+
+return:
+    pop {r1, fp, lr}   // restore link register and frame pointer
     movs pc, lr     // return from svc (return and restore cpsr)
+
+reload_task:
+    pop {r1, fp, lr}   // restore stack pointer
+    b load_current_task_state
