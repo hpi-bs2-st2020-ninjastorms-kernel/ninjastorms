@@ -29,7 +29,7 @@
 syscall_handler:
     push {fp, lr}
     
-    // save current task state
+    // save current task state (even if the syscall does not need this)
     push {r3}   // save r3 for second part of transfer
     ldr r3, =current_task    // get address of task_struct
     ldr r3, [r3]    // dereference current_task, to get the task_struct

@@ -262,7 +262,6 @@ int8_t update_wait(void)
     if(target->state == TASK_DONE){
         current_task->state  = TASK_RUNNING;
         current_task->reg[0] = target->result; // put return value for syscall_handler in r0
-        current_task->pc = current_task->pc+4; // next instruction, would otherwise result in constant syscalls
         return 1;
     }
     return 0;
