@@ -51,6 +51,12 @@ pid_t create_process(void * function)
     return syscall(1, &new_process);
 }
 
+void exit(int result){
+    struct exit_specification spec;
+    spec.value = result;
+    syscall(2, &spec);
+}
+
 pid_t get_pid(void)
 {
     return syscall(3, NULL);
@@ -59,12 +65,6 @@ pid_t get_pid(void)
 pid_t get_parent_pid(void)
 {
     return syscall(4, NULL);
-}
-
-void exit(int result){
-    struct exit_specification spec;
-    spec.value = result;
-    syscall(9, &spec);
 }
 
 int kill(pid_t target)
