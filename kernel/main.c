@@ -174,7 +174,7 @@ task_sender (void)
     }
 }
 
-static void
+static int
 task_calculate (void)
 {
   int n1, n2, i, gcd, lcm;
@@ -188,7 +188,7 @@ task_calculate (void)
     }
   lcm = (n1 * n2) / gcd;
   //for(int j=0;j<150000000; ++j);
-  exit_with_result(lcm);
+  return lcm;
 }
 
 static void
@@ -200,10 +200,10 @@ task_wait (void)
   printf("lcm is %i\n",(int) result);
 }
 
-static void
+static int
 task_exit(void)
 {
-    exit_with_result(get_pid());
+  return get_pid();
 }
 
 
@@ -219,17 +219,11 @@ user_mode_init(void)
     for(int i=0;i<150000000; ++i);
     kill(e_pid); */
 
-    //create_process(&task_wait);
-    //create_process(&task_calculate);
+    create_process(&task_wait);
+    create_process(&task_calculate);
 
-    //for(int i=0;i<150000000; ++i);
-    //print_tasks_info();
-   
-    create_process(&task_exit);
-    create_process(&task_exit);
-    create_process(&task_exit);
-    create_process(&task_exit);
-    create_process(&task_exit);
+    for(int i=0;i<150000000; ++i);
+    print_tasks_info();
     while(1); //init will run forever
 }
 

@@ -91,7 +91,7 @@ int32_t wait_on_pid(pid_t target)
 void exit_with_result(int result){
     struct exit_specification spec;
     spec.value = result;
-    return syscall(9, &spec);
+    syscall(9, &spec);
 }
 
 // Inter process communication

@@ -39,14 +39,15 @@ int next_pid = 1;
 
 
 void
-task_exit(void)
+task_exit(int return_value)
 {
     /*
      * This is called when a process has executed all its statements.
      * Thus task_exit() will be executed in user mode, requiring a syscall
      * to properly exit the process
      */
-    exit();
+    printf("Task exited with %i \n", return_value);
+    exit_with_result(return_value);
 }
 
 void
