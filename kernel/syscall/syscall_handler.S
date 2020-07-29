@@ -27,6 +27,7 @@
 // r0 contains syscall number
 // r1 contains address of data
 syscall_handler:
+    push {fp, lr}
     
     // save current task state
     push {r3}   // save r3 for second part of transfer
