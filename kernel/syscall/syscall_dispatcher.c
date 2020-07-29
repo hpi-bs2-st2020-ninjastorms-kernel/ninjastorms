@@ -18,7 +18,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "syscall_handler.h"
+#include "syscall_dispatcher.h"
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
@@ -32,44 +32,28 @@
 #include "process_control.h"
 
 
-unsigned int syscall_dispatcher(unsigned int, void*);
+enum SYSCALL_NUMBER {
+    ZERO_SYSCALL = 0,
+    CREATE_PROCESS = 1,
+    EXIT = 2,
+    GET_PID = 3,
+    GET_PARENT_PID = 4,
+    KILL = 5,
+    IS_PREDECESSOR = 6,
+    WAIT = 8,
+    EXIT_WITH_RESULT = 9,
 
-unsigned int syscall_handler()
-{
-    
-    unsigned int syscallno = 0;
-    void *data = 0;
-    
-    asm(
-        "mov %[syscallno], r0 \n"    // retrieve syscall number
-        
-        "mov %[data], r1 \n"    // retrieve data
-        
-        : [syscallno] "=r" (syscallno),
-        [data] "=r" (data)
-    );
+    //IPC
+    OPEN_IPC_BUFFER = 10,
+    CLOSE_IPC_BUFFER = 11,
+    SEND_TO_IPC_BUFFER = 12,
+    READ_IPC_BUFFER = 13,
+    LEN_IPC_BUFFER = 14,
 
-    // possible improvement: check if syscallno requires this
-    // save task state to access it in syscalls
-    asm(
-        "push  {r0-r2, lr}\n"
-        "mov  r0, sp \n"   // set argument of save_current_task_state
-    );
-    save_current_task_state();
-    asm(
-        "pop {r0-r2, lr}\n"
-    );
-    
-    // stores return value in r0
-    syscall_dispatcher(syscallno, data);
-    
-    // return from software interrupt and restore cpsr
-    asm(
-        "sub sp, fp, #4 \n"  // discard locals
-        "pop {r11, lr} \n"   // restore link register and (frame pointer)?
-        "movs pc, lr \n"     // return from svc (return and restore cpsr)
-    );
-}
+    TASKS_INFO = 42,
+    SHUTDOWN = 99
+}; 
+
 
 unsigned int syscall_zero_dispatch(void* data)
 {

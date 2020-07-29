@@ -18,7 +18,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "syscall_handler.h"
 #include "process_control.h"
 #include "kernel/syscall.h"
 #include "kernel/tasks.h"

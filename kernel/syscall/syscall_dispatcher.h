@@ -24,6 +24,26 @@
 #  include <config.h>
 #endif
 
-#include <sys/types.h>
+unsigned int syscall_dispatcher(uint32_t syscall_number, void *data);
 
-uint32_t syscall_handler(uint32_t syscall_number, void *data);
+/*enum SYSCALL_NUMBER {
+    ZERO_SYSCALL = 0,
+    CREATE_PROCESS = 1,
+    EXIT = 2,
+    GET_PID = 3,
+    GET_PARENT_PID = 4,
+    KILL = 5,
+    IS_PREDECESSOR = 6,
+    WAIT = 8,
+    EXIT_WITH_RESULT = 9,
+
+    //IPC
+    OPEN_IPC_BUFFER = 10,
+    CLOSE_IPC_BUFFER = 11,
+    SEND_TO_IPC_BUFFER = 12,
+    READ_IPC_BUFFER = 13,
+    LEN_IPC_BUFFER = 14,
+
+    TASKS_INFO = 42,
+    SHUTDOWN = 99
+};*/ 

@@ -1,4 +1,3 @@
-
 /******************************************************************************
  *       ninjastorms - shuriken operating system                              *
  *                                                                            *
@@ -18,12 +17,26 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#pragma once
+#include "syscall_dispatcher.h"
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+.section .text
 
-#include <sys/types.h>
+.globl syscall_handler
+.type syscall_handler STT_FUNC
 
-uint32_t syscall_handler(uint32_t syscall_number, void *data);
+// r0 contains syscall number
+// r1 contains address of data
+syscall_handler:
+    // save current task state
+
+    // fp, local variables
+    push {r11, lr}
+    add r11, sp, #4
+    
+    // call syscall_dispatcher
+    bl syscall_dispatcher
+
+    // return 
+    sub sp, fp, #4  // discard locals
+    pop {fp, lr}   // restore link register and frame pointer
+    movs pc, lr     // return from svc (return and restore cpsr)

@@ -33,7 +33,8 @@ ninjastorms_SOURCES = \
     kernel/tasks.c kernel/tasks.h \
     kernel/scheduler.c kernel/scheduler.h \
     kernel/interrupt.c kernel/interrupt.h \
-    kernel/syscall/syscall_handler.c kernel/syscall/syscall_handler.h \
+    kernel/syscall/syscall_handler.S kernel/syscall/syscall_handler.h \
+	kernel/syscall/syscall_dispatcher.c kernel/syscall/syscall_dispatcher.h \
     kernel/syscall/inter_process_com.c kernel/syscall/inter_process_com.h \
     kernel/syscall/process_control.c kernel/syscall/process_control.h \
     kernel/syscall.c kernel/syscall.h \
