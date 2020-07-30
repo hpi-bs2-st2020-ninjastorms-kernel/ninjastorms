@@ -16,10 +16,12 @@ libc_libc_la_SOURCES = \
     libc/stdio/putchar.c \
     libc/stdio/puts.c \
     libc/stdio/vprintf.c \
+    libc/syscall/syscall.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/include/errno.h \
+    libc/include/syscall.h \
     libc/include/stddef.h \
     libc/include/stdio.h \
     libc/include/string.h \
@@ -37,7 +39,6 @@ ninjastorms_SOURCES = \
 	kernel/syscall/syscall_dispatcher.c kernel/syscall/syscall_dispatcher.h \
     kernel/syscall/inter_process_com.c kernel/syscall/inter_process_com.h \
     kernel/syscall/process_control.c kernel/syscall/process_control.h \
-    kernel/syscall.c kernel/syscall.h \
     kernel/utilities.c kernel/utilities.h \
     kernel/interrupt_handler.S kernel/interrupt_handler.h \
     kernel/memory.h \

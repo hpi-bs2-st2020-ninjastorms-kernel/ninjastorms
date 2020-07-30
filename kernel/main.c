@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "kernel/utilities.h"
 
-#include "syscall.h"
+#include <syscall.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -256,14 +256,14 @@ user_mode_init(void)
   printf("User mode initialized with pid: %i\n", get_pid());
   /*pid_t e_pid = create_process(&task_e);
     create_process(&task_b);
-    create_process(&task_d);
+    create_process(&task_d);*/
     create_process(&task_sender);
     print_tasks_info();
     for(int i=0;i<150000000; ++i);
-    kill(e_pid); */
+  //kill(e_pid);
 
-  create_process(&task_pass_a);
-  create_process(&task_pass_b);
+  //create_process(&task_pass_a);
+  //create_process(&task_pass_b);
 
   //for (int i = 0; i < 150000000; ++i);
   //print_tasks_info();

@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 #include "syscall_dispatcher.h"
-#include "kernel/syscall.h"
+#include <syscall.h>
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
 #include "kernel/interrupt_handler.h"

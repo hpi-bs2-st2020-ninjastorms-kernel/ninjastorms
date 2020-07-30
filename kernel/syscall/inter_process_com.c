@@ -20,7 +20,7 @@
 
 #include "syscall_handler.h"
 #include "inter_process_com.h"
-#include "kernel/syscall.h"
+#include <syscall.h>
 #include "kernel/tasks.h"
 
 #include <errno.h>
