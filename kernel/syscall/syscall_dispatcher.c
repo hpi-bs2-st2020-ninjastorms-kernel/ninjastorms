@@ -42,6 +42,7 @@ enum SYSCALL_NUMBER {
     KILL = 5,
     IS_PREDECESSOR = 6,
     WAIT = 8,
+    PASS = 9,
 
     //IPC
     OPEN_IPC_BUFFER = 10,
@@ -95,6 +96,8 @@ unsigned int syscall_dispatcher(unsigned int syscallno, void *data)
             return is_predecessor_dispatch(data);
         case WAIT:
             return wait_dispatch(data);
+        case PASS:
+            return pass_dispatch(data);
         case OPEN_IPC_BUFFER:
             return open_ipc_buffer_dispatch(data);
         case CLOSE_IPC_BUFFER:

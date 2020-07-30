@@ -80,3 +80,8 @@ int32_t wait_dispatch(void* data)
     do_wait(spec.target);
 }
 
+int32_t pass_dispatch(void* data)
+{
+    do_pass();
+    return 0;
+}

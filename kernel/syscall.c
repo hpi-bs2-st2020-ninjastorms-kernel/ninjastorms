@@ -51,7 +51,8 @@ pid_t create_process(void * function)
     return syscall(1, &new_process);
 }
 
-void exit(int result){
+void exit(int result)
+{
     struct exit_specification spec;
     spec.value = result;
     syscall(2, &spec);
@@ -87,6 +88,11 @@ int32_t wait_on_pid(pid_t target)
     struct wait_specification spec;
     spec.target = target;
     return syscall(8, &spec);
+}
+
+void pass(void)
+{
+    syscall(9, NULL);
 }
 
 
@@ -143,5 +149,3 @@ unsigned int shutdown(void)
 {
     return syscall(99, NULL);
 }
-
-

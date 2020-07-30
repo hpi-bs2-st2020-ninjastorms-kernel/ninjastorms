@@ -127,4 +127,3 @@ init_interrupt_handling (void)
   init_interrupt_controller();
   enable_irq();
 }
-

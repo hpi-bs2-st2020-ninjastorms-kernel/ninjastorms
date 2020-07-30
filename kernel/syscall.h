@@ -35,6 +35,8 @@ int kill(pid_t target);
 
 int32_t wait_on_pid(pid_t target);
 
+void pass(void);
+
 int is_predecessor(pid_t child, pid_t pred);
 
 int ipc_buffer_open(size_t size);

@@ -166,8 +166,7 @@ task_sender(void)
   while (c < 8)
   {
     volatile int i;
-    for (i = 0; i < 10000000; ++i)
-      ;
+    for (i = 0; i < 10000000; ++i);
     errno = 0;
     if (ipc_buffer_send(message[c], receiver) == -1)
     {
@@ -221,6 +220,36 @@ task_exit(void)
   return get_pid();
 }
 
+static int
+task_pass_a(void)
+{
+  int n = 0;
+  while(1)
+  {
+    for(int j=0;j<5000000; ++j);
+    printf("A: %i\n", n++);
+    if(n%5 == 0){
+      printf("Passing!\n");
+      pass();
+    }
+  }
+}
+
+static int
+task_pass_b(void)
+{
+  int n = 0;
+  while(1)
+  {
+    for(int j=0;j<5000000; ++j);
+    printf("B: %i\n", n++);
+    if(n%5 == 0){
+      printf("Passing!\n");
+      pass();
+    }
+  }
+}
+
 static void
 user_mode_init(void)
 {
@@ -233,11 +262,11 @@ user_mode_init(void)
     for(int i=0;i<150000000; ++i);
     kill(e_pid); */
 
-  create_process(&task_wait);
-  create_process(&task_calculate);
+  create_process(&task_pass_a);
+  create_process(&task_pass_b);
 
-  for (int i = 0; i < 150000000; ++i);
-  print_tasks_info();
+  //for (int i = 0; i < 150000000; ++i);
+  //print_tasks_info();
   while (1); //init will run forever
 }
 

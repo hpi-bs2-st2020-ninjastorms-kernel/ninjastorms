@@ -27,5 +27,3 @@
 void irq_handler_timer (void);
 
 void load_current_task_state (void);
-
-void save_current_task_state (void);

@@ -64,7 +64,6 @@ ring_buffer_remove (void)
   return task;
 }
 
-
 void
 set_current_task_update_state()
 {
@@ -89,12 +88,18 @@ set_current_task_update_state()
 }
 
 void
+reset_timer(void)
+{
+  timer_start(TIMER_LOAD_VALUE);
+}
+
+void
 schedule_after_exit(void)
 {
-    set_current_task_update_state();
-    printf("New task will be Task %i",current_task->pid);
-    restore_errno();
-    return_to_user_mode = 0;
+  set_current_task_update_state();
+  printf("New task will be Task %i",current_task->pid);
+  restore_errno();
+  return_to_user_mode = 0;
 }
 
 void
@@ -104,6 +109,7 @@ schedule_after_wait (void)
   ring_buffer_insert(current_task);
   set_current_task_update_state();
   restore_errno();
+  reset_timer();
   return_to_user_mode = 0;
 }
 
@@ -115,7 +121,6 @@ schedule (void)
   set_current_task_update_state();
   restore_errno();
 }
-
 
 void
 start_scheduler (void)
@@ -130,7 +135,6 @@ start_scheduler (void)
       load_current_task_state();
     }
 }
-
 
 void
 rebuild_ring_buffer(void)
@@ -152,7 +156,11 @@ insert_task(task_t* new_task)
     ring_buffer_insert(new_task);
 }
 
-
+void
+do_pass(void)
+{
+  schedule_after_wait();
+}
 
 void
 print_ring_buffer_debug_info (void)
