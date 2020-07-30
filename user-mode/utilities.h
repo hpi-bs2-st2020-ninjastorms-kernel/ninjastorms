@@ -1,4 +1,4 @@
- 
+
 /******************************************************************************
  *       ninjastorms - shuriken operating system                              *
  *                                                                            *
@@ -18,12 +18,10 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#pragma once
+# pragma once
 
 #include <sys/types.h>
 
-unsigned int is_privileged(void);
+int32_t read_ipc_buffer_and_block(void);
 
-void halt_execution(void);
-
-int has_rights(int calling_process, int target);
+int32_t read_ipc_buffer_and_check(int32_t* validity);

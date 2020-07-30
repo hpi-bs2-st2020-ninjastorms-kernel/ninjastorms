@@ -20,7 +20,6 @@
 
 #include "utilities.h"
 #include "tasks.h"
-#include "syscall.h"
 #include "errno.h"
 
 // USERMODE/ SHARED UTILITIES

@@ -53,7 +53,8 @@ ninjastorms_SOURCES = \
     kernel/drivers/spi.c kernel/drivers/spi.h \
     kernel/drivers/timer.c kernel/drivers/timer.h\
     user-mode/init.c user-mode/init.h \
-    user-mode/examples.c user-mode/examples.h
+    user-mode/examples.c user-mode/examples.h \
+    user-mode/utilities.c user-mode/utilities.h
 
 ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)
