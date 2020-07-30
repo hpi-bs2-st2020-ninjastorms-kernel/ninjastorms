@@ -21,7 +21,6 @@
 #include "syscall_dispatcher.h"
 #include <syscall.h>
 #include "kernel/tasks.h"
-#include "kernel/utilities.h"
 #include "kernel/interrupt_handler.h"
 
 #include <stdio.h>
@@ -72,7 +71,7 @@ unsigned int shutdown_dispatch(void* data)
 {
     // close all processes attached with hooks
     // ...
-    halt_execution();
+    asm("hlt");
 }
 
 unsigned int syscall_dispatcher(unsigned int syscallno, void *data) 

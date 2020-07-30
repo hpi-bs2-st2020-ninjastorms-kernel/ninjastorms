@@ -16,53 +16,8 @@
  *                                                                            *
  *    You should have received a copy of the GNU General Public License       *
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
- ******************************************************************************/ 
+ ******************************************************************************/
 
-#include "utilities.h"
-#include "tasks.h"
-#include "syscall.h"
-#include "errno.h"
+# pragma once
 
-// USERMODE/ SHARED UTILITIES
-
-unsigned int get_operating_mode(void)
-{
-    // Processing modes on ARM
-    // usr 0b10000
-    // fiq 0b10001 fast interrupt
-    // irq 0b10010
-    // svc 0b10011 supervisor
-    // abt 0b10111 
-    // und 0b11011 undefined
-    // sys 0b11111
-    
-    unsigned int current_pcsr = 0;
-    asm(
-        "mrs r3, cpsr\n"
-        "mov %[current_pcsr], r3\n"
-        : [current_pcsr] "=r" (current_pcsr)
-    );
-    unsigned int operating_mode = current_pcsr & 0x1f;
-    return operating_mode;
-}
-
-unsigned int is_privileged(void)
-{
-    return get_operating_mode() != 0b10000;
-}
-
-/*
- * check if calling_process has rights for actions on process target
- */
-int has_rights(int calling_process, int target)
-{
-    // same process
-    if(calling_process == target){
-        return 1;
-    }
-    // target is child of calling_process
-    if(process_is_descendent_of(target,calling_process)){
-        return 1;
-    }
-    return 0;
-}
+void user_mode_init(void);
