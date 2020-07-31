@@ -55,7 +55,7 @@ int32_t exit_dispatch(void* data)
 int32_t kill_dispatch(void* data)
 {
     struct kill_specification spec = *((struct kill_specification*) data);
-    int target = spec.pid;
+    pid_t target = spec.pid;
     if(target == current_task->pid){
         printf("Do not call kill() on yourself! Use exit() instead.\n");
         return -1;

@@ -20,11 +20,13 @@
 
 #include "utilities.h"
 #include "tasks.h"
-#include "errno.h"
 
-// USERMODE/ SHARED UTILITIES
+#include <errno.h>
+#include <sys/types.h>
 
-unsigned int get_operating_mode(void)
+// KERNEL UTILITIES
+
+uint32_t get_operating_mode(void)
 {
     // Processing modes on ARM
     // usr 0b10000
@@ -41,11 +43,10 @@ unsigned int get_operating_mode(void)
         "mov %[current_pcsr], r3\n"
         : [current_pcsr] "=r" (current_pcsr)
     );
-    unsigned int operating_mode = current_pcsr & 0x1f;
-    return operating_mode;
+    return current_pcsr & 0x1f;
 }
 
-unsigned int is_privileged(void)
+bool is_privileged(void)
 {
     return get_operating_mode() != 0b10000;
 }
@@ -53,7 +54,7 @@ unsigned int is_privileged(void)
 /*
  * check if calling_process has rights for actions on process target
  */
-int has_rights(int calling_process, int target)
+bool has_rights(pid_t calling_process, pid_t target)
 {
     // same process
     if(calling_process == target){

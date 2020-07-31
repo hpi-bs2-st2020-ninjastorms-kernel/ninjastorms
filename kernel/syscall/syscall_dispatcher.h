@@ -24,6 +24,8 @@
 #  include <config.h>
 #endif
 
-unsigned int syscall_dispatcher(unsigned int syscall_number, void *data);
+#include <sys/types.h>
 
-extern char return_to_user_mode;
+int32_t syscall_dispatcher(uint32_t syscall_number, void *data);
+
+extern int8_t return_to_user_mode;

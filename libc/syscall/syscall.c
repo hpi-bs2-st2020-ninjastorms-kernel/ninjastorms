@@ -22,9 +22,8 @@
 #include <sys/types.h>
 #include <stddef.h>
 
-unsigned int syscall(unsigned int number, void* data) 
+int32_t syscall(unsigned int number, void* data) 
 {
-   
     unsigned int ret;
 
     asm(
@@ -32,15 +31,14 @@ unsigned int syscall(unsigned int number, void* data)
         "mov r0, %[number] \n"  // store number in r0
         "mov r1, %[data] \n"    //   and data in r1
 
-        "svc #0 \n"    // make supervisor call
+        "svc #0 \n"             // make supervisor call
 
-        "mov %[ret], r0 \n"    // save return value
+        "mov %[ret], r0 \n"     // save return value
 
         : [ret] "=r" (ret)
         : [number] "r" (number),
           [data] "r" (data)
     );
-
     return ret;
 }
 
@@ -51,7 +49,7 @@ pid_t create_process(void * function)
     return syscall(1, &new_process);
 }
 
-void exit(int result)
+void exit(int32_t result)
 {
     struct exit_specification spec;
     spec.value = result;
@@ -68,14 +66,14 @@ pid_t get_parent_pid(void)
     return syscall(4, NULL);
 }
 
-int kill(pid_t target)
+int32_t kill(pid_t target)
 {
     struct kill_specification kill_spec;
     kill_spec.pid = target;
     return syscall(5, &kill_spec);
 }
 
-int is_predecessor(pid_t child, pid_t pred)
+int32_t is_predecessor(pid_t child, pid_t pred)
 {
     struct is_predecessor_specification is_pred_spec;
     is_pred_spec.child = child;
@@ -98,19 +96,19 @@ void pass(void)
 
 // Inter process communication
 
-int ipc_buffer_open(size_t size)
+int32_t ipc_buffer_open(size_t size)
 {
     struct open_ipc_buffer_specification open_ipc_spec;
     open_ipc_spec.size = size;
     return syscall(10, &open_ipc_spec);
 }
 
-int ipc_buffer_close(void)
+int32_t ipc_buffer_close(void)
 {
     return syscall(11, NULL);
 }
 
-int ipc_buffer_send(int value, pid_t target)
+int32_t ipc_buffer_send(int32_t value, pid_t target)
 {
     struct send_to_ipc_buffer_specification send_ipc_spec;
     send_ipc_spec.target = target;
@@ -118,7 +116,7 @@ int ipc_buffer_send(int value, pid_t target)
     return syscall(12, &send_ipc_spec);
 }
 
-int ipc_buffer_read(void)
+int32_t ipc_buffer_read(void)
 {
     /* 
     *  The syscall may return -1.
@@ -131,21 +129,21 @@ int ipc_buffer_read(void)
     return syscall(13, NULL);
 }
 
-int ipc_buffer_length(void)
+int32_t ipc_buffer_length(void)
 {
     return syscall(14, NULL);
 }
 
 // Debug information
 
-int print_tasks_info(void)
+int32_t print_tasks_info(void)
 {
     return syscall(42, NULL);
 }
 
 // System control
 
-unsigned int shutdown(void)
+int32_t shutdown(void)
 {
     return syscall(99, NULL);
 }

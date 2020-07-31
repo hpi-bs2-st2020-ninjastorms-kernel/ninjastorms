@@ -25,12 +25,13 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <sys/types.h>
 
 #include "inter_process_com.h"
 #include "process_control.h"
 
 
-char return_to_user_mode = 0;
+int8_t return_to_user_mode = 0;
 
 enum SYSCALL_NUMBER {
     ZERO_SYSCALL = 0,
@@ -55,26 +56,26 @@ enum SYSCALL_NUMBER {
 }; 
 
 
-unsigned int syscall_zero_dispatch(void* data)
+uint32_t syscall_zero_dispatch(void* data)
 {
     puts("This is not a real syscall!\n");
     return 0;
 }
 
-int task_info_dispatch(void* data)
+int32_t task_info_dispatch(void* data)
 {
     print_task_debug_info();
     return 0;
 }
 
-unsigned int shutdown_dispatch(void* data)
+uint32_t shutdown_dispatch(void* data)
 {
     // close all processes attached with hooks
     // ...
     asm("hlt");
 }
 
-unsigned int syscall_dispatcher(unsigned int syscallno, void *data) 
+int32_t syscall_dispatcher(uint32_t syscallno, void *data) 
 {
     return_to_user_mode = 1;
     printf("Handling syscall %i with data at address %x.\n", syscallno, data);

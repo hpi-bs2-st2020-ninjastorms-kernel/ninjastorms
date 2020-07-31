@@ -207,6 +207,7 @@ task_wait(void)
   printf("Starting wait\n");
   float result = wait_on_pid(3);
   printf("lcm is %i\n", (int)result);
+  kill(3); // Kill process to make sure the zombie is deleted
 }
 
 int

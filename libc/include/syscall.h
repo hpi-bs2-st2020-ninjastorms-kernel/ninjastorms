@@ -21,45 +21,44 @@
 
 #include <sys/types.h>
 
-unsigned int syscall(unsigned int number, void* data);
+int32_t syscall(uint32_t number, void* data);
 
 pid_t create_process(void * function); 
 
-void exit(int result);
+void exit(int32_t result);
 
 pid_t get_pid(void);
 
 pid_t get_parent_pid(void);
 
-int kill(pid_t target);
+int32_t kill(pid_t target);
 
 int32_t wait_on_pid(pid_t target);
 
 void pass(void);
 
-int is_predecessor(pid_t child, pid_t pred);
+int32_t is_predecessor(pid_t child, pid_t pred);
 
-int ipc_buffer_open(size_t size);
+int32_t ipc_buffer_open(size_t size);
 
-int ipc_buffer_close(void);
+int32_t ipc_buffer_close(void);
 
-int ipc_buffer_send(int value, pid_t target);
+int32_t ipc_buffer_send(int32_t value, pid_t target);
 
-int ipc_buffer_read(void);
+int32_t ipc_buffer_read(void);
 
-int ipc_buffer_length(void);
+int32_t ipc_buffer_length(void);
 
-int print_tasks_info(void);
+int32_t print_tasks_info(void);
 
-unsigned int shutdown(void);
+int32_t shutdown(void);
 
 struct create_process_specification{
     void * function;
-    //int parent_pid;
 };
 
 struct kill_specification{
-    unsigned int pid;
+    uint32_t pid;
     //int signal;
 };
 
@@ -68,12 +67,12 @@ struct wait_specification{
 };
 
 struct exit_specification{
-    int value;
+    int32_t value;
 };
 
 struct is_predecessor_specification{
-    int child;
-    int pred;
+    pid_t child;
+    pid_t pred;
 };
 
 struct open_ipc_buffer_specification{
@@ -81,6 +80,6 @@ struct open_ipc_buffer_specification{
 };
 
 struct send_to_ipc_buffer_specification{
-    int value;
+    int32_t value;
     pid_t target;
 };

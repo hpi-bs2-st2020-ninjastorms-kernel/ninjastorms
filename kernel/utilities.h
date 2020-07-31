@@ -22,8 +22,6 @@
 
 #include <sys/types.h>
 
-unsigned int is_privileged(void);
+bool is_privileged(void);
 
-void halt_execution(void);
-
-int has_rights(int calling_process, int target);
+bool has_rights(pid_t calling_process, pid_t target);

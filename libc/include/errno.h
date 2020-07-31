@@ -21,16 +21,15 @@
 #pragma once
 
 enum SYMBOLIC_ERRNO {
+    ENOSYS = 1,
     EPERMISSION = 2, //Operation not permitted
     ETOOMANYTASKS = 3, //Too many tasks
     ENOTIMPLEMENTED = 4, //Operation not implemented
     EINVALIDSYSCALLNO = 5, //Syscall no is not recognized
     EBUFFEREMPTY = 6,
     EBUFFERFULL = 7,
-    EBUFFERCLOSED,
+    EBUFFERCLOSED = 8,
     EINVALPID = 9 //given PID is not associaated with task
 };
 
 extern int errno;
-
-#define ENOSYS 1
