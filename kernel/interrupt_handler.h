@@ -21,9 +21,9 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
-void irq_handler_timer (void);
+void irq_handler_timer(void);
 
-void load_current_task_state (void);
+void load_current_task_state(void);

@@ -21,7 +21,7 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include <sys/types.h>
@@ -29,7 +29,8 @@
 #define MAX_TASK_NUMBER 16
 #define IPC_BUFFER_SIZE 16
 
-enum TASK_STATE{
+enum TASK_STATE
+{
 	TASK_RUNNING,
 	TASK_WAITING,
 	TASK_DONE
@@ -37,29 +38,29 @@ enum TASK_STATE{
 
 struct task_t
 {
-  // r01..r12, sp, lr, pc
+	// r01..r12, sp, lr, pc
 	uint32_t reg[13];
 	uint32_t sp;
 	uint32_t lr;
 	uint32_t pc;
 	uint32_t cpsr;
-    
-    pid_t pid;
-    pid_t parent_pid;
+
+	pid_t pid;
+	pid_t parent_pid;
 
 	int32_t result;
 	int8_t state;
 	pid_t waiting_on;
 
 	uint32_t stored_errno;
-    
+
 	int32_t ipc_buffer[IPC_BUFFER_SIZE];
 	int8_t ipc_buffer_open;
 	int8_t ipc_buffer_start;
 	int8_t ipc_buffer_end;
 
 	//used for navigating the array, boolean
-    int8_t valid; 
+	int8_t valid;
 };
 typedef struct task_t task_t;
 
@@ -67,7 +68,7 @@ extern task_t *current_task;
 
 extern task_t tasks[MAX_TASK_NUMBER];
 
-pid_t add_task (void *entrypoint);
+pid_t add_task(void *entrypoint);
 
 void exit_current_task(void);
 
@@ -81,7 +82,7 @@ int32_t do_wait(pid_t target);
 
 void do_exit_with(int result);
 
-void print_task_debug_info (void);
+void print_task_debug_info(void);
 
 void store_errno(void);
 

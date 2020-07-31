@@ -28,59 +28,60 @@
 #include <errno.h>
 #include <sys/types.h>
 
-
-pid_t create_process_dispatch(void* data)
+pid_t create_process_dispatch(void *data)
 {
-    struct create_process_specification spec = *((struct create_process_specification*) data);
+    struct create_process_specification spec = *((struct create_process_specification *)data);
     int result = add_task(spec.function);
     return result;
 }
 
-pid_t get_pid_dispatch(void* data)
+pid_t get_pid_dispatch(void *data)
 {
     return current_task->pid;
 }
 
-pid_t get_parent_pid_dispatch(void* data)
+pid_t get_parent_pid_dispatch(void *data)
 {
     return current_task->parent_pid;
 }
 
-int32_t exit_dispatch(void* data)
+int32_t exit_dispatch(void *data)
 {
-    struct exit_specification spec = *((struct exit_specification*) data);
+    struct exit_specification spec = *((struct exit_specification *)data);
     do_exit_with(spec.value);
 }
 
-int32_t kill_dispatch(void* data)
+int32_t kill_dispatch(void *data)
 {
-    struct kill_specification spec = *((struct kill_specification*) data);
+    struct kill_specification spec = *((struct kill_specification *)data);
     pid_t target = spec.pid;
-    if(target == current_task->pid){
+    if (target == current_task->pid)
+    {
         printf("Do not call kill() on yourself! Use exit() instead.\n");
         return -1;
     }
-    if(has_rights(current_task->pid, target)){
+    if (has_rights(current_task->pid, target))
+    {
         return kill_process(target);
     }
     errno = EPERMISSION;
     return -1;
 }
 
-uint32_t is_predecessor_dispatch(void* data)
+uint32_t is_predecessor_dispatch(void *data)
 {
-    struct is_predecessor_specification spec = *((struct is_predecessor_specification*) data);
-    int result = process_is_descendent_of(spec.child,spec.pred);
+    struct is_predecessor_specification spec = *((struct is_predecessor_specification *)data);
+    int result = process_is_descendent_of(spec.child, spec.pred);
     return result;
 }
 
-int32_t wait_dispatch(void* data)
+int32_t wait_dispatch(void *data)
 {
-    struct wait_specification spec = *((struct wait_specification*) data);
+    struct wait_specification spec = *((struct wait_specification *)data);
     do_wait(spec.target);
 }
 
-int32_t pass_dispatch(void* data)
+int32_t pass_dispatch(void *data)
 {
     do_pass();
     return 0;

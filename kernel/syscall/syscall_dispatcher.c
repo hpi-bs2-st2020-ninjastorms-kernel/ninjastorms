@@ -30,10 +30,10 @@
 #include "inter_process_com.h"
 #include "process_control.h"
 
-
 int8_t return_to_user_mode = 0;
 
-enum SYSCALL_NUMBER {
+enum SYSCALL_NUMBER
+{
     ZERO_SYSCALL = 0,
     CREATE_PROCESS = 1,
     EXIT = 2,
@@ -53,69 +53,69 @@ enum SYSCALL_NUMBER {
 
     TASKS_INFO = 42,
     SHUTDOWN = 99
-}; 
+};
 
-
-uint32_t syscall_zero_dispatch(void* data)
+uint32_t syscall_zero_dispatch(void *data)
 {
     puts("This is not a real syscall!\n");
     return 0;
 }
 
-int32_t task_info_dispatch(void* data)
+int32_t task_info_dispatch(void *data)
 {
     print_task_debug_info();
     return 0;
 }
 
-uint32_t shutdown_dispatch(void* data)
+uint32_t shutdown_dispatch(void *data)
 {
     // close all processes attached with hooks
     // ...
     asm("hlt");
 }
 
-int32_t syscall_dispatcher(uint32_t syscallno, void *data) 
+int32_t syscall_dispatcher(uint32_t syscallno, void *data)
 {
     return_to_user_mode = 1;
     printf("Handling syscall %i with data at address %x.\n", syscallno, data);
-    switch(syscallno){ 
-        case ZERO_SYSCALL:
-            return syscall_zero_dispatch(data);
-        case CREATE_PROCESS:
-            return create_process_dispatch(data);
-        case EXIT:
-            return exit_dispatch(data);
-        case GET_PID:
-            return get_pid_dispatch(data);
-        case GET_PARENT_PID:
-            return get_parent_pid_dispatch(data);
-        case KILL:
-            return kill_dispatch(data);
-        case IS_PREDECESSOR:
-            return is_predecessor_dispatch(data);
-        case WAIT:
-            return wait_dispatch(data);
-        case PASS:
-            return pass_dispatch(data);
-        case OPEN_IPC_BUFFER:
-            return open_ipc_buffer_dispatch(data);
-        case CLOSE_IPC_BUFFER:
-            return close_ipc_buffer_dispatch(data);
-        case SEND_TO_IPC_BUFFER:
-            return send_to_ipc_buffer_dispatch(data);
-        case READ_IPC_BUFFER:
-            return read_ipc_buffer_dispatch(data);
-        case LEN_IPC_BUFFER:
-            return length_ipc_buffer_dispatch(data);
-        case TASKS_INFO:
-            return task_info_dispatch(data);
-        case SHUTDOWN:
-            return shutdown_dispatch(data);
-        default:
-            errno = EINVALIDSYSCALLNO;
-            return -1;
+    switch (syscallno)
+    {
+    case ZERO_SYSCALL:
+        return syscall_zero_dispatch(data);
+    case CREATE_PROCESS:
+        return create_process_dispatch(data);
+    case EXIT:
+        return exit_dispatch(data);
+    case GET_PID:
+        return get_pid_dispatch(data);
+    case GET_PARENT_PID:
+        return get_parent_pid_dispatch(data);
+    case KILL:
+        return kill_dispatch(data);
+    case IS_PREDECESSOR:
+        return is_predecessor_dispatch(data);
+    case WAIT:
+        return wait_dispatch(data);
+    case PASS:
+        return pass_dispatch(data);
+    case OPEN_IPC_BUFFER:
+        return open_ipc_buffer_dispatch(data);
+    case CLOSE_IPC_BUFFER:
+        return close_ipc_buffer_dispatch(data);
+    case SEND_TO_IPC_BUFFER:
+        return send_to_ipc_buffer_dispatch(data);
+    case READ_IPC_BUFFER:
+        return read_ipc_buffer_dispatch(data);
+    case LEN_IPC_BUFFER:
+        return length_ipc_buffer_dispatch(data);
+    case TASKS_INFO:
+        return task_info_dispatch(data);
+    case SHUTDOWN:
+        return shutdown_dispatch(data);
+    default:
+        errno = EINVALIDSYSCALLNO;
+        return -1;
     }
-    
+
     return 0xbeef;
 }

@@ -21,21 +21,21 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include "tasks.h"
 
 void schedule_after_exit(void);
 
-void schedule_after_wait (void);
+void schedule_after_wait(void);
 
 void rebuild_ring_buffer(void);
 
-void start_scheduler (void);
+void start_scheduler(void);
 
-void print_ring_buffer_debug_info (void);
+void print_ring_buffer_debug_info(void);
 
-int insert_task(task_t* new_task);
+int insert_task(task_t *new_task);
 
 void do_pass(void);

@@ -21,7 +21,7 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
-int kernel_main (void);
+int kernel_main(void);

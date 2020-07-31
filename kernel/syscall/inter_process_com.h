@@ -1,4 +1,4 @@
- 
+
 /******************************************************************************
  *       ninjastorms - shuriken operating system                              *
  *                                                                            *
@@ -21,17 +21,17 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include <sys/types.h>
 
-int32_t open_ipc_buffer_dispatch(void* data);
+int32_t open_ipc_buffer_dispatch(void *data);
 
-int32_t close_ipc_buffer_dispatch(void* data);
+int32_t close_ipc_buffer_dispatch(void *data);
 
-int32_t send_to_ipc_buffer_dispatch(void* data);
+int32_t send_to_ipc_buffer_dispatch(void *data);
 
-int32_t read_ipc_buffer_dispatch(void* data);
+int32_t read_ipc_buffer_dispatch(void *data);
 
-int32_t length_ipc_buffer_dispatch(void* data);
+int32_t length_ipc_buffer_dispatch(void *data);

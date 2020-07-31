@@ -26,8 +26,7 @@
 #include <errno.h>
 #include <sys/types.h>
 
-
-int32_t open_ipc_buffer_dispatch(void* data)
+int32_t open_ipc_buffer_dispatch(void *data)
 {
     // Size will be discarded for now
 
@@ -36,26 +35,26 @@ int32_t open_ipc_buffer_dispatch(void* data)
     return 0;
 }
 
-int32_t close_ipc_buffer_dispatch(void* data)
+int32_t close_ipc_buffer_dispatch(void *data)
 {
     _close_ipc_buffer();
     return 0;
 }
 
-int32_t send_to_ipc_buffer_dispatch(void* data)
+int32_t send_to_ipc_buffer_dispatch(void *data)
 {
-    struct send_to_ipc_buffer_specification spec = *((struct send_to_ipc_buffer_specification*) data);
+    struct send_to_ipc_buffer_specification spec = *((struct send_to_ipc_buffer_specification *)data);
     int32_t value = spec.value;
     pid_t target = spec.target;
     return _send_to_ipc_bufer(value, target);
 }
 
-int32_t read_ipc_buffer_dispatch(void* data)
+int32_t read_ipc_buffer_dispatch(void *data)
 {
     return _read_ipc_buffer();
 }
 
-int32_t length_ipc_buffer_dispatch(void* data)
+int32_t length_ipc_buffer_dispatch(void *data)
 {
     return _len_ipc_buffer();
 }

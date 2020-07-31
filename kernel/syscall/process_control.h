@@ -1,4 +1,4 @@
- 
+
 /******************************************************************************
  *       ninjastorms - shuriken operating system                              *
  *                                                                            *
@@ -21,23 +21,23 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include <sys/types.h>
 
-pid_t create_process_dispatch(void* data);
+pid_t create_process_dispatch(void *data);
 
-int32_t exit_dispatch(void* data);
+int32_t exit_dispatch(void *data);
 
-pid_t get_pid_dispatch(void* data);
+pid_t get_pid_dispatch(void *data);
 
-pid_t get_parent_pid_dispatch(void* data);
+pid_t get_parent_pid_dispatch(void *data);
 
-int32_t kill_dispatch(void* data);
+int32_t kill_dispatch(void *data);
 
-uint32_t is_predecessor_dispatch(void* data);
+uint32_t is_predecessor_dispatch(void *data);
 
-int32_t wait_dispatch(void* data);
+int32_t wait_dispatch(void *data);
 
-int32_t pass_dispatch(void* data);
+int32_t pass_dispatch(void *data);

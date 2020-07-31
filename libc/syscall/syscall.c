@@ -22,27 +22,26 @@
 #include <sys/types.h>
 #include <stddef.h>
 
-int32_t syscall(unsigned int number, void* data) 
+int32_t syscall(unsigned int number, void *data)
 {
     unsigned int ret;
 
     asm(
         // store arguments in registers
-        "mov r0, %[number] \n"  // store number in r0
-        "mov r1, %[data] \n"    //   and data in r1
+        "mov r0, %[number] \n" // store number in r0
+        "mov r1, %[data] \n"   //   and data in r1
 
-        "svc #0 \n"             // make supervisor call
+        "svc #0 \n"            // make supervisor call
 
-        "mov %[ret], r0 \n"     // save return value
+        "mov %[ret], r0 \n"    // save return value
 
-        : [ret] "=r" (ret)
-        : [number] "r" (number),
-          [data] "r" (data)
-    );
+        : [ ret ] "=r"(ret)
+        : [ number ] "r"(number),
+          [ data ] "r"(data));
     return ret;
 }
 
-pid_t create_process(void * function) 
+pid_t create_process(void *function)
 {
     struct create_process_specification new_process;
     new_process.function = function;
@@ -77,7 +76,7 @@ int32_t is_predecessor(pid_t child, pid_t pred)
 {
     struct is_predecessor_specification is_pred_spec;
     is_pred_spec.child = child;
-    is_pred_spec.pred  = pred;
+    is_pred_spec.pred = pred;
     return syscall(6, &is_pred_spec);
 }
 
@@ -92,7 +91,6 @@ void pass(void)
 {
     syscall(9, NULL);
 }
-
 
 // Inter process communication
 
@@ -112,7 +110,7 @@ int32_t ipc_buffer_send(int32_t value, pid_t target)
 {
     struct send_to_ipc_buffer_specification send_ipc_spec;
     send_ipc_spec.target = target;
-    send_ipc_spec.value  = value;
+    send_ipc_spec.value = value;
     return syscall(12, &send_ipc_spec);
 }
 

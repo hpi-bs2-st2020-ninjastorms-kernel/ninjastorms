@@ -21,9 +21,9 @@
 
 #include <sys/types.h>
 
-int32_t syscall(uint32_t number, void* data);
+int32_t syscall(uint32_t number, void *data);
 
-pid_t create_process(void * function); 
+pid_t create_process(void *function);
 
 void exit(int32_t result);
 
@@ -53,33 +53,40 @@ int32_t print_tasks_info(void);
 
 int32_t shutdown(void);
 
-struct create_process_specification{
-    void * function;
+struct create_process_specification
+{
+    void *function;
 };
 
-struct kill_specification{
+struct kill_specification
+{
     uint32_t pid;
     //int signal;
 };
 
-struct wait_specification{
+struct wait_specification
+{
     pid_t target;
 };
 
-struct exit_specification{
+struct exit_specification
+{
     int32_t value;
 };
 
-struct is_predecessor_specification{
+struct is_predecessor_specification
+{
     pid_t child;
     pid_t pred;
 };
 
-struct open_ipc_buffer_specification{
+struct open_ipc_buffer_specification
+{
     size_t size;
 };
 
-struct send_to_ipc_buffer_specification{
+struct send_to_ipc_buffer_specification
+{
     int32_t value;
     pid_t target;
 };
