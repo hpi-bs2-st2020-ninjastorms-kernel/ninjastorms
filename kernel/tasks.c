@@ -20,7 +20,7 @@
 
 #include "tasks.h"
 #include "scheduler.h"
-#include "kernel/memory.h"
+#include "kernel/hal/hal.h"
 #include "kernel/utilities.h"
 #include "syscall.h"
 

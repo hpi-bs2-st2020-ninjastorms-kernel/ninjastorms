@@ -20,7 +20,7 @@
 
 #include "timer.h"
 
-#include "kernel/memory.h"
+#include "kernel/hal/hal.h"
 
 void
 timer_start (unsigned int period)

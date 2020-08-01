@@ -21,7 +21,7 @@
 #include "interrupt.h"
 #include "syscall/syscall_handler.h"
 
-#include "kernel/memory.h"
+#include "kernel/hal/hal.h"
 #include "kernel/interrupt_handler.h"
 
 #if BOARD_EV3
