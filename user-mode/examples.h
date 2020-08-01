@@ -45,3 +45,5 @@ int task_pass_a(void);
 int task_pass_b(void);
 
 void task_print_info_periodically(void);
+
+void task_recursive_exit(void);

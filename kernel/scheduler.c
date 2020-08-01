@@ -42,14 +42,16 @@ int isRunning = 0;
 task_t *ring_buffer[MAX_TASK_NUMBER] = {0};
 
 // TODO: disable interrupts during insertion
-void ring_buffer_insert(task_t *task)
+int ring_buffer_insert(task_t *task)
 {
   int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
   if (new_end != buffer_start)
   {
     ring_buffer[buffer_end] = task;
     buffer_end = new_end;
+    return 0;
   }
+  return -1;
 }
 
 task_t *
@@ -113,23 +115,10 @@ void reset_timer(void)
 void schedule_without_insertion(void)
 {
   find_next_active_task();
-  printf("New task will be Task %i", current_task->pid);
+  printf("New task will be Task %i\n", current_task->pid);
   restore_errno();
   return_to_user_mode = 0;
 }
-
-/*
-is called when a task invokes a syscall that requires scheduling
-void schedule_manually(void)
-{
-  store_errno();
-  put_back_current_task();
-  find_next_active_task();
-  restore_errno();
-  reset_timer();
-  return_to_user_mode = 0;
-}
-*/
 
 void schedule(void)
 {
@@ -170,7 +159,7 @@ void rebuild_ring_buffer(void)
 
 int insert_task(task_t *new_task)
 {
-  ring_buffer_insert(new_task);
+  return ring_buffer_insert(new_task);
 }
 
 void do_pass(void)

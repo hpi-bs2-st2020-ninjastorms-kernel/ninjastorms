@@ -255,3 +255,12 @@ task_print_info_periodically(void)
         print_tasks_info();
     }
 }
+
+void
+task_recursive_exit(void)
+{
+    create_process(&task_recursive_exit);
+    print_tasks_info();
+    for(int j=0;j<500000; ++j);
+    return;
+}

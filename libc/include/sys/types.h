@@ -19,4 +19,4 @@ typedef long long 	int64_t;
 
 typedef char bool;
 
-typedef short pid_t;
+typedef unsigned int pid_t;

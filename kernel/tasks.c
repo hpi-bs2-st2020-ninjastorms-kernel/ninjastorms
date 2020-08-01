@@ -187,6 +187,7 @@ pid_t add_task(void *entrypoint)
     if (task_count >= MAX_TASK_NUMBER)
     {
         errno = ETOOMANYTASKS;
+        printf("ERROR: Can't add task, as tasks array is already full!\n");
         return -1;
     }
 
@@ -320,7 +321,7 @@ void print_task_debug_info(void)
     printf("Current process\n----------\nPID:%i  PARENT:%i\n----------\n",
            current_task->pid, current_task->parent_pid);
     printf("Tasks-Array --- Task count %i\n", task_count);
-    char tasksinfo[MAX_TASK_NUMBER] = {0};
+    unsigned int tasksinfo[MAX_TASK_NUMBER] = {0};
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
         if (tasks[i].valid == 1)
