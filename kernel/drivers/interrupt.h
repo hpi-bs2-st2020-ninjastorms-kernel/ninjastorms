@@ -18,29 +18,22 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include <syscall.h>
-#include <stdio.h>
+#pragma once
 
-#include "user-mode/init.h"
-#include "user-mode/examples.h"
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 
-void
-user_mode_init(void)
-{
-  printf("User mode initialized with pid: %i\n", get_pid());
-  /*
-    Call your examples here, like this:
+#if BOARD_EV3
+#define IVT_OFFSET (unsigned int)0xFFFF0000
+#endif
 
-    create_process(&my_example);
+#if BOARD_VERSATILEPB
+#define IVT_OFFSET (unsigned int)0x0
+#endif
 
-    where my_example() is a function that will be used
-    to create a process/ task.
-    If you want to write new functions in a new file, make
-    sure to include it here, add it to "Makefile.am" and
-    run the configuration script 
-  */
+void set_ivt_location(void);
 
-  create_process(&task_recursive_exit);
-  create_process(&task_recursive_exit);
-  while (1); //init will run forever
-}
+void init_timer_interrupt(void);
+
+void init_interrupt_controller(void);

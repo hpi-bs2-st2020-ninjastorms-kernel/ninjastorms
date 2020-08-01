@@ -54,6 +54,7 @@ ninjastorms_SOURCES = \
     kernel/drivers/sensor.c kernel/drivers/sensor.h \
     kernel/drivers/spi.c kernel/drivers/spi.h \
     kernel/drivers/timer.c kernel/drivers/timer.h\
+    kernel/drivers/interrupt.c kernel/drivers/interrupt.h \
     user-mode/init.c user-mode/init.h \
     user-mode/examples.c user-mode/examples.h \
     user-mode/utilities.c user-mode/utilities.h
