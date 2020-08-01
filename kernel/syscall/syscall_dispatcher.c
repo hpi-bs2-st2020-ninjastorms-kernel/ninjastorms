@@ -71,6 +71,7 @@ uint32_t shutdown_dispatch(void *data)
 {
     // close all processes attached with hooks
     // ...
+    clear_all_tasks();
     asm("hlt");
 }
 

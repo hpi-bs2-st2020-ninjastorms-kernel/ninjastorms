@@ -74,6 +74,8 @@ void exit_current_task(void);
 
 void cleanup_task(task_t *task_to_clear);
 
+int clear_all_tasks(void);
+
 int process_is_descendent_of(int child, int pred);
 
 int kill_process(int target);
