@@ -25,25 +25,30 @@
 .globl syscall_handler
 .type syscall_handler STT_FUNC
 
-// r0 contains syscall number
-// r1 contains address of data
+// r0 contains the syscall number.
+// r1 contains the address of the data.
 syscall_handler:
     push {fp, lr}
     
-    // save current task state (even if the syscall does not need this)
-    push {r3}   // save r3 for second part of transfer
-    ldr r3, =current_task    // get address of task_struct
-    ldr r3, [r3]    // dereference current_task, to get the task_struct
-    stm r3!, {r0-r2}    // copy r0-r2 using r3 as counter
-    mov r2, r3    // copy r3 to r2 so we are able to store r3
-    pop {r3}    // restore r3
-    stm r2!, {r3-r12}    // store other general purpose registers
-    stm r2!, {sp, lr}^   // store sp and lr from user mode
-    str lr, [r2]    // store pc
+    // Save current task state (even if the syscall does not need this).
+    // To use the stm instruction we need a register to store the destination
+    // address. Because we want to store all registers in their original state,
+    // we use r3 for registers r0 to r2 and r2 for all other registers.
+    push {r3}
+    ldr r3, =current_task    // Get the address of the task_struct.
+    ldr r3, [r3]    // Dereference current_task to get the task_struct.
+    stm r3!, {r0-r2}
+    mov r2, r3
+    pop {r3}
+    stm r2!, {r3-r12}
+    stm r2!, {sp, lr}^   // Store sp and lr from user mode.
+    str lr, [r2]    // Store pc.
 
-    // call syscall_dispatcher
+    // Call syscall_dispatcher.
     bl syscall_dispatcher
 
+    // Check if the syscall should return to user mode or load the
+    // current_task.
     push {r1}
     ldr r1, =return_to_user_mode
     ldr r1, [r1]
@@ -51,9 +56,9 @@ syscall_handler:
     beq reload_task
 
 return:
-    pop {r1, fp, lr}   // restore link register and frame pointer
-    movs pc, lr     // return from svc (return and restore cpsr)
+    pop {r1, fp, lr}   // Restore link register and frame pointer.
+    movs pc, lr     // Return from svc (return and restore cpsr).
 
 reload_task:
-    pop {r1, fp, lr}   // restore stack pointer
+    pop {r1, fp, lr}   // Restore stack pointer.
     b load_current_task_state
