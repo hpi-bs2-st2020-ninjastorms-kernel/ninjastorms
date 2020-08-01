@@ -40,6 +40,8 @@ user_mode_init(void)
     run the configuration script 
   */
 
-  create_process(&task_sender);
+  create_process(&task_wait);
+  create_process(&task_calculate);
+  create_process(&task_print_info_periodically);
   while (1); //init will run forever
 }

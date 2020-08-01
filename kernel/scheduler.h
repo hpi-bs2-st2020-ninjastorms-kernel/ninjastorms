@@ -26,9 +26,9 @@
 
 #include "tasks.h"
 
-void schedule_after_exit(void);
+void schedule_without_insertion(void);
 
-void schedule_after_wait(void);
+void schedule(void);
 
 void rebuild_ring_buffer(void);
 

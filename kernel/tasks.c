@@ -132,19 +132,21 @@ void reparent_tasks(int killed_pid)
 
 void exit_current_task(void)
 {
+    // will leave the task in the state TASK_DONE, until no task is waiting on it anymore
     task_t *task_to_kill = current_task;
     task_to_kill->state = TASK_DONE;
     int pid_to_kill = current_task->pid;
     printf("Task %i will be exited\n", pid_to_kill);
     reparent_tasks(pid_to_kill);
-    /*
-    clear_task(task_to_kill);
-    
-    
-    
+    schedule();
+}
+
+void cleanup_task(task_t *task_to_clear)
+{
+    clear_task(task_to_clear);
     task_count--;
-    schedule_after_exit();*/
-    schedule_after_wait();
+    reparent_tasks(task_to_clear->pid);
+    schedule_without_insertion();
 }
 
 int next_free_tasks_position(void)
@@ -255,14 +257,23 @@ int kill_process(int target)
         return -1;
     }
 
-    clear_task(task_to_kill);
-    task_count--;
-
-    reparent_tasks(target);
+    cleanup_task(task_to_kill);
 
     //remove task from ring buffer by building new ring buffer
     rebuild_ring_buffer();
 
+    return 0;
+}
+
+bool any_task_waiting_on(pid_t target)
+{
+    for (int i = 0; i < MAX_TASK_NUMBER; ++i)
+    {
+        if (tasks[i].valid == 1 && tasks[i].state == TASK_WAITING && tasks[i].waiting_on == target)
+        {
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -292,7 +303,7 @@ int32_t do_wait(pid_t target)
     }
     current_task->state = TASK_WAITING;
     current_task->waiting_on = target;
-    schedule_after_wait();
+    schedule();
 }
 
 void do_exit_with(int result)

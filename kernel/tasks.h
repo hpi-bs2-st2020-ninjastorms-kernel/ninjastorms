@@ -72,9 +72,13 @@ pid_t add_task(void *entrypoint);
 
 void exit_current_task(void);
 
+void cleanup_task(task_t *task_to_clear);
+
 int process_is_descendent_of(int child, int pred);
 
 int kill_process(int target);
+
+bool any_task_waiting_on(pid_t target);
 
 int8_t update_wait(void);
 

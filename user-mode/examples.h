@@ -43,3 +43,5 @@ int task_exit_test(void);
 int task_pass_a(void);
 
 int task_pass_b(void);
+
+void task_print_info_periodically(void);

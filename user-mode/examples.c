@@ -245,3 +245,13 @@ task_pass_b(void)
     }
   }
 }
+
+void
+task_print_info_periodically(void)
+{
+    while(1)
+    {
+        for(int j=0;j<500000000; ++j);
+        print_tasks_info();
+    }
+}

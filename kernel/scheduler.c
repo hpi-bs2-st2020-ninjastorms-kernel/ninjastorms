@@ -63,31 +63,46 @@ ring_buffer_remove(void)
   return task;
 }
 
-void set_current_task_update_state()
+void put_back_current_task()
 {
-  int32_t initial_buffer_start = buffer_start;
+  ring_buffer_insert(current_task);
+}
 
-  do
-  {
-    current_task = ring_buffer_remove();
-    if (current_task->state == TASK_RUNNING)
+void update_state(task_t* task)
+{
+  if (task->state == TASK_RUNNING)
     {
       return;
     }
-    if (current_task->state == TASK_WAITING)
+    if (task->state == TASK_WAITING)
     {
       int8_t wait_done = update_wait();
       if (wait_done)
       {
         return;
-      } //Wait not done, select another process
+      } // Wait not done, select another process.
     }
-    if (current_task->state == TASK_DONE)
+    if (task->state == TASK_DONE)
     {
-      //TODO clear done task
+      if(!any_task_waiting_on(task->pid))
+      {
+        cleanup_task(task);
+      }
     }
+}
+
+void
+find_next_active_task()
+{
+  int32_t initial_buffer_start = buffer_start;
+  do
+  {
+    current_task = ring_buffer_remove();
+    update_state(current_task);
+    if(current_task->state == TASK_RUNNING)
+      return;
   } while (buffer_start != initial_buffer_start);
-  printf("No task not marked done or waiting!\n");
+  printf("All tasks done or waiting!\n");
 }
 
 void reset_timer(void)
@@ -95,30 +110,34 @@ void reset_timer(void)
   timer_start(TIMER_LOAD_VALUE);
 }
 
-void schedule_after_exit(void)
+void schedule_without_insertion(void)
 {
-  set_current_task_update_state();
+  find_next_active_task();
   printf("New task will be Task %i", current_task->pid);
   restore_errno();
   return_to_user_mode = 0;
 }
 
-void schedule_after_wait(void)
+/*
+is called when a task invokes a syscall that requires scheduling
+void schedule_manually(void)
 {
   store_errno();
-  ring_buffer_insert(current_task);
-  set_current_task_update_state();
+  put_back_current_task();
+  find_next_active_task();
   restore_errno();
   reset_timer();
   return_to_user_mode = 0;
 }
+*/
 
 void schedule(void)
 {
   store_errno();
-  ring_buffer_insert(current_task);
-  set_current_task_update_state();
+  put_back_current_task();
+  find_next_active_task();
   restore_errno();
+  return_to_user_mode = 0;
 }
 
 void start_scheduler(void)
@@ -156,7 +175,7 @@ int insert_task(task_t *new_task)
 
 void do_pass(void)
 {
-  schedule_after_wait();
+  schedule();
 }
 
 void print_ring_buffer_debug_info(void)
