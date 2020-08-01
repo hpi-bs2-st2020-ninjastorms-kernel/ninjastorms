@@ -72,7 +72,7 @@ uint32_t shutdown_dispatch(void *data)
     // close all processes attached with hooks
     // ...
     clear_all_tasks();
-    asm("hlt");
+    while(1);
 }
 
 int32_t syscall_dispatcher(uint32_t syscallno, void *data)

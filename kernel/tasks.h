@@ -74,11 +74,11 @@ void exit_current_task(void);
 
 void cleanup_task(task_t *task_to_clear);
 
-int clear_all_tasks(void);
+int32_t clear_all_tasks(void);
 
-int process_is_descendent_of(int child, int pred);
+bool process_is_descendent_of(pid_t child, pid_t pred);
 
-int kill_process(int target);
+int32_t kill_process(pid_t target);
 
 bool any_task_waiting_on(pid_t target);
 
@@ -86,7 +86,7 @@ int8_t update_wait(void);
 
 int32_t do_wait(pid_t target);
 
-void do_exit_with(int result);
+void do_exit_with(int32_t result);
 
 void print_task_debug_info(void);
 
@@ -96,10 +96,10 @@ void restore_errno(void);
 
 void _open_ipc_buffer(size_t size);
 
-int _read_ipc_buffer(void);
+int32_t _read_ipc_buffer(void);
 
-int _close_ipc_buffer(void);
+int32_t _close_ipc_buffer(void);
 
-int _send_to_ipc_bufer(int value, pid_t target);
+int32_t _send_to_ipc_bufer(int32_t value, pid_t target);
 
-int _len_ipc_buffer(void);
+int32_t _len_ipc_buffer(void);

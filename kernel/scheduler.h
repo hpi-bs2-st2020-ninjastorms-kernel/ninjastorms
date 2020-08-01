@@ -36,6 +36,6 @@ void start_scheduler(void);
 
 void print_ring_buffer_debug_info(void);
 
-int insert_task(task_t *new_task);
+int32_t insert_task(task_t *new_task);
 
 void do_pass(void);

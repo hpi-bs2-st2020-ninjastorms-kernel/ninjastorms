@@ -37,13 +37,14 @@ task_t tasks[MAX_TASK_NUMBER] = {0};
 task_t *current_task = &tasks[0];
 int next_pid = 1;
 
-void task_exit(int return_value)
+/*
+* This is called when a process has executed all its statements.
+* Thus task_exit() will be executed in user mode, requiring a syscall
+* to properly exit the process
+*/
+void task_exit(int32_t return_value)
 {
-    /*
-     * This is called when a process has executed all its statements.
-     * Thus task_exit() will be executed in user mode, requiring a syscall
-     * to properly exit the process
-     */
+
     printf("Task exited with %i \n", return_value);
     exit(return_value);
 }
@@ -58,7 +59,7 @@ void restore_errno(void)
     errno = current_task->stored_errno;
 }
 
-pid_t init_task(task_t *task, void *entrypoint, unsigned int stackbase)
+pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase)
 {
     int i;
     for (i = 0; i < 13; i++)
@@ -117,22 +118,22 @@ void clear_task(task_t *task_to_clear)
     // currently the used pid will not be freed
 }
 
-
-int clear_all_tasks(void)
+int32_t clear_all_tasks(void)
 {
-    task_t* task_to_kill = (void*) 0;
-    for(int i=0;i<MAX_TASK_NUMBER;i++){
-        if(tasks[i].valid == 1){
+    task_t *task_to_kill = (void *)0;
+    for (int i = 0; i < MAX_TASK_NUMBER; i++)
+    {
+        if (tasks[i].valid == 1)
+        {
             task_to_kill = &tasks[i];
             clear_task(task_to_kill);
         }
     }
-    return 0;    
+    return 0;
 }
 
-void reparent_tasks(int killed_pid)
+void reparent_tasks(pid_t killed_pid)
 {
-
     // All tasks that have killed_pid as parent will now have 1 as parent (init)
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
@@ -162,7 +163,7 @@ void cleanup_task(task_t *task_to_clear)
     schedule_without_insertion();
 }
 
-int next_free_tasks_position(void)
+int32_t next_free_tasks_position(void)
 {
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
@@ -215,7 +216,7 @@ pid_t add_task(void *entrypoint)
 }
 
 // check if process with pid pred is predecessor (parent of parent ...) with pid child
-int process_is_descendent_of(int child, int pred)
+bool process_is_descendent_of(pid_t child, pid_t pred)
 {
     if (child == pred)
     {
@@ -250,7 +251,7 @@ int process_is_descendent_of(int child, int pred)
     return current_parent == pred;
 }
 
-int kill_process(int target)
+int32_t kill_process(pid_t target)
 {
     // Don't use kill on the current task, use exit() instead.
     if (target == current_task->pid)
@@ -320,7 +321,7 @@ int32_t do_wait(pid_t target)
     schedule();
 }
 
-void do_exit_with(int result)
+void do_exit_with(int32_t result)
 {
     task_t *task_to_kill = current_task;
     task_to_kill->result = result; //Return value
@@ -364,7 +365,7 @@ void _open_ipc_buffer(size_t size)
     printf("Opening ipc\n");
 }
 
-int _read_ipc_buffer(void)
+int32_t _read_ipc_buffer(void)
 {
     if (!current_task->ipc_buffer_open)
     {
@@ -379,16 +380,17 @@ int _read_ipc_buffer(void)
 
     int32_t result = current_task->ipc_buffer[current_task->ipc_buffer_start];
     current_task->ipc_buffer_start = (current_task->ipc_buffer_start + 1) % IPC_BUFFER_SIZE;
-    
+
     return result;
 }
 
-int _close_ipc_buffer(void)
+int32_t _close_ipc_buffer(void)
 {
     current_task->ipc_buffer_open = 0;
+    return 0;
 }
 
-int _send_to_ipc_bufer(int value, pid_t target)
+int32_t _send_to_ipc_bufer(int32_t value, pid_t target)
 {
     // maybe check at target, if sender is allowed?
     task_t *receiver = (_get_task(target));
@@ -413,7 +415,7 @@ int _send_to_ipc_bufer(int value, pid_t target)
     return 0;
 }
 
-int _len_ipc_buffer(void)
+int32_t _len_ipc_buffer(void)
 {
     return current_task->ipc_buffer_end - current_task->ipc_buffer_start;
 }

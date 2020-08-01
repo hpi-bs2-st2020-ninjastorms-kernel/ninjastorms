@@ -34,7 +34,7 @@ int isRunning = 0;
 task_t *ring_buffer[MAX_TASK_NUMBER] = {0};
 
 // TODO: disable interrupts during insertion
-int ring_buffer_insert(task_t *task)
+int32_t ring_buffer_insert(task_t *task)
 {
   int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
   if (new_end != buffer_start)
@@ -149,7 +149,7 @@ void rebuild_ring_buffer(void)
   buffer_end = buffer_position;
 }
 
-int insert_task(task_t *new_task)
+int32_t insert_task(task_t *new_task)
 {
   return ring_buffer_insert(new_task);
 }
