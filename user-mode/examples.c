@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <thread.h>
 #include <sys/types.h>
 
 #include "examples.h"
@@ -263,4 +264,37 @@ task_recursive_exit(void)
     print_tasks_info();
     for(int j=0;j<500000; ++j);
     return;
+}
+
+unsigned int shared_mem = unlocked;
+int count_value = 0;
+
+void
+task_mutex_a (void)
+{
+  for(int i=0 ; i<10 ; i++) {
+    lock_mutex(&shared_mem);
+    int tmp_value = count_value;
+    for(int j=0;j<5000000; ++j);
+    tmp_value++;
+    count_value = tmp_value;
+    printf("A: %i\n",count_value);
+    unlock_mutex(&shared_mem);
+    for(int j=0;j<5000000; ++j);
+  }
+}
+
+void
+task_mutex_b (void)
+{
+  for(int i=0 ; i<10 ; i++) {
+    lock_mutex(&shared_mem);
+    int tmp_value = count_value;
+    for(int j=0;j<5000000; ++j);
+    tmp_value--;
+    count_value = tmp_value;
+    printf("B: %i\n",count_value);
+    unlock_mutex(&shared_mem);
+    for(int j=0;j<5000000; ++j);
+  }
 }

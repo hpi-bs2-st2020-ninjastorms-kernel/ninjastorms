@@ -47,3 +47,7 @@ int task_pass_b(void);
 void task_print_info_periodically(void);
 
 void task_recursive_exit(void);
+
+void task_mutex_a (void);
+
+void task_mutex_b (void);

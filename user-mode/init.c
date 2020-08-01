@@ -40,8 +40,7 @@ user_mode_init(void)
     run the configuration script 
   */
 
-  create_process(&task_recursive_exit);
-  create_process(&task_recursive_exit);
-  create_process(&task_recursive_exit);
+  create_process(&task_mutex_a);
+  create_process(&task_mutex_b);
   while (1); //init will run forever
 }
