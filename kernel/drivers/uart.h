@@ -18,17 +18,19 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
+#pragma once
+
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include <config.h>
 #endif
 
-#include <stdio.h>
-#include "kernel/drivers/uart.h"
+#if BOARD_VERSATILEPB
+#  define UART_THR (volatile char*)(0x101f1000)
+#endif
 
-int putchar(int c)
-{
-  if (c == '\n')
-    putchar('\r');
-  write_byte(c);
-  return c;
-}
+#if BOARD_EV3
+#  define UART_THR (volatile char*)(0x01D0C000)
+#  define UART_LSR (volatile char*)(0x01D0C014)
+#endif
+
+void write_byte(char byte);

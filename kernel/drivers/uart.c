@@ -18,17 +18,14 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+ #include "uart.h"
 
-#include <stdio.h>
-#include "kernel/drivers/uart.h"
-
-int putchar(int c)
+void
+write_byte(char byte)
 {
-  if (c == '\n')
-    putchar('\r');
-  write_byte(c);
-  return c;
+  #if BOARD_EV3
+  while (!(*UART_LSR & (1 << 5)));
+  #endif
+
+  *UART_THR = byte;
 }

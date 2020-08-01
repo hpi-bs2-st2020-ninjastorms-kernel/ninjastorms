@@ -28,14 +28,6 @@
 
 #include <stdio.h>
 
-#if BOARD_VERSATILEPB
-#define TIMER_LOAD_VALUE 0x20000
-#endif
-
-#if BOARD_EV3
-#define TIMER_LOAD_VALUE 0x10000
-#endif
-
 int buffer_start = 0;
 int buffer_end = 0;
 int isRunning = 0;
