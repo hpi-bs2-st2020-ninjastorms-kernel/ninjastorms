@@ -19,10 +19,10 @@
  ******************************************************************************/
 
 #include "syscall_dispatcher.h"
-#include <syscall.h>
 #include "kernel/tasks.h"
 #include "kernel/interrupt_handler.h"
 
+#include <syscall.h>
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -41,6 +41,7 @@ enum SYSCALL_NUMBER
     GET_PARENT_PID = 4,
     KILL = 5,
     IS_PREDECESSOR = 6,
+    //FORK = 7, (Not implemented)
     WAIT = 8,
     PASS = 9,
 
@@ -69,10 +70,9 @@ int32_t task_info_dispatch(void *data)
 
 uint32_t shutdown_dispatch(void *data)
 {
-    // close all processes attached with hooks
-    // ...
+    // Shutdown is more complicated on ARM. Currently only an endless loop
     clear_all_tasks();
-    while(1);
+    while (1);
 }
 
 int32_t syscall_dispatcher(uint32_t syscallno, void *data)

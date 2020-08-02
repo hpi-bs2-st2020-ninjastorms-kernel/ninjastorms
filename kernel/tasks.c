@@ -32,10 +32,10 @@
 #define CPSR_MODE_SVC 0x13
 #define CPSR_MODE_USER 0x10
 
-int task_count = 0;
+int32_t task_count = 0;
 task_t tasks[MAX_TASK_NUMBER] = {0};
 task_t *current_task = &tasks[0];
-int next_pid = 1;
+int32_t next_pid = 1;
 
 /*
 * This is called when a process has executed all its statements.
@@ -44,8 +44,7 @@ int next_pid = 1;
 */
 void task_exit(int32_t return_value)
 {
-
-    printf("Task exited with %i \n", return_value);
+    printf("Task %i exited with %i \n", current_task->pid, return_value);
     exit(return_value);
 }
 
@@ -59,35 +58,39 @@ void restore_errno(void)
     errno = current_task->stored_errno;
 }
 
+pid_t get_new_pid(void)
+{
+    return next_pid++;
+}
+
+pid_t get_new_parent_pid(task_t *new_process)
+{
+    if (new_process->pid == 1)
+    {
+        // the init process has no parent
+       return 1;
+    }
+    return current_task->pid;
+}
+
 pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase)
 {
-    int i;
-    for (i = 0; i < 13; i++)
+    for (int i = 0; i < 13; i++)
+    {
         task->reg[i] = i;
-
+    }
     task->sp = stackbase;
     task->lr = (unsigned int)&task_exit;
     task->pc = (unsigned int)entrypoint;
-
     task->cpsr = CPSR_MODE_USER;
 
-    unsigned int new_pid = next_pid++;
-
-    task->pid = new_pid;
-    if (new_pid == 1)
-    {
-        //init process
-        task->parent_pid = 1;
-    }
-    else
-    {
-        task->parent_pid = current_task->pid;
-    }
+    task->pid = get_new_pid();
+    task->parent_pid = get_new_parent_pid(task);
+    
     task->state = TASK_RUNNING;
-
     task->valid = 1;
 
-    return new_pid;
+    return task->pid;
 }
 
 void clear_task(task_t *task_to_clear)
@@ -258,16 +261,10 @@ int32_t kill_process(pid_t target)
     {
         return -1;
     }
-    task_t *task_to_kill = (void *)0;
-    for (int i = 0; i < MAX_TASK_NUMBER; i++)
-    {
-        if (tasks[i].valid == 1 && tasks[i].pid == target)
-        {
-            task_to_kill = &tasks[i];
-        }
-    }
+    task_t *task_to_kill = _get_task(target);
+
     // Task with that pid does not exist
-    if (task_to_kill == (void *)0)
+    if (task_to_kill == NULL)
     {
         return -1;
     }
@@ -293,7 +290,7 @@ bool any_task_waiting_on(pid_t target)
 }
 
 // Check if current_task, in TASK_WAIT state, is done waiting and update accordingly
-int8_t update_wait(void)
+bool update_wait(void)
 {
     if (current_task->state != TASK_WAITING)
     {
@@ -309,6 +306,10 @@ int8_t update_wait(void)
     return 0;
 }
 
+/*
+*  Set the current task as waiting, waiting on task with pid target.
+*  Reschedule.
+*/
 int32_t do_wait(pid_t target)
 {
     task_t *waiting = _get_task(target);

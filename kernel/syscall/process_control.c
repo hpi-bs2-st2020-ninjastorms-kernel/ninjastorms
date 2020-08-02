@@ -19,7 +19,6 @@
  ******************************************************************************/
 
 #include "process_control.h"
-#include <syscall.h>
 #include "kernel/tasks.h"
 #include "kernel/utilities.h"
 #include "kernel/scheduler.h"
@@ -27,6 +26,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <syscall.h>
 
 pid_t create_process_dispatch(void *data)
 {
@@ -78,7 +78,7 @@ uint32_t is_predecessor_dispatch(void *data)
 int32_t wait_dispatch(void *data)
 {
     struct wait_specification spec = *((struct wait_specification *)data);
-    do_wait(spec.target);
+    return do_wait(spec.target);
 }
 
 int32_t pass_dispatch(void *data)
