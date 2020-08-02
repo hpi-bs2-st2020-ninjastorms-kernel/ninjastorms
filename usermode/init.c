@@ -18,14 +18,13 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
+#include "usermode/init.h"
+#include "usermode/examples.h"
+
 #include <syscall.h>
 #include <stdio.h>
 
-#include "user-mode/init.h"
-#include "user-mode/examples.h"
-
-void
-user_mode_init(void)
+void user_mode_init(void)
 {
   printf("User mode initialized with pid: %i\n", get_pid());
   /*
@@ -40,7 +39,6 @@ user_mode_init(void)
     run the configuration script 
   */
 
-  create_process(&task_recursive_exit);
-  create_process(&task_recursive_exit);
+  create_process(&task_sender);
   while (1); //init will run forever
 }

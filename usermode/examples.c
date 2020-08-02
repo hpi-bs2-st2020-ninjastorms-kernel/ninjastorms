@@ -26,7 +26,7 @@
 #include <sys/types.h>
 
 #include "examples.h"
-#include "user-mode/utilities.h"
+#include "usermode/utilities.h"
 
 void
 task_a(void)

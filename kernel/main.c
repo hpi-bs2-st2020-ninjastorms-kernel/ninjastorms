@@ -22,7 +22,7 @@
 
 #include "kernel/scheduler.h"
 #include "kernel/tasks.h"
-#include "user-mode/init.h"
+#include "usermode/init.h"
 
 #include <stdio.h>
 
