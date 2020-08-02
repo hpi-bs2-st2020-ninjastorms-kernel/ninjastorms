@@ -20,28 +20,29 @@
 
 #include "main.h"
 
-#include "kernel/drivers/button.h"
 #include "kernel/scheduler.h"
 #include "kernel/tasks.h"
-#include "memory.h"
 #include "user-mode/init.h"
-#include "kernel/utilities.h"
 
 #include <stdio.h>
 
-char shuriken[] =
-    "                 /\\\n"
-    "                /  \\\n"
-    "                |  |\n"
-    "              __/()\\__\n"
-    "             /   /\\   \\\n"
-    "            /___/  \\___\\\n";
-
-int kernel_main(void)
+void print_system_info(void)
 {
+  char shuriken[] =
+      "                 /\\\n"
+      "                /  \\\n"
+      "                |  |\n"
+      "              __/()\\__\n"
+      "             /   /\\   \\\n"
+      "            /___/  \\___\\\n";
   puts("This is ninjastorms OS");
   puts("  shuriken ready");
   puts(shuriken);
+}
+
+int kernel_main(void)
+{
+  print_system_info();
 
   add_task(&user_mode_init);
   start_scheduler();
