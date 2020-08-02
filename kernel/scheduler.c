@@ -62,38 +62,35 @@ void put_back_current_task()
   ring_buffer_insert(current_task);
 }
 
-void update_state(task_t* task)
+void update_state(task_t *task)
 {
   if (task->state == TASK_RUNNING)
+    return;
+  if (task->state == TASK_WAITING)
+  {
+    bool wait_done = update_wait();
+    if (wait_done)
     {
       return;
-    }
-    if (task->state == TASK_WAITING)
+    } // Wait not done, select another process.
+  }
+  if (task->state == TASK_DONE)
+  {
+    if (!any_task_waiting_on(task->pid))
     {
-      int8_t wait_done = update_wait();
-      if (wait_done)
-      {
-        return;
-      } // Wait not done, select another process.
+      cleanup_task(task);
     }
-    if (task->state == TASK_DONE)
-    {
-      if(!any_task_waiting_on(task->pid))
-      {
-        cleanup_task(task);
-      }
-    }
+  }
 }
 
-void
-find_next_active_task()
+void find_next_active_task()
 {
   int32_t initial_buffer_start = buffer_start;
   do
   {
     current_task = ring_buffer_remove();
     update_state(current_task);
-    if(current_task->state == TASK_RUNNING)
+    if (current_task->state == TASK_RUNNING)
       return;
   } while (buffer_start != initial_buffer_start);
   printf("All tasks done or waiting!\n");
@@ -112,6 +109,17 @@ void schedule_without_insertion(void)
   return_to_user_mode = 0;
 }
 
+/*
+* schedule is called in two cases:
+* 1. After a timer interrupt by interrupt_handler.S
+* 2. Through a syscall (exit/pass/wait)
+* 
+* In both cases schedule selects the next task and loads it into
+* current_task. Dispatching (switching execution context) is done
+* for case 1 in "load_current_task_state" in interrupt_handler.S
+* while in case 2 it is done after handling the syscall in
+* syscall_handler.S, when return_to_user_mode is set to 0
+*/
 void schedule(void)
 {
   store_errno();

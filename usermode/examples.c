@@ -39,7 +39,7 @@ task_a(void)
   {
     printf("  task a: %i\n", n++);
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
     if (n == 7)
     {
       print_tasks_info();
@@ -57,7 +57,7 @@ task_b(void)
   {
     printf("  task b: %i\n", n++);
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
     if (n > 7)
     {
       //Enough of b!
@@ -83,7 +83,7 @@ task_c(void)
       return;
     }
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
   }
 }
 
@@ -103,7 +103,7 @@ task_d(void)
   {
     printf("  task d: %i\n", n++);
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
     if (n > 25)
     {
       //That's enough for everyone!
@@ -122,7 +122,7 @@ task_e(void)
   {
     printf("  task e: %i\n", n++);
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
     if (n == 10)
     {
       create_process(&task_a);
@@ -137,7 +137,7 @@ task_receiver(void)
   while (c < 8)
   {
     volatile int i;
-    for (i = 0; i < 20000000; ++i);
+    sleep(20000000);
     int validity = 0;
     int received = read_ipc_buffer_and_check(&validity);
     if (!validity)
@@ -162,7 +162,7 @@ task_sender(void)
   while (c < 8)
   {
     volatile int i;
-    for (i = 0; i < 10000000; ++i);
+    sleep(10000000);
     errno = 0;
     if (ipc_buffer_send(message[c], receiver) == -1)
     {
@@ -223,7 +223,7 @@ task_pass_a(void)
   int n = 0;
   while(1)
   {
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
     printf("A: %i\n", n++);
     if(n%5 == 0){
       printf("Passing!\n");
@@ -238,7 +238,7 @@ task_pass_b(void)
   int n = 0;
   while(1)
   {
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
     printf("B: %i\n", n++);
     if(n%5 == 0){
       printf("Passing!\n");
@@ -252,7 +252,7 @@ task_print_info_periodically(void)
 {
     while(1)
     {
-        for(int j=0;j<500000000; ++j);
+        sleep(500000000);
         print_tasks_info();
     }
 }
@@ -262,7 +262,7 @@ task_recursive_exit(void)
 {
     create_process(&task_recursive_exit);
     print_tasks_info();
-    for(int j=0;j<500000; ++j);
+    sleep(500000);
     return;
 }
 
@@ -275,12 +275,12 @@ task_mutex_a (void)
   for(int i=0 ; i<10 ; i++) {
     lock_mutex(&shared_mem);
     int tmp_value = count_value;
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
     tmp_value++;
     count_value = tmp_value;
     printf("A: %i\n",count_value);
     unlock_mutex(&shared_mem);
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
   }
 }
 
@@ -290,11 +290,11 @@ task_mutex_b (void)
   for(int i=0 ; i<10 ; i++) {
     lock_mutex(&shared_mem);
     int tmp_value = count_value;
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
     tmp_value--;
     count_value = tmp_value;
     printf("B: %i\n",count_value);
     unlock_mutex(&shared_mem);
-    for(int j=0;j<5000000; ++j);
+    sleep(5000000);
   }
 }

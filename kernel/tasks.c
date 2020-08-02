@@ -224,7 +224,7 @@ bool process_is_descendent_of(pid_t child, pid_t pred)
     if (child == pred)
     {
         //question of definition
-        return 1;
+        return true;
     }
     int current_parent = -1;
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
@@ -238,7 +238,7 @@ bool process_is_descendent_of(pid_t child, pid_t pred)
     if (current_parent == -1)
     {
         // pid child is not a task!
-        return 0;
+        return false;
     }
     while (!(current_parent == 1 || current_parent == pred || current_parent == 0))
     {
@@ -283,10 +283,10 @@ bool any_task_waiting_on(pid_t target)
     {
         if (tasks[i].valid == 1 && tasks[i].state == TASK_WAITING && tasks[i].waiting_on == target)
         {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 // Check if current_task, in TASK_WAIT state, is done waiting and update accordingly
@@ -294,16 +294,16 @@ bool update_wait(void)
 {
     if (current_task->state != TASK_WAITING)
     {
-        return 0;
+        return false;
     }
     task_t *target = _get_task(current_task->waiting_on);
     if (target->state == TASK_DONE)
     {
         current_task->state = TASK_RUNNING;
         current_task->reg[0] = target->result; // put return value for syscall_handler in r0
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 /*
@@ -359,7 +359,7 @@ void print_task_debug_info(void)
 void _open_ipc_buffer(size_t size)
 {
     // Size will be ignored for now
-    current_task->ipc_buffer_open = 1;
+    current_task->ipc_buffer_open = true;
 
     current_task->ipc_buffer_start = 0;
     current_task->ipc_buffer_end = 0;
@@ -387,7 +387,7 @@ int32_t _read_ipc_buffer(void)
 
 int32_t _close_ipc_buffer(void)
 {
-    current_task->ipc_buffer_open = 0;
+    current_task->ipc_buffer_open = false;
     return 0;
 }
 

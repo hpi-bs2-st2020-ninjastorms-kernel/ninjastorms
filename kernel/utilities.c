@@ -58,12 +58,12 @@ bool has_rights(pid_t calling_process, pid_t target)
     // same process
     if (calling_process == target)
     {
-        return 1;
+        return true;
     }
     // target is child of calling_process
     if (process_is_descendent_of(target, calling_process))
     {
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }

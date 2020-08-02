@@ -25,3 +25,5 @@
 int32_t read_ipc_buffer_and_block(void);
 
 int32_t read_ipc_buffer_and_check(int32_t* validity);
+
+void sleep(uint64_t cycles);

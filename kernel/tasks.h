@@ -55,12 +55,12 @@ struct task_t
 	uint32_t stored_errno;
 
 	int32_t ipc_buffer[IPC_BUFFER_SIZE];
-	int8_t ipc_buffer_open;
+	bool ipc_buffer_open;
 	int8_t ipc_buffer_start;
 	int8_t ipc_buffer_end;
 
-	//used for navigating the array, boolean
-	int8_t valid;
+	//used for navigating the array
+	bool valid;
 };
 typedef struct task_t task_t;
 
