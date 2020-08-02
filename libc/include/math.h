@@ -18,28 +18,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "usermode/init.h"
-#include "usermode/examples.h"
+#pragma once
 
-#include <syscall.h>
-#include <stdio.h>
-
-void user_mode_init(void)
-{
-  printf("User mode initialized with pid: %i\n", get_pid());
-  /*
-    Call your examples here, like this:
-
-    create_process(&my_example);
-
-    where my_example() is a function that will be used
-    to create a process/ task.
-    If you want to write new functions in a new file, make
-    sure to include it here, add it to "Makefile.am" and
-    run the configuration script 
-  */
-
-  create_process(&task_orchestrate_example);
-  create_process(&task_print_info_periodically);
-  while (1); //init will run forever
-}
+int ackermann(int m, int n);

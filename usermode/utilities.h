@@ -27,3 +27,5 @@ int32_t read_ipc_buffer_and_block(void);
 int32_t read_ipc_buffer_and_check(int32_t* validity);
 
 void sleep(uint64_t cycles);
+
+void send_when_ready(int *message, int message_length, pid_t receiver);

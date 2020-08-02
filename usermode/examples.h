@@ -51,3 +51,5 @@ void task_recursive_exit(void);
 void task_mutex_a (void);
 
 void task_mutex_b (void);
+
+void task_orchestrate_example(void);

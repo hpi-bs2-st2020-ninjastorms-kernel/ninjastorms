@@ -18,15 +18,15 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include <syscall.h>
+#include "examples.h"
+#include "usermode/utilities.h"
 
+#include <syscall.h>
 #include <stdio.h>
 #include <errno.h>
 #include <thread.h>
 #include <sys/types.h>
-
-#include "examples.h"
-#include "usermode/utilities.h"
+#include <math.h>
 
 void
 task_a(void)
@@ -144,8 +144,9 @@ task_receiver(void)
     {
       printf("Oops forgot to open buffer\n");
       ipc_buffer_open(16);
+      continue;
     }
-    printf(" Received: %c\n", received);
+    printf("Received: %c\n", received);
     c++;
   }
   printf("Closing buffer!\n");
@@ -297,4 +298,30 @@ task_mutex_b (void)
     unlock_mutex(&shared_mem);
     sleep(5000000);
   }
+}
+
+int task_receive_and_calculate(void)
+{
+  ipc_buffer_open(2);
+  int a = read_ipc_buffer_and_block();
+  int b = read_ipc_buffer_and_block();
+  printf("Read %i and %i \n",a,b);
+  int result =  ackermann(a,b);
+  printf("Calculated %i \n",result);
+  return result;
+}
+
+void task_orchestrate_example(void)
+{
+  // do something with ipc, do something with mutex, do something with wait
+  // Start calculater
+  int value_a = 3;
+  int value_b = 10;
+  pid_t calculator = create_process(&task_receive_and_calculate);
+  // Send values to calculater
+  int message[] = {value_a, value_b};
+  send_when_ready(&message,2,calculator);
+  // Wait on results
+  int result = wait_on_pid(calculator);
+  printf("Calculation done! Result is: %i \n", result);
 }

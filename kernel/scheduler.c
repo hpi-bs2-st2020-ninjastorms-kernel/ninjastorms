@@ -65,7 +65,9 @@ void put_back_current_task()
 void update_state(task_t *task)
 {
   if (task->state == TASK_RUNNING)
+  {
     return;
+  }
   if (task->state == TASK_WAITING)
   {
     bool wait_done = update_wait();
@@ -92,6 +94,7 @@ void find_next_active_task()
     update_state(current_task);
     if (current_task->state == TASK_RUNNING)
       return;
+    put_back_current_task();
   } while (buffer_start != initial_buffer_start);
   printf("All tasks done or waiting!\n");
 }

@@ -17,12 +17,14 @@ libc_libc_la_SOURCES = \
     libc/stdio/puts.c \
     libc/stdio/vprintf.c \
     libc/syscall/syscall.c \
+    libc/math/math.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/thread/thread.c \
     libc/include/errno.h \
     libc/include/syscall.h \
+    libc/include/math.h \
     libc/include/stddef.h \
     libc/include/stdio.h \
     libc/include/string.h \

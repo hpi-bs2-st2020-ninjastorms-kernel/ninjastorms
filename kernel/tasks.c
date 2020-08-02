@@ -150,11 +150,8 @@ void reparent_tasks(pid_t killed_pid)
 void exit_current_task(void)
 {
     // will leave the task in the state TASK_DONE, until no task is waiting on it anymore
-    task_t *task_to_kill = current_task;
-    task_to_kill->state = TASK_DONE;
-    int pid_to_kill = current_task->pid;
-    printf("Task %i will be exited\n", pid_to_kill);
-    reparent_tasks(pid_to_kill);
+    current_task->state = TASK_DONE;
+    printf("Task %i is done\n", current_task->pid);
     schedule();
 }
 

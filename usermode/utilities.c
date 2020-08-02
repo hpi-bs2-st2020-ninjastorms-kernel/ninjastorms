@@ -21,17 +21,18 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <syscall.h>
+#include <stdio.h>
 
 #include "utilities.h"
 
 int32_t read_ipc_buffer_and_block(void)
 {
-    int DELAY = 50000;
+    int DELAY = 500000;
     int result = 0;
     do{
         result = ipc_buffer_read();
         if (result == -1){
-            for(int i=0; i<DELAY; ++i);
+            sleep(DELAY);
         }
     } while(result == -1 && errno == EBUFFEREMPTY);
     return result;
@@ -52,4 +53,31 @@ int32_t read_ipc_buffer_and_check(int32_t* validity)
 void sleep(uint64_t cycles)
 {
     for (long i = 0; i < cycles; ++i);
+}
+
+void send_when_ready(int *message, int message_length, pid_t receiver)
+{
+    int i = 0;
+    while (i < message_length)
+    {
+        errno = 0;
+        if (ipc_buffer_send(message[i], receiver) == -1)
+        {
+            if (errno == EBUFFERCLOSED)
+            {
+                printf("Receiver not ready \n");
+                sleep(10000000);
+            }
+            else if (errno == EBUFFERFULL)
+            {
+                printf("Buffer full, not sending \n");
+                sleep(10000000);
+            }
+        }
+        else
+        {
+            // Sent successfully
+            i++;
+        }
+    }
 }
