@@ -21,7 +21,7 @@
 #pragma once
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 void init_interrupt_handling(void);

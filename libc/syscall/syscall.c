@@ -27,17 +27,18 @@ int32_t syscall(unsigned int number, void *data)
     unsigned int ret;
 
     asm(
-        // store arguments in registers
-        "mov r0, %[number] \n" // store number in r0
-        "mov r1, %[data] \n"   //   and data in r1
+        // Store arguments in registers.
+        "mov r0, %[number] \n" // Store syscall number in r0
+        "mov r1, %[data] \n"   // and address of data in r1.
 
-        "svc #0 \n"            // make supervisor call
+        "svc #0 \n"            // Make supervisor call.
 
-        "mov %[ret], r0 \n"    // save return value
+        "mov %[ret], r0 \n"    // Save return value.
 
         : [ ret ] "=r"(ret)
         : [ number ] "r"(number),
-          [ data ] "r"(data));
+          [ data ] "r"(data)
+        );
     return ret;
 }
 

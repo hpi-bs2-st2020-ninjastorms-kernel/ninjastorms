@@ -31,9 +31,9 @@ int32_t read_ipc_buffer_and_block(void)
     int result = 0;
     do{
         result = ipc_buffer_read();
-        if (result == -1){
-            sleep(DELAY);
-        }
+        if (result == -1)
+            delay(DELAY);
+
     } while(result == -1 && errno == EBUFFEREMPTY);
     return result;
 }
@@ -50,7 +50,7 @@ int32_t read_ipc_buffer_and_check(int32_t* validity)
     return result;
 }
 
-void sleep(uint64_t cycles)
+void delay(uint64_t cycles)
 {
     for (long i = 0; i < cycles; ++i);
 }
@@ -71,18 +71,15 @@ void send_when_ready(int *message, int message_length, pid_t receiver)
             if (errno == EBUFFERCLOSED)
             {
                 printf("Receiver not ready \n");
-                sleep(10000000);
+                delay(10000000);
             }
             else if (errno == EBUFFERFULL)
             {
                 printf("Buffer full, not sending \n");
-                sleep(10000000);
+                delay(10000000);
             }
         }
-        else
-        {
-            // Sent successfully
-            i++;
-        }
+        else  
+            i++; // Sent successfully
     }
 }

@@ -38,7 +38,6 @@ enum TASK_STATE
 
 struct task_t
 {
-	// r01..r12, sp, lr, pc
 	uint32_t reg[13];
 	uint32_t sp;
 	uint32_t lr;
@@ -59,7 +58,6 @@ struct task_t
 	int8_t ipc_buffer_start;
 	int8_t ipc_buffer_end;
 
-	//used for navigating the array
 	bool valid;
 };
 

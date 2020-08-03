@@ -27,13 +27,17 @@
 #include "kernel/syscall/syscall_dispatcher.h"
 
 #include <stdio.h>
+#include <stddef.h>
 
 int buffer_start = 0;
 int buffer_end = 0;
 int isRunning = 0;
+// Ring buffer is used for scheduling.
+// All tasks that can be scheduled are placed in the buffer,
+// when "schedule()" is called, a valid item is drawn from 
+// the start.
 task_t *ring_buffer[MAX_TASK_NUMBER] = {0};
 
-// TODO: disable interrupts during insertion
 int32_t ring_buffer_insert(task_t *task)
 {
   int new_end = (buffer_end + 1) % MAX_TASK_NUMBER;
@@ -50,7 +54,7 @@ task_t *
 ring_buffer_remove(void)
 {
   if (buffer_start == buffer_end)
-    return &tasks[0];
+    return NULL;
 
   task_t *task = ring_buffer[buffer_start];
   buffer_start = (buffer_start + 1) % MAX_TASK_NUMBER;
@@ -65,23 +69,19 @@ void put_back_current_task()
 void update_state(task_t *task)
 {
   if (task->state == TASK_RUNNING)
-  {
     return;
-  }
+
   if (task->state == TASK_WAITING)
   {
     bool wait_done = update_wait(task);
     if (wait_done)
-    {
       return;
-    } // Wait not done, select another process.
+    // Wait not done, select another process.
   }
   if (task->state == TASK_DONE)
   {
     if (!any_task_waiting_on(task->pid))
-    {
       cleanup_task(task);
-    }
   }
 }
 
@@ -99,15 +99,12 @@ void find_next_active_task(void)
   printf("All tasks done or waiting!\n");
 }
 
-void reset_timer(void)
-{
-  timer_start(TIMER_LOAD_VALUE);
-}
-
+// Schedule the next task, but don't insert current
+// task back into buffer. This means current task 
+// will no longer be scheduled.
 void schedule_without_insertion(void)
 {
   find_next_active_task();
-  printf("New task will be Task %i\n", current_task->pid);
   restore_errno();
   return_to_user_mode = 0;
 }
@@ -121,7 +118,7 @@ void schedule_without_insertion(void)
 * current_task. Dispatching (switching execution context) is done
 * for case 1 in "load_current_task_state" in interrupt_handler.S
 * while in case 2 it is done after handling the syscall in
-* syscall_handler.S, when return_to_user_mode is set to 0
+* syscall_handler.S, when return_to_user_mode is set to 0.
 */
 void schedule(void)
 {
@@ -151,7 +148,7 @@ void rebuild_ring_buffer(void)
   buffer_start = 0;
   for (int i = 0; i < MAX_TASK_NUMBER; i++)
   {
-    if (tasks[i].valid == 1)
+    if (tasks[i].valid)
     {
       ring_buffer[buffer_position] = &tasks[i];
       buffer_position++;
@@ -165,8 +162,15 @@ int32_t insert_task(task_t *new_task)
   return ring_buffer_insert(new_task);
 }
 
+void
+reset_timer()
+{
+  timer_start(TIMER_LOAD_VALUE);
+}
+
 void do_pass(void)
 {
+  reset_timer();
   schedule();
 }
 

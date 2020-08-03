@@ -29,12 +29,12 @@
 
 lock_mutex:
     LDR r2, =locked
-    SWP r1, r2, [r0]       // Swap R2 with location [R0], [R0] value placed in R1
-    CMP r1, r2             // Check if memory value was 'locked'
-    BEQ lock_mutex         // If so, retry immediately
-    BX  lr                 // If not, lock successful, return
+    SWP r1, r2, [r0]       // Swap R2 with location [R0], [R0] value placed in R1.
+    CMP r1, r2             // Check if memory value was 'locked'.
+    BEQ lock_mutex         // If so, retry immediately.
+    BX  lr                 // If not, lock successful, return.
 
 unlock_mutex:
     LDR r1, =unlocked
-    STR r1, [r0]           // Write value 'unlocked' to location [R0]
+    STR r1, [r0]           // Write value 'unlocked' to location [R0].
     BX  lr

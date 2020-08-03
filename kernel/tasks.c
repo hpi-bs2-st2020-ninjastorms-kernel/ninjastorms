@@ -44,7 +44,6 @@ int32_t next_pid = 1;
 */
 void task_exit(int32_t return_value)
 {
-    printf("Task %i exited with %i \n", current_task->pid, return_value);
     exit(return_value);
 }
 
@@ -58,38 +57,37 @@ void restore_errno(void)
     errno = current_task->stored_errno;
 }
 
-pid_t get_new_pid(void)
+pid_t create_new_pid(void)
 {
     return next_pid++;
 }
 
 pid_t get_new_parent_pid(task_t *new_process)
 {
+    // The init process has itself as parent.
     if (new_process->pid == 1)
-    {
-        // the init process has no parent
-       return 1;
-    }
+        return 1;
+
     return current_task->pid;
 }
 
 pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase, bool is_kernel_mode_task)
 {
     for (int i = 0; i < 13; i++)
-    {
         task->reg[i] = i;
-    }
+
     task->sp = stackbase;
     task->lr = (unsigned int)&task_exit;
     task->pc = (unsigned int)entrypoint;
-    if(is_kernel_mode_task)
+
+    if (is_kernel_mode_task)
         task->cpsr = CPSR_MODE_SVC;
     else
         task->cpsr = CPSR_MODE_USER;
 
-    task->pid = get_new_pid();
+    task->pid = create_new_pid();
     task->parent_pid = get_new_parent_pid(task);
-    
+
     task->state = TASK_RUNNING;
     task->valid = 1;
 
@@ -98,12 +96,11 @@ pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase, bool is_kern
 
 void clear_task(task_t *task_to_clear)
 {
-    // should be replaced by memset(task_to_clear,0,size_of(task_t));
-    task_to_clear->valid = 0; //should be enough, but let's clean it nontheless
+    task_to_clear->valid = 0;
+
     for (int i = 0; i <= 13; i++)
-    {
         task_to_clear->reg[i] = 0;
-    }
+
     task_to_clear->lr = 0;
     task_to_clear->pc = 0;
     task_to_clear->sp = 0;
@@ -113,23 +110,22 @@ void clear_task(task_t *task_to_clear)
     task_to_clear->stored_errno = 0;
 
     for (int i = 0; i <= IPC_BUFFER_SIZE; i++)
-    {
         task_to_clear->ipc_buffer[i] = 0;
-    }
+
     task_to_clear->ipc_buffer_start = 0;
     task_to_clear->ipc_buffer_end = 0;
     task_to_clear->ipc_buffer_open = 0;
 
-    // zeroing the stack should be done
-    // currently the used pid will not be freed
+    // The task specific stack is not zeroed.
+    // Currently the used pid will not be freed.
 }
 
 int32_t clear_all_tasks(void)
 {
-    task_t *task_to_kill = (void *)0;
+    task_t *task_to_kill = NULL;
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
-        if (tasks[i].valid == 1)
+        if (tasks[i].valid)
         {
             task_to_kill = &tasks[i];
             clear_task(task_to_kill);
@@ -138,23 +134,22 @@ int32_t clear_all_tasks(void)
     return 0;
 }
 
+// Set parent_pid for all tasks that have killed_pid as parent
+// to 1, thus setting init as their parent.
 void reparent_tasks(pid_t killed_pid)
 {
-    // All tasks that have killed_pid as parent will now have 1 as parent (init)
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
-        if (tasks[i].valid == 1 && tasks[i].parent_pid == killed_pid)
-        {
+        if (tasks[i].valid && tasks[i].parent_pid == killed_pid)
             tasks[i].parent_pid = 1;
-        }
     }
 }
 
 void exit_current_task(void)
 {
-    // will leave the task in the state TASK_DONE, until no task is waiting on it anymore
+    // This will leave the task in the state TASK_DONE, until no task
+    // is waiting on it anymore, which is updated in scheduler.c/update_state().
     current_task->state = TASK_DONE;
-    printf("Task %i is done\n", current_task->pid);
     schedule();
 }
 
@@ -171,9 +166,7 @@ int32_t next_free_tasks_position(void)
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
         if (!tasks[i].valid)
-        {
             return i;
-        }
     }
     return -1;
 }
@@ -182,18 +175,15 @@ task_t *_get_task(pid_t pid)
 {
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
-        if (tasks[i].valid == 1 && tasks[i].pid == pid)
-        {
+        if (tasks[i].valid && tasks[i].pid == pid)
             return &tasks[i];
-        }
     }
     errno = EINVALPID;
     return NULL;
 }
 
-/*
- * returns new tasks' pid or -1
- */
+// Creates a new task from given function pointer
+// Returns new tasks' pid or -1 on error
 pid_t add_task(void *entrypoint, bool is_kernel_mode_task)
 {
     if (!is_privileged())
@@ -214,7 +204,9 @@ pid_t add_task(void *entrypoint, bool is_kernel_mode_task)
     unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE * new_task_pos;
     unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase, is_kernel_mode_task);
     insert_task(&tasks[new_task_pos]);
+
     task_count++;
+
     return new_pid;
 }
 
@@ -222,11 +214,10 @@ pid_t add_task(void *entrypoint, bool is_kernel_mode_task)
 bool process_is_descendent_of(pid_t child, pid_t pred)
 {
     if (child == pred)
-    {
-        //question of definition
         return true;
-    }
+
     int current_parent = -1;
+    // Get first parent, check if child task exists.
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
         if (tasks[i].pid == child)
@@ -236,10 +227,9 @@ bool process_is_descendent_of(pid_t child, pid_t pred)
         }
     }
     if (current_parent == -1)
-    {
-        // pid child is not a task!
         return false;
-    }
+
+    // Look for predecessors until at the top of the hierarchy or pred found.
     while (!(current_parent == 1 || current_parent == pred || current_parent == 0))
     {
         for (int i = 0; i < MAX_TASK_NUMBER; i++)
@@ -258,20 +248,17 @@ int32_t kill_process(pid_t target)
 {
     // Don't use kill on the current task, use exit() instead.
     if (target == current_task->pid)
-    {
         return -1;
-    }
+
     task_t *task_to_kill = _get_task(target);
 
-    // Task with that pid does not exist
+    // Task with that pid does not exist.
     if (task_to_kill == NULL)
-    {
         return -1;
-    }
 
     cleanup_task(task_to_kill);
 
-    // remove task from ring buffer by building new ring buffer
+    // Remove task from ring buffer by building new ring buffer.
     rebuild_ring_buffer();
 
     return 0;
@@ -281,10 +268,8 @@ bool any_task_waiting_on(pid_t target)
 {
     for (int i = 0; i < MAX_TASK_NUMBER; ++i)
     {
-        if (tasks[i].valid == 1 && tasks[i].state == TASK_WAITING && tasks[i].waiting_on == target)
-        {
+        if (tasks[i].valid && tasks[i].state == TASK_WAITING && tasks[i].waiting_on == target)
             return true;
-        }
     }
     return false;
 }
@@ -293,30 +278,26 @@ bool any_task_waiting_on(pid_t target)
 bool update_wait(task_t *task)
 {
     if (task->state != TASK_WAITING)
-    {
         return false;
-    }
+
     task_t *target = _get_task(task->waiting_on);
     if (target->state == TASK_DONE)
     {
         task->state = TASK_RUNNING;
-        task->reg[0] = target->result; // put return value for syscall_handler in r0
+        task->reg[0] = target->result; // Put return value for syscall_handler in r0.
         return true;
     }
     return false;
 }
 
-/*
-*  Set the current task as waiting, waiting on task with pid target.
-*  Reschedule.
-*/
+// Set the current task as waiting, waiting on task with pid target.
+// Reschedule afterwards.
 int32_t do_wait(pid_t target)
 {
     task_t *waiting = _get_task(target);
     if (waiting == NULL)
-    {
         return -1;
-    }
+    
     current_task->state = TASK_WAITING;
     current_task->waiting_on = target;
     schedule();
@@ -325,7 +306,7 @@ int32_t do_wait(pid_t target)
 void do_exit_with(int32_t result)
 {
     task_t *task_to_kill = current_task;
-    task_to_kill->result = result; // return value
+    task_to_kill->result = result;
 
     exit_current_task();
 }
@@ -333,16 +314,14 @@ void do_exit_with(int32_t result)
 void print_task_debug_info(void)
 {
     printf("-----------TASKS INFO-----------\n");
-    printf("Current process\n----------\nPID:%i  PARENT:%i\n----------\n",
+    printf("Current process\n-------------\nPID:%i  PARENT:%i\n-------------\n",
            current_task->pid, current_task->parent_pid);
     printf("Tasks-Array --- Task count %i\n", task_count);
     unsigned int tasksinfo[MAX_TASK_NUMBER] = {0};
     for (int i = 0; i < MAX_TASK_NUMBER; i++)
     {
-        if (tasks[i].valid == 1)
-        {
+        if (tasks[i].valid)
             tasksinfo[i] = tasks[i].pid;
-        }
     }
     printf("[%i][%i][%i][%i][%i][%i][%i][%i]\n",
            tasksinfo[0], tasksinfo[1], tasksinfo[2], tasksinfo[3],
@@ -354,11 +333,11 @@ void print_task_debug_info(void)
     printf("-------------------------------\n");
 }
 
-// IPC
+// Inter process communication (IPC)
 
 void _open_ipc_buffer(size_t size)
 {
-    // Size will be ignored for now
+    // Size will be ignored for now.
     current_task->ipc_buffer_open = true;
 
     current_task->ipc_buffer_start = 0;
@@ -393,10 +372,10 @@ int32_t _close_ipc_buffer(void)
 
 int32_t _send_to_ipc_bufer(int32_t value, pid_t target)
 {
-    // maybe check at target, if sender is allowed?
     task_t *receiver = (_get_task(target));
     if (receiver == NULL)
     {
+        errno = EINVALPID;
         return -1;
     }
     if (!receiver->ipc_buffer_open)

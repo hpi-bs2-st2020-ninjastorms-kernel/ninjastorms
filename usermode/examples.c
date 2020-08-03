@@ -28,13 +28,14 @@
 #include <sys/types.h>
 #include <math.h>
 
+// Print data received via ipc.
 void task_receiver(void)
 {
   int c = 0;
   while (c < 8)
   {
     volatile int i;
-    sleep(20000000);
+    delay(20000000);
     int validity = 0;
     int received = read_ipc_buffer_and_check(&validity);
     if (!validity)
@@ -51,30 +52,38 @@ void task_receiver(void)
   exit(0);
 }
 
+// Create a new receiver task and send data to it.
 void task_sender(void)
 {
   int receiver = create_process(&task_receiver);
   unsigned int c = 0;
   int message[8] = {83, 104, 105, 110, 111, 98, 105, 0};
-  send_when_ready(&message, 8, receiver);
+  send_when_ready(message, 8, receiver);
 }
 
+// Print task info every couple of seconds.
 void task_print_info_periodically(void)
 {
   while (1)
   {
-    sleep(500000000);
+    delay(500000000);
     print_tasks_info();
   }
 }
 
+// Create a new task with same function and exit.
 void task_recursive_exit(void)
 {
   create_process(&task_recursive_exit);
   print_tasks_info();
-  sleep(500000);
+  delay(500000);
   return;
 }
+
+// With the 2 tasks below you can see the implementation
+// of mutex in action. Count_value will be 0 at the end.
+// Try commenting out the lines about mutex and see what
+// the result is otherwise.
 
 unsigned int shared_mem = unlocked;
 int count_value = 0;
@@ -85,13 +94,14 @@ void task_mutex_a(void)
   {
     lock_mutex(&shared_mem);
     int tmp_value = count_value;
-    sleep(5000000);
+    delay(5000000);
     tmp_value++;
     count_value = tmp_value;
     printf("A: %i\n", count_value);
     unlock_mutex(&shared_mem);
-    sleep(5000000);
+    delay(5000000);
   }
+  printf("A done!\n");
 }
 
 void task_mutex_b(void)
@@ -100,15 +110,18 @@ void task_mutex_b(void)
   {
     lock_mutex(&shared_mem);
     int tmp_value = count_value;
-    sleep(5000000);
+    delay(5000000);
     tmp_value--;
     count_value = tmp_value;
     printf("B: %i\n", count_value);
     unlock_mutex(&shared_mem);
-    sleep(5000000);
+    delay(5000000);
   }
+  printf("B done!\n");
 }
 
+// Receive two numbers via ipc and calculate the value of the ackermann
+// function for them.
 int task_receive_and_calculate(void)
 {
   ipc_buffer_open(2);
@@ -119,12 +132,13 @@ int task_receive_and_calculate(void)
   return result;
 }
 
+// A queue.
 unsigned int mutex = unlocked;
 int printing_queue[4];
 int queue_start = 0;
 int queue_end = 0;
 
-int write_queue(int value)
+int enqueue(int value)
 {
   int new_end = (queue_end + 1) % 4;
   if (new_end != queue_start)
@@ -137,7 +151,7 @@ int write_queue(int value)
   return -1;
 }
 
-int read_queue(void)
+int dequeue(void)
 {
   if (queue_start == queue_end)
   {
@@ -149,13 +163,16 @@ int read_queue(void)
   return value;
 }
 
+
+// Print values from the queue.
 void task_queue_printer(void)
 {
   while (1)
   {
+    delay(100000000);
     //Read from printing queue
     lock_mutex(&mutex);
-    int read_value = read_queue();
+    int read_value = dequeue();
     unlock_mutex(&mutex);
     if (read_value != -1)
     {
@@ -168,6 +185,11 @@ void task_queue_printer(void)
   }
 }
 
+// In this example, you can see 3 different types of 
+// communication between processes: wait/return, ipc-buffer
+// and shared memory with mutes.
+// It also demonstrates a multitude of syscalls.
+
 void task_orchestrate_example(void)
 {
   pid_t printer = create_process(&task_queue_printer);
@@ -179,7 +201,7 @@ void task_orchestrate_example(void)
 
     // Send values to calculater
     int message[] = {value_a, m};
-    send_when_ready(&message, 2, calculator);
+    send_when_ready(message, 2, calculator);
     // Wait on results
     int result = wait_on_pid(calculator);
 
@@ -188,11 +210,12 @@ void task_orchestrate_example(void)
     while (queue_result == -1)
     {
       printf("Trying to write %i \n", result);
-      lock_mutex(&mutex);
-      queue_result = write_queue(result);
-      unlock_mutex(&mutex);
+      //lock_mutex(&mutex);
+      queue_result = enqueue(result);
+      //unlock_mutex(&mutex);
       pass();
     }
   }
+  delay(300000000);
   kill(printer);
 }

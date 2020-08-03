@@ -53,6 +53,9 @@ int32_t print_tasks_info(void);
 
 int32_t shutdown(void);
 
+// Structs used to capsulate data,
+// send address to struct to kernel mode.
+
 struct create_process_specification
 {
     void *function;
@@ -61,7 +64,6 @@ struct create_process_specification
 struct kill_specification
 {
     uint32_t pid;
-    //int signal;
 };
 
 struct wait_specification

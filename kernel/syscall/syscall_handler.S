@@ -26,7 +26,7 @@
 .type syscall_handler STT_FUNC
 
 // r0 contains the syscall number.
-// r1 contains the address of the data.
+// r1 contains the address of the data needed to perform syscall.
 syscall_handler:
     push {fp, lr}
     
@@ -36,13 +36,13 @@ syscall_handler:
     // we use r3 for registers r0 to r2 and r2 for all other registers.
     push {r3}
     ldr r3, =current_task    // Get the address of the task_struct.
-    ldr r3, [r3]    // Dereference current_task to get the task_struct.
+    ldr r3, [r3]             // Dereference current_task to get the task_struct.
     stm r3!, {r0-r2}
     mov r2, r3
     pop {r3}
     stm r2!, {r3-r12}
-    stm r2!, {sp, lr}^   // Store sp and lr from user mode.
-    str lr, [r2]    // Store pc.
+    stm r2!, {sp, lr}^       // Store sp and lr from user mode.
+    str lr, [r2]             // Store pc.
 
     // Call syscall_dispatcher.
     bl syscall_dispatcher
@@ -56,9 +56,9 @@ syscall_handler:
     beq reload_task
 
 return:
-    pop {r1, fp, lr}   // Restore link register and frame pointer.
-    movs pc, lr     // Return from svc (return and restore cpsr).
+    pop {r1, fp, lr}          // Restore link register and frame pointer.
+    movs pc, lr               // Return from svc (return and restore cpsr).
 
 reload_task:
-    pop {r1, fp, lr}   // Restore stack pointer.
+    pop {r1, fp, lr}          // Restore stack pointer.
     b load_current_task_state

@@ -25,16 +25,16 @@
 #include "kernel/drivers/interrupt.h"
 #include "kernel/interrupt_handler.h"
 
-// builds the interrupt vector table
+// Builds the interrupt vector table.
 void setup_ivt(void)
 {
   // This is the machine word for "ldr pc, [pc, #20]".
   unsigned int ldr_pc_pc_20 = 0xe59ff014;
 
   // The processor jumps to one of these addresses whenever an interrupt
-  // arrives. Because the word contains the "ldr pc, [pc, #20]" instruction, 
+  // arrives. Because the word contains the "ldr pc, [pc, #20]" instruction,
   // it loads the address specified at byte offset 20, where the actual address
-  // of the appropriate interrupt handler is stored. 
+  // of the appropriate interrupt handler is stored.
   *(unsigned int *)(IVT_OFFSET + 0x00) = 0;            //TODO: reset
   *(unsigned int *)(IVT_OFFSET + 0x04) = ldr_pc_pc_20; // 0x20 undefined instruction
   *(unsigned int *)(IVT_OFFSET + 0x08) = ldr_pc_pc_20; // 0x24 software interrupt
@@ -77,7 +77,8 @@ void enable_irq(void)
   asm(
       "mrs  r1, cpsr\n"
       "bic  r1, r1, #0x80\n"
-      "msr  cpsr_c, r1\n");
+      "msr  cpsr_c, r1\n"
+      );
 }
 
 void init_interrupt_handling(void)

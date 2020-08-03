@@ -24,8 +24,6 @@
 #include <errno.h>
 #include <sys/types.h>
 
-// KERNEL UTILITIES
-
 uint32_t get_operating_mode(void)
 {
     // Processing modes on ARM
@@ -41,29 +39,27 @@ uint32_t get_operating_mode(void)
     asm(
         "mrs r3, cpsr\n"
         "mov %[current_pcsr], r3\n"
-        : [ current_pcsr ] "=r"(current_pcsr));
-    return current_pcsr & 0x1f;
+        : [ current_pcsr ] "=r"(current_pcsr)
+        );
+    return current_pcsr & 0x1f; // Masking last 5 bits.
 }
+
+int32_t user_mode_pe = 0b10000;
 
 bool is_privileged(void)
 {
-    return get_operating_mode() != 0b10000;
+    return get_operating_mode() != user_mode_pe;
 }
 
-/*
- * check if calling_process has rights for actions on process target
- */
+// Check if calling_process has rights for actions on process target
 bool has_rights(pid_t calling_process, pid_t target)
 {
     // same process
     if (calling_process == target)
-    {
         return true;
-    }
-    // target is child of calling_process
+    
     if (process_is_descendent_of(target, calling_process))
-    {
         return true;
-    }
+    
     return false;
 }

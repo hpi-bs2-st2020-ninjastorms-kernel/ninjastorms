@@ -32,6 +32,7 @@
 
 int8_t return_to_user_mode = 0;
 
+// Do not change these numbers without changing them in the syscall.c library code.
 enum SYSCALL_NUMBER
 {
     ZERO_SYSCALL = 0,
@@ -70,7 +71,7 @@ int32_t task_info_dispatch(void *data)
 
 uint32_t shutdown_dispatch(void *data)
 {
-    // Shutdown is more complicated on ARM. Currently only an endless loop
+    // Shutdown is more complicated on ARM. Currently only an endless loop.
     clear_all_tasks();
     while (1);
 }

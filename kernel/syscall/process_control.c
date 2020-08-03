@@ -31,8 +31,7 @@
 pid_t create_process_dispatch(void *data)
 {
     struct create_process_specification spec = *((struct create_process_specification *)data);
-    int result = add_task(spec.function, false);
-    return result;
+    return add_task(spec.function, false);
 }
 
 pid_t get_pid_dispatch(void *data)
@@ -49,6 +48,7 @@ int32_t exit_dispatch(void *data)
 {
     struct exit_specification spec = *((struct exit_specification *)data);
     do_exit_with(spec.value);
+    return 0;
 }
 
 int32_t kill_dispatch(void *data)
