@@ -44,7 +44,7 @@ enum SYSCALL_NUMBER
     IS_PREDECESSOR = 6,
     //FORK = 7, (Not implemented)
     WAIT = 8,
-    PASS = 9,
+    YIELD = 9,
 
     //IPC
     OPEN_IPC_BUFFER = 10,
@@ -101,7 +101,7 @@ int32_t syscall_dispatcher(uint32_t syscallno, void *data)
         return is_predecessor_dispatch(data);
     case WAIT:
         return wait_dispatch(data);
-    case PASS:
+    case YIELD:
         return yield_dispatch(data);
     case OPEN_IPC_BUFFER:
         return open_ipc_buffer_dispatch(data);
