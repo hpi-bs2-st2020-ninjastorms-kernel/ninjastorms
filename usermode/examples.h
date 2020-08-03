@@ -20,36 +20,10 @@
 
 #pragma once
 
-void task_a(void);
-
-void task_b(void);
-
-void task_c(void);
-
-void task_d(void);
-
-void task_e(void);
-
 void task_receiver(void);
 
 void task_sender(void);
 
-int task_calculate(void);
-
-void task_wait(void);
-
-int task_exit_test(void);
-
-int task_pass_a(void);
-
-int task_pass_b(void);
-
 void task_print_info_periodically(void);
-
-void task_recursive_exit(void);
-
-void task_mutex_a (void);
-
-void task_mutex_b (void);
 
 void task_orchestrate_example(void);
