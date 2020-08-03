@@ -27,6 +27,7 @@
  * inspired by pthread.h
  */
 
-void lock_mutex(void * mutex);
+void lock_mutex(void *mutex);
 
-void unlock_mutex(void * mutex);
+void unlock_mutex(void *mutex);
+

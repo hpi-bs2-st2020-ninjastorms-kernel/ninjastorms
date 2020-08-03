@@ -38,3 +38,4 @@ unlock_mutex:
     LDR r1, =unlocked
     STR r1, [r0]           // Write value 'unlocked' to location [R0].
     BX  lr
+
