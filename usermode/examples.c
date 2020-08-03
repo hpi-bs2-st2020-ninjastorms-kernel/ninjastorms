@@ -299,7 +299,7 @@ int task_receive_and_calculate(void)
 }
 
 unsigned int mutex = unlocked;
-int printing_queue[] = {4};
+int printing_queue[4];
 int queue_start = 0;
 int queue_end = 0;
 
