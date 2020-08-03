@@ -201,7 +201,8 @@ pid_t add_task(void *entrypoint)
     if (task_count >= MAX_TASK_NUMBER)
     {
         errno = ETOOMANYTASKS;
-        printf("ERROR: Can't add task, as tasks array is already full!\n");
+        printf("ERROR: Can't add task at %x, as tasks array is already full!\n", entrypoint);
+        print_task_debug_info();
         return -1;
     }
 

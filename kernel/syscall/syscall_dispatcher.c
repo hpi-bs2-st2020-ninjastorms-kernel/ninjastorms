@@ -81,7 +81,7 @@ uint32_t shutdown_dispatch(void *data)
 int32_t syscall_dispatcher(uint32_t syscallno, void *data)
 {
     return_to_user_mode = 1;
-    printf("Handling syscall %i with data at address %x.\n", syscallno, data);
+    //printf("Handling syscall %i with data at address %x.\n", syscallno, data);
     switch (syscallno)
     {
     case ZERO_SYSCALL:

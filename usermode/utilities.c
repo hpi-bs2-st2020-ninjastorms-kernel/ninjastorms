@@ -63,6 +63,11 @@ void send_when_ready(int *message, int message_length, pid_t receiver)
         errno = 0;
         if (ipc_buffer_send(message[i], receiver) == -1)
         {
+            if (errno == EINVALPID)
+            {
+                printf("Receiver is no valid process! \n");
+                return;
+            }
             if (errno == EBUFFERCLOSED)
             {
                 printf("Receiver not ready \n");
