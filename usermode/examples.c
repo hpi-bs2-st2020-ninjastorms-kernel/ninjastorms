@@ -220,12 +220,16 @@ void task_orchestrate_example(void)
   kill(printer);
 }
 
+
+// task_cooperative_1 and 2 demonstrate cooperative multitasking. With
+// cooperative multitasking turned on (in kernel/main.c), Player 1 should never
+// print its third line, if they get scheduled in order.
 void
 task_cooperative_1(void)
 {
-    printf("Player 1: will yield.\n");
+    printf("Player 1: Yield.\n");
     yield();
-    printf("Player 1: will again yield. But please give control back to me.\n");
+    printf("Player 1: I will again yield. But please let me act again.\n");
     yield();
     printf("Now I am happy :)\n");
 }
@@ -233,8 +237,9 @@ task_cooperative_1(void)
 void
 task_cooperative_2(void)
 {
-    printf("Player 2: Reluctantly I yield.\n");
+    printf("Player 2: Another task may run again.\n");
     yield();
     printf("Player 2: I am the bad guy.\n");
     while(1);
 }
+
