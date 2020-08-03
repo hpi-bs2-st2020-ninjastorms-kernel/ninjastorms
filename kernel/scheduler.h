@@ -34,7 +34,7 @@ void schedule(void);
 
 void rebuild_ring_buffer(void);
 
-void start_scheduler(bool peemptive);
+void start_scheduler(bool preemptive);
 
 void print_ring_buffer_debug_info(void);
 

@@ -46,7 +46,10 @@ int kernel_main(void)
   print_system_info();
 
   add_task(&user_mode_init, false);
-  start_scheduler(false);
+
+  // Argument is true if preemptive scheduling should be used, else cooperative
+  // scheduling will be used.
+  start_scheduler(true);
 
   puts("All done. ninjastorms out!");
 

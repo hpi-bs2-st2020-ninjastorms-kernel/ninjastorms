@@ -40,10 +40,8 @@ void user_mode_init(void)
     run the configuration script 
   */
 
-  //create_process(&task_orchestrate_example);
-  //create_process(&task_print_info_periodically);
-  create_process(&task_cooperative_1);
-  create_process(&task_cooperative_2);
+  create_process(&task_orchestrate_example);
+  create_process(&task_print_info_periodically);
   
   // Init will run forever but also always end its time slice immediately.
   // Shuting down the OS by ending init is currently not supported.
