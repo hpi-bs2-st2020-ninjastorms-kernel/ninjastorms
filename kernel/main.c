@@ -25,6 +25,7 @@
 #include "usermode/init.h"
 
 #include <stdio.h>
+#include <sys/types.h>
 
 void print_system_info(void)
 {
@@ -44,7 +45,7 @@ int kernel_main(void)
 {
   print_system_info();
 
-  add_task(&user_mode_init);
+  add_task(&user_mode_init, false);
   start_scheduler();
 
   puts("All done. ninjastorms out!");

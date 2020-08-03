@@ -73,7 +73,7 @@ pid_t get_new_parent_pid(task_t *new_process)
     return current_task->pid;
 }
 
-pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase)
+pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase, bool is_kernel_mode_task)
 {
     for (int i = 0; i < 13; i++)
     {
@@ -82,7 +82,10 @@ pid_t init_task(task_t *task, void *entrypoint, uint32_t stackbase)
     task->sp = stackbase;
     task->lr = (unsigned int)&task_exit;
     task->pc = (unsigned int)entrypoint;
-    task->cpsr = CPSR_MODE_USER;
+    if(is_kernel_mode_task)
+        task->cpsr = CPSR_MODE_SVC;
+    else
+        task->cpsr = CPSR_MODE_USER;
 
     task->pid = get_new_pid();
     task->parent_pid = get_new_parent_pid(task);
@@ -191,7 +194,7 @@ task_t *_get_task(pid_t pid)
 /*
  * returns new tasks' pid or -1
  */
-pid_t add_task(void *entrypoint)
+pid_t add_task(void *entrypoint, bool is_kernel_mode_task)
 {
     if (!is_privileged())
     {
@@ -209,7 +212,7 @@ pid_t add_task(void *entrypoint)
     int new_task_pos = next_free_tasks_position();
 
     unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE * new_task_pos;
-    unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase);
+    unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase, is_kernel_mode_task);
     insert_task(&tasks[new_task_pos]);
     task_count++;
     return new_pid;
