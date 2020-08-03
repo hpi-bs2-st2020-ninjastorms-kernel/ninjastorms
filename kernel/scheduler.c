@@ -70,7 +70,7 @@ void update_state(task_t *task)
   }
   if (task->state == TASK_WAITING)
   {
-    bool wait_done = update_wait();
+    bool wait_done = update_wait(task);
     if (wait_done)
     {
       return;
@@ -85,7 +85,7 @@ void update_state(task_t *task)
   }
 }
 
-void find_next_active_task()
+void find_next_active_task(void)
 {
   int32_t initial_buffer_start = buffer_start;
   do

@@ -82,7 +82,7 @@ int32_t kill_process(pid_t target);
 
 bool any_task_waiting_on(pid_t target);
 
-bool update_wait(void);
+bool update_wait(task_t *task);
 
 int32_t do_wait(pid_t target);
 

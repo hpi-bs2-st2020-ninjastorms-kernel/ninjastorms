@@ -286,18 +286,18 @@ bool any_task_waiting_on(pid_t target)
     return false;
 }
 
-// Check if current_task, in TASK_WAIT state, is done waiting and update accordingly
-bool update_wait(void)
+// Check if task, in TASK_WAIT state, is done waiting and update accordingly
+bool update_wait(task_t *task)
 {
-    if (current_task->state != TASK_WAITING)
+    if (task->state != TASK_WAITING)
     {
         return false;
     }
-    task_t *target = _get_task(current_task->waiting_on);
+    task_t *target = _get_task(task->waiting_on);
     if (target->state == TASK_DONE)
     {
-        current_task->state = TASK_RUNNING;
-        current_task->reg[0] = target->result; // put return value for syscall_handler in r0
+        task->state = TASK_RUNNING;
+        task->reg[0] = target->result; // put return value for syscall_handler in r0
         return true;
     }
     return false;
