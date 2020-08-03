@@ -41,5 +41,7 @@ void user_mode_init(void)
 
   create_process(&task_orchestrate_example);
   create_process(&task_print_info_periodically);
-  while (1); //init will run forever
+  
+  // Init will run forever. Shuting down the OS by ending init is currently not supported.
+  while (1);
 }

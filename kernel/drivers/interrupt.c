@@ -19,7 +19,9 @@
  ******************************************************************************/
 
 #include "kernel/drivers/interrupt.h"
-#include "kernel/hal/hal.h"
+#include "kernel/hal.h"
+
+
 
 void
 set_ivt_location(void)

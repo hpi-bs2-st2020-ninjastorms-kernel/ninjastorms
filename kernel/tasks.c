@@ -20,7 +20,7 @@
 
 #include "tasks.h"
 #include "scheduler.h"
-#include "kernel/hal/hal.h"
+#include "kernel/hal.h"
 #include "kernel/utilities.h"
 #include "syscall.h"
 
@@ -208,7 +208,6 @@ pid_t add_task(void *entrypoint)
     int new_task_pos = next_free_tasks_position();
 
     unsigned int stackbase = TASK_STACK_BASE_ADDRESS - STACK_SIZE * new_task_pos;
-    // push &task_finished
     unsigned int new_pid = init_task(&tasks[new_task_pos], entrypoint, stackbase);
     insert_task(&tasks[new_task_pos]);
     task_count++;
@@ -268,7 +267,7 @@ int32_t kill_process(pid_t target)
 
     cleanup_task(task_to_kill);
 
-    //remove task from ring buffer by building new ring buffer
+    // remove task from ring buffer by building new ring buffer
     rebuild_ring_buffer();
 
     return 0;
@@ -286,7 +285,7 @@ bool any_task_waiting_on(pid_t target)
     return false;
 }
 
-// Check if task, in TASK_WAIT state, is done waiting and update accordingly
+// Check if task, in TASK_WAIT state, is done waiting and update accordingly.
 bool update_wait(task_t *task)
 {
     if (task->state != TASK_WAITING)
@@ -322,7 +321,7 @@ int32_t do_wait(pid_t target)
 void do_exit_with(int32_t result)
 {
     task_t *task_to_kill = current_task;
-    task_to_kill->result = result; //Return value
+    task_to_kill->result = result; // return value
 
     exit_current_task();
 }
@@ -351,7 +350,7 @@ void print_task_debug_info(void)
     printf("-------------------------------\n");
 }
 
-//IPC
+// IPC
 
 void _open_ipc_buffer(size_t size)
 {

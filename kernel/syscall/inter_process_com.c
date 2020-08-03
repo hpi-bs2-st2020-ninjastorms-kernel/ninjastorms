@@ -29,7 +29,6 @@
 int32_t open_ipc_buffer_dispatch(void *data)
 {
     // Size will be discarded for now
-
     // Otherwise: cast struct
     _open_ipc_buffer(0);
     return 0;

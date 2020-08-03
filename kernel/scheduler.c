@@ -20,7 +20,7 @@
 
 #include "scheduler.h"
 #include "tasks.h"
-#include "kernel/hal/hal.h"
+#include "kernel/hal.h"
 #include "kernel/drivers/timer.h"
 #include "kernel/interrupt.h"
 #include "kernel/interrupt_handler.h"

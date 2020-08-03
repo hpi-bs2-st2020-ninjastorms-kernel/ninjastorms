@@ -21,24 +21,32 @@
 #include "interrupt.h"
 #include "syscall/syscall_handler.h"
 
-#include "kernel/hal/hal.h"
+#include "kernel/hal.h"
 #include "kernel/drivers/interrupt.h"
 #include "kernel/interrupt_handler.h"
 
 // builds the interrupt vector table
 void setup_ivt(void)
 {
-  *(unsigned int *)(IVT_OFFSET + 0x00) = 0;          //TODO: reset
-  *(unsigned int *)(IVT_OFFSET + 0x04) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x20 undefined instruction
-  *(unsigned int *)(IVT_OFFSET + 0x08) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x24 software interrupt
-  *(unsigned int *)(IVT_OFFSET + 0x0c) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x28 prefetch abort
-  *(unsigned int *)(IVT_OFFSET + 0x10) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x2c data abort
-  *(unsigned int *)(IVT_OFFSET + 0x14) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x30 reserved
-  *(unsigned int *)(IVT_OFFSET + 0x18) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x34 IRQ
-  *(unsigned int *)(IVT_OFFSET + 0x1c) = 0xe59ff014; //ldr pc, [pc, #20] ; 0x38 FIQ
+  // This is the machine word for "ldr pc, [pc, #20]".
+  unsigned int ldr_pc_pc_20 = 0xe59ff014;
 
+  // The processor jumps to one of these addresses whenever an interrupt
+  // arrives. Because the word contains the "ldr pc, [pc, #20]" instruction, 
+  // it loads the address specified at byte offset 20, where the actual address
+  // of the appropriate interrupt handler is stored. 
+  *(unsigned int *)(IVT_OFFSET + 0x00) = 0;            //TODO: reset
+  *(unsigned int *)(IVT_OFFSET + 0x04) = ldr_pc_pc_20; // 0x20 undefined instruction
+  *(unsigned int *)(IVT_OFFSET + 0x08) = ldr_pc_pc_20; // 0x24 software interrupt
+  *(unsigned int *)(IVT_OFFSET + 0x0c) = ldr_pc_pc_20; // 0x28 prefetch abort
+  *(unsigned int *)(IVT_OFFSET + 0x10) = ldr_pc_pc_20; // 0x2c data abort
+  *(unsigned int *)(IVT_OFFSET + 0x14) = ldr_pc_pc_20; // 0x30 reserved
+  *(unsigned int *)(IVT_OFFSET + 0x18) = ldr_pc_pc_20; // 0x34 IRQ
+  *(unsigned int *)(IVT_OFFSET + 0x1c) = ldr_pc_pc_20; // 0x38 FIQ
+
+  // Addresses of interrupt handlers.
   *(unsigned int *)(IVT_OFFSET + 0x20) = (unsigned int)0;
-  //ATTENTION: don't use software interrupts in supervisor mode
+  // ATTENTION: don't use software interrupts in supervisor mode:
   *(unsigned int *)(IVT_OFFSET + 0x24) = (unsigned int)&syscall_handler;
   *(unsigned int *)(IVT_OFFSET + 0x28) = (unsigned int)0;
   *(unsigned int *)(IVT_OFFSET + 0x2c) = (unsigned int)0;

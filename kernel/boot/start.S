@@ -20,7 +20,7 @@
 
 .section .text.boot
 
-#include "kernel/hal/hal.h"
+#include "kernel/hal.h"
 
 .globl Start
 Start:

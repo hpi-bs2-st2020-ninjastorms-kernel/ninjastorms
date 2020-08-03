@@ -28,4 +28,9 @@
 
 int32_t syscall_dispatcher(uint32_t syscall_number, void *data);
 
+// If this is not zero, when a syscall is handled and the control
+// flow returns to syscall_handler(unsigned int number, void *data) after
+// syscall_dispatch, instead of returning to the user mode, the task in
+// current_task is loaded. This enables easy implementation of syscalls that
+// change the currently active user mode process, like exit, wait and pass.
 extern int8_t return_to_user_mode;

@@ -62,6 +62,7 @@ struct task_t
 	//used for navigating the array
 	bool valid;
 };
+
 typedef struct task_t task_t;
 
 extern task_t *current_task;

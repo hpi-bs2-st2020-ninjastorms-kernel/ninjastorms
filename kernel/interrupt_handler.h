@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+// This is called to schedule a new task when a timer interrupt arrives.
 void irq_handler_timer(void);
 
 void load_current_task_state(void);

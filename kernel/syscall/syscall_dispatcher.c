@@ -75,6 +75,9 @@ uint32_t shutdown_dispatch(void *data)
     while (1);
 }
 
+// Call the corresponding function for a syscall number. These follow the
+// naming scheme <syscall>_dispatch(void *data) and for the most part call
+// the kernel mode functions responsible for serving the syscall.
 int32_t syscall_dispatcher(uint32_t syscallno, void *data)
 {
     return_to_user_mode = 1;
@@ -117,6 +120,4 @@ int32_t syscall_dispatcher(uint32_t syscallno, void *data)
         errno = EINVALIDSYSCALLNO;
         return -1;
     }
-
-    return 0xbeef;
 }
