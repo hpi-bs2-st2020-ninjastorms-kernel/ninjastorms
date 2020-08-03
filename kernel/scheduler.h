@@ -26,13 +26,15 @@
 
 #include "tasks.h"
 
+#include <sys/types.h>
+
 void schedule_without_insertion(void);
 
 void schedule(void);
 
 void rebuild_ring_buffer(void);
 
-void start_scheduler(void);
+void start_scheduler(bool peemptive);
 
 void print_ring_buffer_debug_info(void);
 

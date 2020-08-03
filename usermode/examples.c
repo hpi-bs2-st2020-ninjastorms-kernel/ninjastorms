@@ -219,3 +219,22 @@ void task_orchestrate_example(void)
   delay(300000000);
   kill(printer);
 }
+
+void
+task_cooperative_1(void)
+{
+    printf("Player 1: will yield.\n");
+    yield();
+    printf("Player 1: will again yield. But please give control back to me.\n");
+    yield();
+    printf("Now I am happy :)\n");
+}
+
+void
+task_cooperative_2(void)
+{
+    printf("Player 2: Reluctantly I yield.\n");
+    yield();
+    printf("Player 2: I am the bad guy.\n");
+    while(1);
+}

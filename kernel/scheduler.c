@@ -129,15 +129,19 @@ void schedule(void)
   return_to_user_mode = 0;
 }
 
-void start_scheduler(void)
+bool use_preemptive_scheduling;
+
+void start_scheduler(bool preemptive)
 {
   if (!isRunning)
   {
+    use_preemptive_scheduling = preemptive;
     current_task = ring_buffer_remove();
     isRunning = 1;
     timer_stop();
     init_interrupt_handling();
-    timer_start(TIMER_LOAD_VALUE);
+    if(use_preemptive_scheduling)
+        timer_start(TIMER_LOAD_VALUE);
     load_current_task_state();
   }
 }
@@ -165,7 +169,8 @@ int32_t insert_task(task_t *new_task)
 void
 reset_timer()
 {
-  timer_start(TIMER_LOAD_VALUE);
+  if(use_preemptive_scheduling)
+    timer_start(TIMER_LOAD_VALUE);
 }
 
 void do_yield(void)

@@ -31,3 +31,6 @@ void task_mutex_b(void);
 void task_print_info_periodically(void);
 
 void task_orchestrate_example(void);
+
+void task_cooperative_1(void);
+void task_cooperative_2(void);

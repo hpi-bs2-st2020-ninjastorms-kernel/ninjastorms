@@ -46,7 +46,7 @@ int kernel_main(void)
   print_system_info();
 
   add_task(&user_mode_init, false);
-  start_scheduler();
+  start_scheduler(false);
 
   puts("All done. ninjastorms out!");
 
