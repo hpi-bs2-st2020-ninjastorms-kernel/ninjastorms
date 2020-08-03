@@ -180,7 +180,7 @@ void task_queue_printer(void)
     }
     else
     {
-      pass();
+      yield();
     }
   }
 }
@@ -213,7 +213,7 @@ void task_orchestrate_example(void)
       //lock_mutex(&mutex);
       queue_result = enqueue(result);
       //unlock_mutex(&mutex);
-      pass();
+      yield();
     }
   }
   delay(300000000);

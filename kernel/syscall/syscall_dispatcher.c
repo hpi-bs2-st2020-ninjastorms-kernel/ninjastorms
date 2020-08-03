@@ -102,7 +102,7 @@ int32_t syscall_dispatcher(uint32_t syscallno, void *data)
     case WAIT:
         return wait_dispatch(data);
     case PASS:
-        return pass_dispatch(data);
+        return yield_dispatch(data);
     case OPEN_IPC_BUFFER:
         return open_ipc_buffer_dispatch(data);
     case CLOSE_IPC_BUFFER:

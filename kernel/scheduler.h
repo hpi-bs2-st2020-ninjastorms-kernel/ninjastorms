@@ -38,4 +38,4 @@ void print_ring_buffer_debug_info(void);
 
 int32_t insert_task(task_t *new_task);
 
-void do_pass(void);
+void do_yield(void);

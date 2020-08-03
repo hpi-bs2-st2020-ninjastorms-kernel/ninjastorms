@@ -112,7 +112,7 @@ void schedule_without_insertion(void)
 /*
 * schedule is called in two cases:
 * 1. After a timer interrupt by interrupt_handler.S
-* 2. Through a syscall (exit/pass/wait)
+* 2. Through a syscall (exit/yield/wait)
 * 
 * In both cases schedule selects the next task and loads it into
 * current_task. Dispatching (switching execution context) is done
@@ -168,7 +168,7 @@ reset_timer()
   timer_start(TIMER_LOAD_VALUE);
 }
 
-void do_pass(void)
+void do_yield(void)
 {
   reset_timer();
   schedule();

@@ -88,7 +88,7 @@ int32_t wait_on_pid(pid_t target)
     return syscall(8, &spec);
 }
 
-void pass(void)
+void yield(void)
 {
     syscall(9, NULL);
 }

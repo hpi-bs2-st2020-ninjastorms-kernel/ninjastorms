@@ -40,4 +40,4 @@ uint32_t is_predecessor_dispatch(void *data);
 
 int32_t wait_dispatch(void *data);
 
-int32_t pass_dispatch(void *data);
+int32_t yield_dispatch(void *data);

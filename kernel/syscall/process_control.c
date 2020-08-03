@@ -81,8 +81,8 @@ int32_t wait_dispatch(void *data)
     return do_wait(spec.target);
 }
 
-int32_t pass_dispatch(void *data)
+int32_t yield_dispatch(void *data)
 {
-    do_pass();
+    do_yield();
     return 0;
 }

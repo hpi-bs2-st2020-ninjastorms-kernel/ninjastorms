@@ -46,5 +46,5 @@ void user_mode_init(void)
   // Init will run forever but also always end its time slice immediately.
   // Shuting down the OS by ending init is currently not supported.
   while (1)
-    pass();
+    yield();
 }

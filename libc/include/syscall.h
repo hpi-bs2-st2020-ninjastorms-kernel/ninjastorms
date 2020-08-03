@@ -35,7 +35,7 @@ int32_t kill(pid_t target);
 
 int32_t wait_on_pid(pid_t target);
 
-void pass(void);
+void yield(void);
 
 int32_t is_predecessor(pid_t child, pid_t pred);
 
