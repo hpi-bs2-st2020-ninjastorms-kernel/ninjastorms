@@ -26,7 +26,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#include "kernel/memory.h"
+#include "kernel/hal.h"
 
 static uint32_t current_heap_address = HEAP_START;
 

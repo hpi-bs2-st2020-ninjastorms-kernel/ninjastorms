@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 #include "time.h"
-#include "kernel/memory.h"
+#include "kernel/hal.h"
 #include <sys/types.h>
 
 #define INTTOCHAR(val) ((val) + '0')

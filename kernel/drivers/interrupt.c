@@ -22,6 +22,8 @@
 #include "kernel/hal.h"
 #include "kernel/mmio.h"
 #include "kernel/network/e1000.h"
+#include "kernel/time.h"
+#include "kernel/interrupt_handler.h"
 
 
 void

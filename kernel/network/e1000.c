@@ -24,7 +24,7 @@
 #include "kernel/pci/pci_mmio.h"
 #include "kernel/mmio.h"
 #include "kernel/logger/logger.h"
-#include "kernel/memory.h"
+#include "kernel/hal.h"
 #include "kernel/network/network_task.h"
 #include "kernel/network/pdu_handler.h"
 #include "kernel/network/ethernet.h"

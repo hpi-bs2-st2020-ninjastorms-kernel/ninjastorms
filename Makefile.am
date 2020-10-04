@@ -16,20 +16,17 @@ libc_libc_la_SOURCES = \
     libc/stdio/putchar.c \
     libc/stdio/puts.c \
     libc/stdio/vprintf.c \
-<<<<<<< HEAD
     libc/syscall/syscall.c \
     libc/math/math.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/thread/thread.c \
-=======
     libc/stdlib/malloc.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/unistd/sbrk.c \
->>>>>>> network/master
     libc/include/errno.h \
     libc/include/syscall.h \
     libc/include/math.h \
@@ -38,24 +35,17 @@ libc_libc_la_SOURCES = \
     libhc/include/stdlib.h \
     libhc/include/stdbool.h \
     libc/include/string.h \
-<<<<<<< HEAD
     libc/process/process.h \
-    libc/include/sys/types.h
-=======
     libc/include/sys/types.h \
     libc/include/unistd.h
->>>>>>> network/master
 
 noinst_PROGRAMS = ninjastorms
 
 ninjastorms_SOURCES = \
     kernel/boot/start.S \
     kernel/main.c kernel/main.h \
-<<<<<<< HEAD
     kernel/tasks.c kernel/tasks.h \
-=======
     kernel/time.c kernel/time.h \
->>>>>>> network/master
     kernel/scheduler.c kernel/scheduler.h \
     kernel/interrupt.c kernel/interrupt.h \
     kernel/syscall/syscall_handler.S kernel/syscall/syscall_handler.h \

@@ -52,7 +52,7 @@ int kernel_main(void)
 
   add_task(&user_mode_init, false);
   add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
+  LOG_DEBUG("Logger initialized!");
   pci_init();
   e1000_init();
 
