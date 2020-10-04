@@ -18,52 +18,35 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#include "pdu_handler.h"
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
+#include "kernel/network/network_io.h"
+#include "kernel/network/ethernet.h"
+#include "kernel/network/arp.h"
 
 #include <stdio.h>
-#include <sys/types.h>
 
-void print_system_info(void)
+/*
+ * Takes a raw_packet and converts it data to an ethernet frame.
+ * Reads the ether type and passes the packet to the corresponding protocol.
+ */
+void
+start_pdu_encapsulation(raw_packet_t * buf)
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+  /* *INDENT-OFF* */
+  ethernet_frame_t *frame = (ethernet_frame_t *) &(buf->data);
+  /* *INDENT-ON* */
 
-int kernel_main(void)
-{
-  print_system_info();
+  uint16_t ether_type = ntohs(frame->ether_type);
 
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
+  switch (ether_type)
+    {
+    case TYPE_ARP:
+      arp_receive(frame);
+      break;
+    case TYPE_IPv4:
+    case TYPE_IPv6:            // we don't wanna support ipv6 yet ;)
+    default:
+      break;
+    }
 }

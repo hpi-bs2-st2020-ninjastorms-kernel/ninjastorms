@@ -20,6 +20,11 @@
 
 #include "pci_mmio.h"
 
+/*
+ * Functions for reading/writing on addresses in the PCI address space.
+ * Use kernel/mmio.h for reads in systems memory.
+ */
+
 uint8_t
 pci_read8(uint32_t address)
 {
@@ -35,20 +40,23 @@ pci_read16(uint32_t address)
 uint32_t
 pci_read32(uint32_t address)
 {
-  return *((volatile uint32_t*) address);
+  return *((volatile uint32_t *) address);
 }
 
 uint64_t
 pci_read64(uint32_t address)
 {
-  return *((volatile uint64_t*) address);
+  return *((volatile uint64_t *) address);
 }
 
-// works only if address % 4 == 0
+/*
+ * Writes a word to `address` on the PCI bus.
+ * ATTENTION: works only if address % 4 == 0.
+ */
 void
 write_word(uint32_t address, uint32_t value)
 {
-  *((volatile uint32_t*) address) = value;
+  *((volatile uint32_t *) address) = value;
 }
 
 void
@@ -102,12 +110,16 @@ pci_write32(uint32_t address, uint32_t value)
 
       uint32_t lower_word_read = pci_read32(address - lower_offset);
       uint32_t lower_word_write = value << lower_offset * 8;
-      uint32_t lower_word = ((lower_word_read << upper_offset * 8) >> upper_offset * 8) | lower_word_write;
+      uint32_t lower_word =
+        ((lower_word_read << upper_offset * 8) >> upper_offset *
+         8) | lower_word_write;
       write_word(address - lower_offset, lower_word);
 
       uint32_t upper_word_read = pci_read32(address + upper_offset);
       uint32_t upper_word_write = value >> upper_offset * 8;
-      uint32_t upper_word = ((upper_word_read >> lower_offset * 8) << lower_offset * 8) | upper_word_write;
+      uint32_t upper_word =
+        ((upper_word_read >> lower_offset * 8) << lower_offset *
+         8) | upper_word_write;
       write_word(address + upper_offset, upper_word);
     }
   else
@@ -126,22 +138,25 @@ pci_write64(uint32_t address, uint64_t value)
 
       uint32_t lower_word_read = pci_read32(address - lower_offset);
       uint32_t lower_word_write = (uint32_t) (value << lower_offset * 8);
-      uint32_t lower_word = ((lower_word_read << upper_offset * 8) >> upper_offset * 8) | lower_word_write;
+      uint32_t lower_word = ((lower_word_read << upper_offset * 8)
+                             >> upper_offset * 8) | lower_word_write;
       write_word(address - lower_offset, lower_word);
 
-      uint32_t middle_word_read = pci_read32(address + upper_offset);
       uint32_t middle_word_write = (uint32_t) (value >> upper_offset * 8);
       write_word(address + upper_offset, middle_word_write);
 
       uint32_t upper_word_read = pci_read32(address + 4 + upper_offset);
-      uint32_t upper_word_write = (uint32_t) (value >> (upper_offset + 4) * 8);
-      uint32_t upper_word = ((upper_word_read >> lower_offset * 8) << lower_offset * 8) | upper_word_write;
+      uint32_t upper_word_write =
+        (uint32_t) (value >> (upper_offset + 4) * 8);
+      uint32_t upper_word =
+        ((upper_word_read >> lower_offset * 8)
+         << lower_offset * 8) | upper_word_write;
       write_word(address + 4 + upper_offset, upper_word);
     }
   else
     // write exactly two words
     {
       write_word(address, (uint32_t) value);
-      write_word(address + 4, (uint32_t) (value >> 32)); 
+      write_word(address + 4, (uint32_t) (value >> 32));
     }
 }

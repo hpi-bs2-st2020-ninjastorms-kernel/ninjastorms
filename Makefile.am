@@ -16,27 +16,46 @@ libc_libc_la_SOURCES = \
     libc/stdio/putchar.c \
     libc/stdio/puts.c \
     libc/stdio/vprintf.c \
+<<<<<<< HEAD
     libc/syscall/syscall.c \
     libc/math/math.c \
     libc/string/memcmp.c \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/thread/thread.c \
+=======
+    libc/stdlib/malloc.c \
+    libc/string/memcmp.c \
+    libc/string/memcpy.c \
+    libc/string/memset.c \
+    libc/unistd/sbrk.c \
+>>>>>>> network/master
     libc/include/errno.h \
     libc/include/syscall.h \
     libc/include/math.h \
     libc/include/stddef.h \
     libc/include/stdio.h \
+    libhc/include/stdlib.h \
+    libhc/include/stdbool.h \
     libc/include/string.h \
+<<<<<<< HEAD
     libc/process/process.h \
     libc/include/sys/types.h
+=======
+    libc/include/sys/types.h \
+    libc/include/unistd.h
+>>>>>>> network/master
 
 noinst_PROGRAMS = ninjastorms
 
 ninjastorms_SOURCES = \
     kernel/boot/start.S \
     kernel/main.c kernel/main.h \
+<<<<<<< HEAD
     kernel/tasks.c kernel/tasks.h \
+=======
+    kernel/time.c kernel/time.h \
+>>>>>>> network/master
     kernel/scheduler.c kernel/scheduler.h \
     kernel/interrupt.c kernel/interrupt.h \
     kernel/syscall/syscall_handler.S kernel/syscall/syscall_handler.h \
@@ -64,7 +83,14 @@ ninjastorms_SOURCES = \
     kernel/drivers/interrupt.c kernel/drivers/interrupt.h \
     usermode/init.c usermode/init.h \
     usermode/examples.c usermode/examples.h \
-    usermode/utilities.c usermode/utilities.h
+    usermode/utilities.c usermode/utilities.h \
+    kernel/network/network_task.c kernel/network/network_task.h \
+    kernel/network/network_io.c kernel/network/network_io.h \
+    kernel/network/arp.c kernel/network/arp.h \
+    kernel/network/routing.c kernel/network/routing.h \
+    kernel/network/ethernet.c kernel/network/ethernet.h \
+    kernel/network/pdu_handler.c kernel/network/pdu_handler.h \
+    kernel/network/ipv4.c kernel/network/ipv4.h
 
 ninjastorms_LDADD = libc/libc.la -lgcc
 ninjastorms_LDFLAGS = -T kernel/link-arm-eabi.ld -Ttext $(LOADADDR)

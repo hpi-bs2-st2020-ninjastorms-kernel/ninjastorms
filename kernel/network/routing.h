@@ -18,52 +18,29 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
+#include "kernel/network/ethernet.h"
 #include "kernel/time.h"
 
-#include <stdio.h>
-#include <sys/types.h>
+#include <stdbool.h>
 
-void print_system_info(void)
+// #define ROUTING_DEBUG
+
+#define MAX_ARP_TABLE_ENTRIES 	10
+#define MAX_ARP_TABLE_AGE 		300     // seconds
+
+#define ARP_NULL_ENTRY ((arp_table_entry_t){0, {{0}}, 0})
+
+typedef struct
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+  uint32_t ip;
+  mac_address_t mac;
+  clock_t entry_time;
+} arp_table_entry_t;
 
-int kernel_main(void)
-{
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+mac_address_t arp_table_lookup(uint32_t ip);
+mac_address_t arp_table_get_mac(uint32_t ip);
+bool arp_table_update(mac_address_t mac, uint32_t ip);
+void arp_table_add_entry(mac_address_t mac, uint32_t ip);
+void routing_init();

@@ -18,52 +18,39 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
-
-#include <stdio.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
-void print_system_info(void)
+// #define ETHERNET_DEBUG
+#define ETH_MAC_ADDRESS_LENGTH 6
+#define MINIMUM_PAYLOAD_LENGTH 46
+
+#define NULL_MAC      ((mac_address_t) {{0x00,0x00,0x00,0x00,0x00,0x00}})
+#define BROADCAST_MAC ((mac_address_t) {{0xff,0xff,0xff,0xff,0xff,0xff}})
+
+typedef enum
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+  TYPE_ARP = 0x0806,
+  TYPE_IPv4 = 0x0800,
+  TYPE_IPv6 = 0x86dd
+} ether_type;
 
-int kernel_main(void)
+typedef struct __attribute__((packed))
 {
-  print_system_info();
+  uint8_t address[6];
+} mac_address_t;
 
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
+typedef struct __attribute__((packed))
+{
+  mac_address_t dest_mac;
+  mac_address_t src_mac;
+  ether_type ether_type;
+  uint8_t payload[];
+} ethernet_frame_t;
 
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+void ethernet_send(mac_address_t dest_mac, ether_type eth_type, void *payload,
+                   size_t len_payload);
+const char *mac_to_str(mac_address_t mac);
+bool mac_address_equal(mac_address_t mac1, mac_address_t mac2);

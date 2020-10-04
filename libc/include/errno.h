@@ -29,7 +29,8 @@ enum SYMBOLIC_ERRNO {
     EBUFFEREMPTY = 6,
     EBUFFERFULL = 7,
     EBUFFERCLOSED = 8,
-    EINVALPID = 9 //given PID is not associaated with task
+    EINVALPID = 9, //given PID is not associaated with task
+    ENOMEM = 12 // Cannot allocate memory
 };
 
 extern int errno;

@@ -18,52 +18,22 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
+#include "kernel/network/ethernet.h"
 
-#include <stdio.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
-void print_system_info(void)
-{
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+// https://developer.arm.com/documentation/dui0224/i/programmer-s-reference/status-and-system-control-registers/configuration-registers-sys-cfgdatax
+// Register storing e.g. endianess
+#define SYS_CFGDATA2 0x1000002C
 
-int kernel_main(void)
-{
-  print_system_info();
+uint32_t htonl(uint32_t hostlong);
+uint16_t htons(uint16_t hostshort);
+uint32_t ntohl(uint32_t netlong);
+uint16_t ntohs(uint16_t netshort);
+bool is_big_endian();
 
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+mac_address_t hton_mac(mac_address_t mac);
+mac_address_t ntoh_mac(mac_address_t mac);

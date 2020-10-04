@@ -23,7 +23,7 @@
 .section .text
 
 // import
-.globl schedule
+.globl handle_interrupt
 
 // export
 .globl irq_handler_timer
@@ -33,14 +33,11 @@
 .globl save_current_task_state
 .type save_current_task_state STT_FUNC
 
-
 irq_handler_timer:
-  // save registers
   push  {r0-r2, lr}
 
-  mov  r0, sp   // set argument of save_current_task_state
-  bl  save_current_task_state
-  bl  schedule
+  // schedule new task
+  bl schedule
 
 #if BOARD_VERSATILEPB
   // clear interrupt
@@ -59,6 +56,18 @@ irq_handler_timer:
   mov r1, T64P0_TINT34_ASM
   str r1, [r0]
 #endif
+
+  pop  {r0-r2, lr}
+  bx lr
+
+irq_handler:
+  // save registers
+  push  {r0-r2, lr}
+
+  mov  r0, sp   // set argument of save_current_task_state
+  bl  save_current_task_state
+
+  bl  handle_interrupt
 
   pop  {r0-r2, lr}
 

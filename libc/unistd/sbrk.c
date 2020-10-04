@@ -18,52 +18,32 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
-
-#include <stdio.h>
+#include <errno.h>
+#include <stddef.h>
 #include <sys/types.h>
 
-void print_system_info(void)
+#include "kernel/memory.h"
+
+static uint32_t current_heap_address = HEAP_START;
+
+/*
+ * Very simple implementation of sbrk that uses a global memory pool.
+ * Should probably be changed to real program break in the future.
+ */
+void *
+sbrk(size_t increment)
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
-
-int kernel_main(void)
-{
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
+  if (current_heap_address + increment > HEAP_START + HEAP_SIZE)
+    {
+      // No memory left
+      errno = ENOMEM;
+      return NULL;
+    }
+  void *ptr = (void *) current_heap_address;
+  current_heap_address += increment;
+  return ptr;
 }

@@ -23,7 +23,9 @@
 
 #include "kernel/hal.h"
 #include "kernel/drivers/interrupt.h"
+#include "kernel/time.h"
 #include "kernel/interrupt_handler.h"
+
 
 // Builds the interrupt vector table.
 void setup_ivt(void)

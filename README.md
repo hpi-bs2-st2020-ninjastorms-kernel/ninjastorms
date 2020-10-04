@@ -10,6 +10,8 @@
      Created by the Operating Systems and Middleware Group at Hasso
                  Plattner Institute Potsdam, Germany.
 
+![C/C++ CI](https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/workflows/C/C++%20CI/badge.svg)
+
 # Introduction
 
 NinjaStorms is an attempt to create a simple RealTime Operating System which
@@ -68,12 +70,15 @@ pull request!
 
         ./configure --host=arm-none-eabi BOARD=versatilepb CFLAGS="-nostdlib -nostartfiles -ffreestanding -mcpu=ARM926EJ-s"
 
-- deployment process: execute the built kernel directly with
+- deployment process: make and execute the built kernel directly with
 
-        qemu-system-arm -M versatilepb -m 128M -nographic -kernel ninjastorms
+        ./start_qemu.sh
+
+  You will need sudo to start the os, as we need to create a network tap for communication with the host.
 
   The hardware access to the device periphery will fail silently, but the
   kernel output will still be shown.
+  You can stop the VM using `STRG+A` followed by pressing `X`
 
 ## Further Reading
 

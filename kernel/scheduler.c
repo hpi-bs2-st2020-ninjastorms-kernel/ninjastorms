@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "scheduler.h"
+
 #include "tasks.h"
 #include "kernel/hal.h"
 #include "kernel/drivers/timer.h"

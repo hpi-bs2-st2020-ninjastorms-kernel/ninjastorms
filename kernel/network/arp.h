@@ -18,52 +18,35 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
+#include "ethernet.h"
 
-#include <stdio.h>
 #include <sys/types.h>
 
-void print_system_info(void)
+// DEBUG LEVEL
+// #define ARP_DEBUG
+
+// OPCODES
+#define ARP_REQUEST 0x0001
+#define ARP_REPLY 0x0002
+
+// HARDWARE TYPE
+#define HTYPE_ETHERNET 1
+
+// https://wiki.osdev.org/ARP
+typedef struct __attribute__((packed))
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+  uint16_t hardware_type;
+  uint16_t protocol_type;
+  uint8_t hardware_addr_len;    // ethernet = 6
+  uint8_t protocol_addr_len;    // ipv4 = 4
+  uint16_t opcode;              // ARP OP Code: see above
+  mac_address_t src_hardware_addr;
+  uint32_t src_ip_address;
+  mac_address_t dest_hardware_addr;
+  uint32_t dest_ip_address;
+} arp_frame_t;
 
-int kernel_main(void)
-{
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+void arp_receive(ethernet_frame_t * frame);
+void arp_send_request(uint32_t ip);

@@ -18,52 +18,22 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
+// value calculated according to https://documentation-service.arm.com/static/5e8e2102fd977155116a4aef?token=
+// assuming 1MHz clock frequency
+#define TIMER_SECOND_INTERVAL 0xf4240
+#define TIMER_MILLIS_INTERVAL 0x3e8
 
-#include <stdio.h>
-#include <sys/types.h>
+typedef unsigned long long clock_t;
 
-void print_system_info(void)
-{
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+void irq_handler_clock();
+void time_init();
 
-int kernel_main(void)
-{
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+// clock is time since system start
+clock_t clock_millis();
+clock_t clock_seconds();
+clock_t clock_minutes();
+clock_t clock_hours();
+const char * clock_formatted_msms();
+const char * clock_time_to_str(clock_t time);

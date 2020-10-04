@@ -18,52 +18,75 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#include "network_task.h"
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
 #include "kernel/network/e1000.h"
 #include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
-#include "kernel/time.h"
+#include "kernel/network/pdu_handler.h"
+#include "kernel/network/routing.h"
 
-#include <stdio.h>
 #include <sys/types.h>
+#include <string.h>
+#include <stdbool.h>
 
-void print_system_info(void)
+static int recv_queue_start = 0;
+static int recv_queue_end = 0;
+static raw_packet_t recv_packet_queue[MAX_PACKET_COUNT] = { 0 };
+
+/*
+ * Takes the next packet out of the receive queue and returns it (simple pop operation).
+ */
+raw_packet_t *
+remove_packet(void)
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
+  if (recv_queue_start == recv_queue_end)
+    return 0;
+
+  raw_packet_t *packet = &recv_packet_queue[recv_queue_start];
+  recv_queue_start = (recv_queue_start + 1) % MAX_PACKET_COUNT;
+  return packet;
 }
 
-int kernel_main(void)
+bool
+new_packet_available(void)
 {
-  print_system_info();
+  return recv_queue_start != recv_queue_end;
+}
 
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
+/*
+ * A concurrent running task that receives packets from its receive ring buffer and
+ * inserts them into the network stack.
+ */
+void
+network_task_recv(void)
+{
+  routing_init();
+  while (1)
+    {
+      if (new_packet_available())
+        {
+          raw_packet_t *packet = remove_packet();
+          start_pdu_encapsulation(packet);
+        }
+    }
+}
 
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
+/*
+ * Insert a new packet into the ring buffer if space is left.
+ * Throws the packet away if queue is full.
+ */
+void
+insert_packet(uint8_t * data, size_t len)
+{
+  int new_end = (recv_queue_end + 1) % MAX_PACKET_COUNT;
+  if (new_end != recv_queue_start)
+    {
+      recv_packet_queue[recv_queue_end].length = len;
+      memcpy(&recv_packet_queue[recv_queue_end].data, data, len);
+      recv_queue_end = new_end;
+    }
+  else
+    {
+      LOG_WARN("Packet Queue full!");
+    }
 }

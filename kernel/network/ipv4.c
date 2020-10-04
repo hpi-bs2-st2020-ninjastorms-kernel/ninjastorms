@@ -18,52 +18,50 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#include "ipv4.h"
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-#include "kernel/network/network_task.h"
 #include "kernel/time.h"
+#include "kernel/network/ethernet.h"
+#include "kernel/network/routing.h"
+#include "kernel/logger/logger.h"
 
-#include <stdio.h>
 #include <sys/types.h>
+#include <stdio.h>
 
-void print_system_info(void)
+/*
+ * Very basic implementation of sending an ipv4 packet.
+ * ATTENTION: Does not implement any ipv4 standard.
+ * Currently it looks up the destination mac (an arp request is send if not present)
+ * and waits WAIT_ON_ARP_TIMEOUT seconds for a reply. If no reply is received
+ * the funtion returns -1, otherwise it hands the data on to ethernet.
+ */
+uint32_t
+ipv4_send(uint32_t ip, void *payload, size_t len)
 {
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
+  // TODO: implement protocol
+  mac_address_t dest_mac = arp_table_get_mac(ip);
+  uint64_t start = clock_seconds();
+  while (mac_address_equal(dest_mac, NULL_MAC))
+    {
+      dest_mac = arp_table_lookup(ip);
+      if (clock_seconds() - start > WAIT_ON_ARP_TIMEOUT)
+        {
+#ifdef IPV4_DEBUG
+          LOG_DEBUG("Sending to IP %x timed out waiting for arp", ip);
+#endif
+          return -1;
+        }
+    }
+
+  ethernet_send(dest_mac, TYPE_IPv4, payload, len);
+  return 0;
 }
 
-int kernel_main(void)
+void
+ipv4_print(uint32_t ip)
 {
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  add_task(&network_task_recv, true);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // keep this method at this line, otherwise we can't guarantee for your life 
-  // see https://github.com/hpi-bs2-st2020-ninjastorms-network/ninjastorms/issues/28
-  time_init(); 
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
+  /* *INDENT-OFF* */
+  uint8_t *bytes = (uint8_t *) &ip;
+  /* *INDENT-ON* */
+  printf("%i.%i.%i.%i", bytes[3], bytes[2], bytes[1], bytes[0]);
 }
