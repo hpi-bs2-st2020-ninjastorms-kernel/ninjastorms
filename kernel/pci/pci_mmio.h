@@ -18,46 +18,16 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "main.h"
+#pragma once
 
-#include "kernel/scheduler.h"
-#include "kernel/tasks.h"
-#include "usermode/init.h"
-#include "kernel/pci/pci.h"
-#include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
-
-#include <stdio.h>
 #include <sys/types.h>
 
-void print_system_info(void)
-{
-  char shuriken[] =
-      "                 /\\\n"
-      "                /  \\\n"
-      "                |  |\n"
-      "              __/()\\__\n"
-      "             /   /\\   \\\n"
-      "            /___/  \\___\\\n";
-  puts("This is ninjastorms OS");
-  puts("  shuriken ready");
-  puts(shuriken);
-}
+uint8_t  pci_read8(uint32_t address);
+uint16_t pci_read16(uint32_t address);
+uint32_t pci_read32(uint32_t address);
+uint64_t pci_read64(uint32_t address);
 
-int kernel_main(void)
-{
-  print_system_info();
-
-  add_task(&user_mode_init, false);
-  log_debug("Logger initialized!");
-  pci_init();
-  e1000_init();
-
-  // Argument is true if preemptive scheduling should be used, else cooperative
-  // scheduling will be used.
-  start_scheduler(true);
-
-  puts("All done. ninjastorms out!");
-
-  return 0;
-}
+void pci_write8(uint32_t address, uint8_t value);
+void pci_write16(uint32_t address, uint16_t value);
+void pci_write32(uint32_t address, uint32_t value);
+void pci_write64(uint32_t address, uint64_t value);

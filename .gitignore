@@ -29,3 +29,6 @@ scripts/
 
 # editor
 .vscode/
+
+# Local History for Visual Studio Code
+.history/
