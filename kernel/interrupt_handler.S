@@ -27,11 +27,11 @@
 
 // export
 .globl irq_handler_timer
+.type irq_handler_timer STT_FUNC
+.globl irq_handler
 .type irq_handler STT_FUNC
 .globl load_current_task_state
 .type load_current_task_state STT_FUNC
-.globl save_current_task_state
-.type save_current_task_state STT_FUNC
 
 irq_handler_timer:
   push  {r0-r2, lr}

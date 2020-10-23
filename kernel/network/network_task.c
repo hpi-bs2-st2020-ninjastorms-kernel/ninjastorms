@@ -27,6 +27,7 @@
 
 #include <sys/types.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 static int recv_queue_start = 0;
@@ -63,6 +64,7 @@ network_task_recv(void)
   routing_init();
   while (1)
     {
+      //printf("LOOP");
       if (new_packet_available())
         {
           raw_packet_t *packet = remove_packet();

@@ -53,7 +53,7 @@ void setup_ivt(void)
   *(unsigned int *)(IVT_OFFSET + 0x28) = (unsigned int)0;
   *(unsigned int *)(IVT_OFFSET + 0x2c) = (unsigned int)0;
   *(unsigned int *)(IVT_OFFSET + 0x30) = (unsigned int)0;
-  *(unsigned int *)(IVT_OFFSET + 0x34) = (unsigned int)&irq_handler_timer;
+  *(unsigned int *)(IVT_OFFSET + 0x34) = (unsigned int)&irq_handler;
   *(unsigned int *)(IVT_OFFSET + 0x38) = (unsigned int)0;
 
   set_ivt_location();
