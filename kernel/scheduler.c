@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <logger.h>
 
 int buffer_start = 0;
 int buffer_end = 0;
@@ -97,7 +98,7 @@ void find_next_active_task(void)
       return;
     put_back_current_task();
   } while (buffer_start != initial_buffer_start);
-  printf("All tasks done or waiting!\n");
+  LOG_WARN("All tasks done or waiting!\n");
 }
 
 // Schedule the next task, but don't insert current

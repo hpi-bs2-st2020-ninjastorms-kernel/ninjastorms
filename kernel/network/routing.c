@@ -21,7 +21,7 @@
 #include "routing.h"
 
 #include "kernel/time.h"
-#include "kernel/logger/logger.h"
+#include <logger.h>
 #include "kernel/network/ethernet.h"
 #include "kernel/network/arp.h"
 #include "kernel/network/ipv4.h"

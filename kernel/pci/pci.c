@@ -21,7 +21,7 @@
 #include "pci.h"
 
 #include "kernel/mmio.h"
-#include "kernel/logger/logger.h"
+#include <logger.h>
 
 #include <stdio.h>
 #include <sys/types.h>

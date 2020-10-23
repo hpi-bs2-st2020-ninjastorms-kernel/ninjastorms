@@ -21,18 +21,17 @@
 #include "network_task.h"
 
 #include "kernel/network/e1000.h"
-#include "kernel/logger/logger.h"
 #include "kernel/network/pdu_handler.h"
 #include "kernel/network/routing.h"
 
 #include <sys/types.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <logger.h>
 
 static int recv_queue_start = 0;
 static int recv_queue_end = 0;
-static raw_packet_t recv_packet_queue[MAX_PACKET_COUNT] = { 0 };
+static raw_packet_t recv_packet_queue[MAX_PACKET_COUNT] = {0};
 
 /*
  * Takes the next packet out of the receive queue and returns it (simple pop operation).
@@ -48,8 +47,7 @@ remove_packet(void)
   return packet;
 }
 
-bool
-new_packet_available(void)
+bool new_packet_available(void)
 {
   return recv_queue_start != recv_queue_end;
 }
@@ -58,37 +56,34 @@ new_packet_available(void)
  * A concurrent running task that receives packets from its receive ring buffer and
  * inserts them into the network stack.
  */
-void
-network_task_recv(void)
+void network_task_recv(void)
 {
   routing_init();
   while (1)
+  {
+    if (new_packet_available())
     {
-      //printf("LOOP");
-      if (new_packet_available())
-        {
-          raw_packet_t *packet = remove_packet();
-          start_pdu_encapsulation(packet);
-        }
+      raw_packet_t *packet = remove_packet();
+      start_pdu_encapsulation(packet);
     }
+  }
 }
 
 /*
  * Insert a new packet into the ring buffer if space is left.
  * Throws the packet away if queue is full.
  */
-void
-insert_packet(uint8_t * data, size_t len)
+void insert_packet(uint8_t *data, size_t len)
 {
   int new_end = (recv_queue_end + 1) % MAX_PACKET_COUNT;
   if (new_end != recv_queue_start)
-    {
-      recv_packet_queue[recv_queue_end].length = len;
-      memcpy(&recv_packet_queue[recv_queue_end].data, data, len);
-      recv_queue_end = new_end;
-    }
+  {
+    recv_packet_queue[recv_queue_end].length = len;
+    memcpy(&recv_packet_queue[recv_queue_end].data, data, len);
+    recv_queue_end = new_end;
+  }
   else
-    {
-      LOG_WARN("Packet Queue full!");
-    }
+  {
+    LOG_WARN("Packet Queue full!");
+  }
 }

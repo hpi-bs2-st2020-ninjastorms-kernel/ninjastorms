@@ -18,7 +18,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  ******************************************************************************/
 
-#include "logger.h"
+#include <logger.h>
 #include "kernel/time.h"
 
 #include <stdio.h>
@@ -46,7 +46,7 @@ void
 general_log(uint32_t severity, const char* file, const char* format, ...)
 {
   va_list args;
-  const char *time = clock_formatted_msms();
+  const char *time = clock_formatted_msms(); //PROHIBITED KERNEL ACCESS!
   // Align shorter severities on the same level
   if(severity == 1 || severity == 2) 
     printf("%s[%s]  [%s]\x1b[0m [%s]: ", log_colors[severity], log_severities[severity], time, file);

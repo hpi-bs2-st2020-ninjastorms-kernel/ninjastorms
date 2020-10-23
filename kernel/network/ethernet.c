@@ -23,7 +23,7 @@
 #include "kernel/network/arp.h"
 #include "kernel/network/e1000.h"
 #include "kernel/network/network_io.h"
-#include "kernel/logger/logger.h"
+#include <logger.h>
 
 #include <sys/types.h>
 #include <stdlib.h>

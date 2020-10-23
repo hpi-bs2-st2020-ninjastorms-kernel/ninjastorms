@@ -22,12 +22,12 @@
 #include "usermode/examples.h"
 
 #include <syscall.h>
-#include <stdio.h>
+#include <logger.h>
 
 void user_mode_init(void)
 {
-  printf("Welcome to usermode!\n");
-  printf("User mode initialized with pid: %i\n", get_pid());
+  LOG_INFO("Welcome to usermode!\n");
+  LOG_INFO("User mode initialized with pid: %i\n", get_pid());
   /*
     Call your examples here, like this:
 

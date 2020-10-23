@@ -21,7 +21,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <syscall.h>
-#include <stdio.h>
+#include <logger.h>
 
 #include "utilities.h"
 
@@ -65,17 +65,17 @@ void send_when_ready(int *message, int message_length, pid_t receiver)
         {
             if (errno == EINVALPID)
             {
-                printf("Receiver is no valid process! \n");
+                LOG_WARN("Receiver is no valid process! \n");
                 return;
             }
             if (errno == EBUFFERCLOSED)
             {
-                printf("Receiver not ready \n");
+                LOG_WARN("Receiver not ready \n");
                 delay(10000000);
             }
             else if (errno == EBUFFERFULL)
             {
-                printf("Buffer full, not sending \n");
+                LOG_WARN("Buffer full, not sending \n");
                 delay(10000000);
             }
         }

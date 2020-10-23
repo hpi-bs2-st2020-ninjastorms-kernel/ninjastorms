@@ -20,7 +20,7 @@
 
 #include "arp.h"
 
-#include "kernel/logger/logger.h"
+#include <logger.h>
 #include "kernel/network/ethernet.h"
 #include "kernel/network/e1000.h"
 #include "kernel/network/ipv4.h"

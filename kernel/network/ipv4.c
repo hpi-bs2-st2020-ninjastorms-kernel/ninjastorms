@@ -23,7 +23,7 @@
 #include "kernel/time.h"
 #include "kernel/network/ethernet.h"
 #include "kernel/network/routing.h"
-#include "kernel/logger/logger.h"
+#include <logger.h>
 
 #include <sys/types.h>
 #include <stdio.h>

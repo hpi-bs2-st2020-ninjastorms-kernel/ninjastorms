@@ -27,6 +27,7 @@ libc_libc_la_SOURCES = \
     libc/string/memcpy.c \
     libc/string/memset.c \
     libc/unistd/sbrk.c \
+    libc/logger/logger.c \
     libc/include/errno.h \
     libc/include/syscall.h \
     libc/include/math.h \
@@ -37,7 +38,8 @@ libc_libc_la_SOURCES = \
     libc/include/string.h \
     libc/process/process.h \
     libc/include/sys/types.h \
-    libc/include/unistd.h
+    libc/include/unistd.h \
+    libc/include/logger.h
 
 noinst_PROGRAMS = ninjastorms
 
@@ -69,7 +71,6 @@ ninjastorms_SOURCES = \
     kernel/drivers/timer.c kernel/drivers/timer.h\
     kernel/pci/pci.c kernel/pci/pci.h \
     kernel/network/e1000.c kernel/network/e1000.h \
-    kernel/logger/logger.c kernel/logger/logger.h \
     kernel/drivers/interrupt.c kernel/drivers/interrupt.h \
     usermode/init.c usermode/init.h \
     usermode/examples.c usermode/examples.h \

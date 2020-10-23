@@ -22,11 +22,11 @@
 #include "usermode/utilities.h"
 
 #include <syscall.h>
-#include <stdio.h>
 #include <errno.h>
 #include <thread.h>
 #include <sys/types.h>
 #include <math.h>
+#include <logger.h>
 
 // Print data received via ipc.
 void task_receiver(void)
@@ -40,14 +40,14 @@ void task_receiver(void)
     int received = read_ipc_buffer_and_check(&validity);
     if (!validity)
     {
-      printf("Oops forgot to open buffer\n");
+      LOG_INFO("Oops forgot to open buffer\n");
       ipc_buffer_open(16);
       continue;
     }
-    printf("Received: %c\n", received);
+    LOG_INFO("Received: %c\n", received);
     c++;
   }
-  printf("Closing buffer!\n");
+  LOG_INFO("Closing buffer!\n");
   ipc_buffer_close();
   exit(0);
 }
@@ -97,11 +97,11 @@ void task_mutex_a(void)
     delay(5000000);
     tmp_value++;
     count_value = tmp_value;
-    printf("A: %i\n", count_value);
+    LOG_INFO("A: %i\n", count_value);
     unlock_mutex(&shared_mem);
     delay(5000000);
   }
-  printf("A done!\n");
+  LOG_INFO("A done!\n");
 }
 
 void task_mutex_b(void)
@@ -113,11 +113,11 @@ void task_mutex_b(void)
     delay(5000000);
     tmp_value--;
     count_value = tmp_value;
-    printf("B: %i\n", count_value);
+    LOG_INFO("B: %i\n", count_value);
     unlock_mutex(&shared_mem);
     delay(5000000);
   }
-  printf("B done!\n");
+  LOG_INFO("B done!\n");
 }
 
 // Receive two numbers via ipc and calculate the value of the ackermann
@@ -127,7 +127,7 @@ int task_receive_and_calculate(void)
   ipc_buffer_open(2);
   int a = read_ipc_buffer_and_block();
   int b = read_ipc_buffer_and_block();
-  printf("Read %i and %i as input from IPC\n", a, b);
+  LOG_INFO("Read %i and %i as input from IPC\n", a, b);
   int result = ackermann(a, b);
   return result;
 }
@@ -176,7 +176,7 @@ void task_queue_printer(void)
     unlock_mutex(&mutex);
     if (read_value != -1)
     {
-      printf("READING RESULT: %i\n", read_value);
+      LOG_INFO("READING RESULT: %i\n", read_value);
     }
     else
     {
@@ -209,7 +209,7 @@ void task_orchestrate_example(void)
     int queue_result = -1;
     while (queue_result == -1)
     {
-      printf("Trying to write %i \n", result);
+      LOG_INFO("Trying to write %i \n", result);
       //lock_mutex(&mutex);
       queue_result = enqueue(result);
       //unlock_mutex(&mutex);
@@ -227,19 +227,19 @@ void task_orchestrate_example(void)
 void
 task_cooperative_1(void)
 {
-    printf("Player 1: Yield.\n");
+    LOG_INFO("Player 1: Yield.\n");
     yield();
-    printf("Player 1: I will again yield. But please let me act again.\n");
+    LOG_INFO("Player 1: I will again yield. But please let me act again.\n");
     yield();
-    printf("Now I am happy :)\n");
+    LOG_INFO("Now I am happy :)\n");
 }
 
 void
 task_cooperative_2(void)
 {
-    printf("Player 2: Another task may run again.\n");
+    LOG_INFO("Player 2: Another task may run again.\n");
     yield();
-    printf("Player 2: I am the bad guy.\n");
+    LOG_INFO("Player 2: I am the bad guy.\n");
     while(1);
 }
 
