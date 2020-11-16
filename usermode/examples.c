@@ -40,14 +40,14 @@ void task_receiver(void)
     int received = read_ipc_buffer_and_check(&validity);
     if (!validity)
     {
-      LOG_INFO("Oops forgot to open buffer\n");
+      LOG_INFO("Oops forgot to open buffer");
       ipc_buffer_open(16);
       continue;
     }
-    LOG_INFO("Received: %c\n", received);
+    LOG_INFO("Received: %c", received);
     c++;
   }
-  LOG_INFO("Closing buffer!\n");
+  LOG_INFO("Closing buffer!");
   ipc_buffer_close();
   exit(0);
 }
@@ -97,11 +97,11 @@ void task_mutex_a(void)
     delay(5000000);
     tmp_value++;
     count_value = tmp_value;
-    LOG_INFO("A: %i\n", count_value);
+    LOG_INFO("A: %i", count_value);
     unlock_mutex(&shared_mem);
     delay(5000000);
   }
-  LOG_INFO("A done!\n");
+  LOG_INFO("A done!");
 }
 
 void task_mutex_b(void)
@@ -113,11 +113,11 @@ void task_mutex_b(void)
     delay(5000000);
     tmp_value--;
     count_value = tmp_value;
-    LOG_INFO("B: %i\n", count_value);
+    LOG_INFO("B: %i", count_value);
     unlock_mutex(&shared_mem);
     delay(5000000);
   }
-  LOG_INFO("B done!\n");
+  LOG_INFO("B done!");
 }
 
 // Receive two numbers via ipc and calculate the value of the ackermann
@@ -127,7 +127,7 @@ int task_receive_and_calculate(void)
   ipc_buffer_open(2);
   int a = read_ipc_buffer_and_block();
   int b = read_ipc_buffer_and_block();
-  LOG_INFO("Read %i and %i as input from IPC\n", a, b);
+  LOG_INFO("Read %i and %i as input from IPC", a, b);
   int result = ackermann(a, b);
   return result;
 }
@@ -176,7 +176,7 @@ void task_queue_printer(void)
     unlock_mutex(&mutex);
     if (read_value != -1)
     {
-      LOG_INFO("READING RESULT: %i\n", read_value);
+      LOG_INFO("READING RESULT: %i", read_value);
     }
     else
     {
@@ -209,7 +209,7 @@ void task_orchestrate_example(void)
     int queue_result = -1;
     while (queue_result == -1)
     {
-      LOG_INFO("Trying to write %i \n", result);
+      LOG_INFO("Trying to write %i", result);
       //lock_mutex(&mutex);
       queue_result = enqueue(result);
       //unlock_mutex(&mutex);
@@ -227,19 +227,19 @@ void task_orchestrate_example(void)
 void
 task_cooperative_1(void)
 {
-    LOG_INFO("Player 1: Yield.\n");
+    LOG_INFO("Player 1: Yield.");
     yield();
-    LOG_INFO("Player 1: I will again yield. But please let me act again.\n");
+    LOG_INFO("Player 1: I will again yield. But please let me act again.");
     yield();
-    LOG_INFO("Now I am happy :)\n");
+    LOG_INFO("Now I am happy :)");
 }
 
 void
 task_cooperative_2(void)
 {
-    LOG_INFO("Player 2: Another task may run again.\n");
+    LOG_INFO("Player 2: Another task may run again.");
     yield();
-    LOG_INFO("Player 2: I am the bad guy.\n");
+    LOG_INFO("Player 2: I am the bad guy.");
     while(1);
 }
 

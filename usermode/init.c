@@ -26,8 +26,8 @@
 
 void user_mode_init(void)
 {
-  LOG_INFO("Welcome to usermode!\n");
-  LOG_INFO("User mode initialized with pid: %i\n", get_pid());
+  LOG_INFO("Welcome to usermode!");
+  LOG_INFO("User mode initialized with pid: %i", get_pid());
   /*
     Call your examples here, like this:
 

@@ -195,7 +195,7 @@ pid_t add_task(void *entrypoint, bool is_kernel_mode_task)
     if (task_count >= MAX_TASK_NUMBER)
     {
         errno = ETOOMANYTASKS;
-        LOG_ERROR("ERROR: Can't add task at %x, as tasks array is already full!\n", entrypoint);
+        LOG_ERROR("ERROR: Can't add task at %x, as tasks array is already full!", entrypoint);
         print_task_debug_info();
         return -1;
     }
@@ -343,7 +343,7 @@ void _open_ipc_buffer(size_t size)
 
     current_task->ipc_buffer_start = 0;
     current_task->ipc_buffer_end = 0;
-    LOG_INFO("Opening ipc\n");
+    LOG_INFO("Opening ipc");
 }
 
 int32_t _read_ipc_buffer(void)

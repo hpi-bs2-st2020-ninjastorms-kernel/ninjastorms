@@ -65,17 +65,17 @@ void send_when_ready(int *message, int message_length, pid_t receiver)
         {
             if (errno == EINVALPID)
             {
-                LOG_WARN("Receiver is no valid process! \n");
+                LOG_WARN("Receiver is no valid process!");
                 return;
             }
             if (errno == EBUFFERCLOSED)
             {
-                LOG_WARN("Receiver not ready \n");
+                LOG_WARN("Receiver not ready");
                 delay(10000000);
             }
             else if (errno == EBUFFERFULL)
             {
-                LOG_WARN("Buffer full, not sending \n");
+                LOG_WARN("Buffer full, not sending");
                 delay(10000000);
             }
         }
