@@ -67,7 +67,7 @@ extern task_t *current_task;
 
 extern task_t tasks[MAX_TASK_NUMBER];
 
-pid_t add_task(void *entrypoint, bool is_kernel_mode_task);
+pid_t add_task(void *entrypoint);
 
 void exit_current_task(void);
 

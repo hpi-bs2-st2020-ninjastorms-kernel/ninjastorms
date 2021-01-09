@@ -31,7 +31,7 @@
 pid_t create_process_dispatch(void *data)
 {
     struct create_process_specification spec = *((struct create_process_specification *)data);
-    return add_task(spec.function, false);
+    return add_task(spec.function);
 }
 
 pid_t get_pid_dispatch(void *data)
