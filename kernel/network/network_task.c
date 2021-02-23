@@ -55,6 +55,11 @@ bool new_packet_available(void)
 /*
  * A concurrent running task that receives packets from its receive ring buffer and
  * inserts them into the network stack.
+ * 
+ * The task is currently situated in user mode. This is only possible as there is 
+ * no memory isolation at the moment. Running in supervisor mode is not possible, 
+ * as privileged processes can not be scheduled at this time.
+ * 
  */
 void network_task_recv(void)
 {
