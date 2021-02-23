@@ -45,7 +45,7 @@ int32_t send_to_ipc_buffer_dispatch(void *data)
     struct send_to_ipc_buffer_specification spec = *((struct send_to_ipc_buffer_specification *)data);
     int32_t value = spec.value;
     pid_t target = spec.target;
-    return _send_to_ipc_bufer(value, target);
+    return _send_to_ipc_buffer(value, target);
 }
 
 int32_t read_ipc_buffer_dispatch(void *data)

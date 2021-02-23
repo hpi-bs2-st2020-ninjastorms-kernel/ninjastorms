@@ -99,6 +99,6 @@ int32_t _read_ipc_buffer(void);
 
 int32_t _close_ipc_buffer(void);
 
-int32_t _send_to_ipc_bufer(int32_t value, pid_t target);
+int32_t _send_to_ipc_buffer(int32_t value, pid_t target);
 
 int32_t _len_ipc_buffer(void);

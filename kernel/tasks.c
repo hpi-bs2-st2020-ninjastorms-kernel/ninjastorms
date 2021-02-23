@@ -368,7 +368,7 @@ int32_t _close_ipc_buffer(void)
     return 0;
 }
 
-int32_t _send_to_ipc_bufer(int32_t value, pid_t target)
+int32_t _send_to_ipc_buffer(int32_t value, pid_t target)
 {
     task_t *receiver = (_get_task(target));
     if (receiver == NULL)
